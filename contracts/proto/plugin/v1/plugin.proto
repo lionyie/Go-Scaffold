@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package plugin.v1;
+
+option go_package = "github.com/example/scaffold/services/api/plugin/v1;pluginv1";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+message PluginNav {
+  string label = 1;
+  string icon = 2;
+  int32 order = 3;
+  string path = 4;
+  string permission = 5;
+}
+
+message PluginRoute {
+  string path = 1;
+  string name = 2;
+  string component = 3;
+  string permission = 4;
+}
+
+message Plugin {
+  string id = 1;
+  string name = 2;
+  string version = 3;
+  string description = 4;
+  string icon = 5;
+  string entry_url = 6;
+  repeated string styles = 7;
+  repeated PluginRoute routes = 8;
+  repeated PluginNav navigations = 9;
+  repeated string permissions = 10;
+}
+
+service PluginService {
+  rpc ListPlugins(ListPluginsRequest) returns (ListPluginsResponse) {
+    option (google.api.http) = { get: "/api/v1/plugins" };
+  }
+  rpc GetPlugin(GetPluginRequest) returns (GetPluginResponse) {
+    option (google.api.http) = { get: "/api/v1/plugins/{id}" };
+  }
+}
+
+message ListPluginsRequest {}
+
+message ListPluginsResponse {
+  repeated Plugin items = 1;
+}
+
+message GetPluginRequest {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message GetPluginResponse {
+  Plugin plugin = 1;
+}

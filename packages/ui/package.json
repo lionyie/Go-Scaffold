@@ -1,0 +1,22 @@
+{
+  "name": "@scaffold/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "echo source-only",
+    "lint": "echo no-lint",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "test": "echo no-tests"
+  },
+  "dependencies": {
+    "vue": "3.5.44"
+  },
+  "devDependencies": {
+    "vue-tsc": "3.3.13",
+    "typescript": "5.9.3"
+  }
+}

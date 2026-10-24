@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package identity.v1;
+
+option go_package = "github.com/example/scaffold/services/api/identity/v1;identityv1";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+message Permission {
+  string code = 1;
+  string name = 2;
+  string resource = 3;
+  string action = 4;
+}
+
+message Role {
+  string id = 1;
+  string name = 2 [(google.api.field_behavior) = REQUIRED];
+  string display_name = 3;
+  string description = 4;
+  bool is_system = 5;
+  repeated string permissions = 6;
+}
+
+service RoleService {
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {
+    option (google.api.http) = { get: "/api/v1/roles" };
+  }
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/roles"
+      body: "*"
+    };
+  }
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/roles/{id}"
+      body: "*"
+    };
+  }
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
+    option (google.api.http) = { delete: "/api/v1/roles/{id}" };
+  }
+  rpc ListPermissions(ListPermissionsRequest) returns (ListPermissionsResponse) {
+    option (google.api.http) = { get: "/api/v1/permissions" };
+  }
+}
+
+message ListRolesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListRolesResponse {
+  repeated Role items = 1;
+  int32 total_size = 2;
+}
+
+message CreateRoleRequest {
+  Role role = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CreateRoleResponse {
+  Role role = 1;
+}
+
+message UpdateRoleRequest {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+  Role role = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdateRoleResponse {
+  Role role = 1;
+}
+
+message DeleteRoleRequest {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message DeleteRoleResponse {}
+
+message ListPermissionsRequest {}
+
+message ListPermissionsResponse {
+  repeated Permission items = 1;
+}

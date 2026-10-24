@@ -1,0 +1,654 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ""
+    version: 0.0.1
+paths:
+    /api/v1/auth/login:
+        post:
+            tags:
+                - AuthService
+            operationId: AuthService_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.LoginResponse'
+    /api/v1/auth/logout:
+        post:
+            tags:
+                - AuthService
+            operationId: AuthService_Logout
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.LogoutRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.LogoutResponse'
+    /api/v1/auth/me:
+        get:
+            tags:
+                - AuthService
+            operationId: AuthService_GetCurrentUser
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.GetCurrentUserResponse'
+    /api/v1/auth/password:
+        post:
+            tags:
+                - AuthService
+            operationId: AuthService_ChangePassword
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.ChangePasswordRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.ChangePasswordResponse'
+    /api/v1/auth/refresh:
+        post:
+            tags:
+                - AuthService
+            operationId: AuthService_Refresh
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.RefreshRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.RefreshResponse'
+    /api/v1/permissions:
+        get:
+            tags:
+                - RoleService
+            operationId: RoleService_ListPermissions
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.ListPermissionsResponse'
+    /api/v1/plugins:
+        get:
+            tags:
+                - PluginService
+            operationId: PluginService_ListPlugins
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/plugin.v1.ListPluginsResponse'
+    /api/v1/plugins/{id}:
+        get:
+            tags:
+                - PluginService
+            operationId: PluginService_GetPlugin
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/plugin.v1.GetPluginResponse'
+    /api/v1/roles:
+        get:
+            tags:
+                - RoleService
+            operationId: RoleService_ListRoles
+            parameters:
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.ListRolesResponse'
+        post:
+            tags:
+                - RoleService
+            operationId: RoleService_CreateRole
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.CreateRoleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.CreateRoleResponse'
+    /api/v1/roles/{id}:
+        put:
+            tags:
+                - RoleService
+            operationId: RoleService_UpdateRole
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.UpdateRoleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.UpdateRoleResponse'
+        delete:
+            tags:
+                - RoleService
+            operationId: RoleService_DeleteRole
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.DeleteRoleResponse'
+    /api/v1/system/version:
+        get:
+            tags:
+                - SystemService
+            operationId: SystemService_GetVersion
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/system.v1.GetVersionResponse'
+    /api/v1/users:
+        get:
+            tags:
+                - UserService
+            operationId: UserService_ListUsers
+            parameters:
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
+                - name: keyword
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.ListUsersResponse'
+        post:
+            tags:
+                - UserService
+            operationId: UserService_CreateUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.CreateUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.CreateUserResponse'
+    /api/v1/users/{id}:
+        put:
+            tags:
+                - UserService
+            operationId: UserService_UpdateUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.UpdateUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.UpdateUserResponse'
+        delete:
+            tags:
+                - UserService
+            operationId: UserService_DeleteUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.DeleteUserResponse'
+    /healthz:
+        get:
+            tags:
+                - SystemService
+            operationId: SystemService_GetHealth
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/system.v1.GetHealthResponse'
+    /readyz:
+        get:
+            tags:
+                - SystemService
+            operationId: SystemService_GetReady
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/system.v1.GetReadyResponse'
+components:
+    schemas:
+        identity.v1.ChangePasswordRequest:
+            required:
+                - oldPassword
+                - newPassword
+            type: object
+            properties:
+                oldPassword:
+                    type: string
+                newPassword:
+                    type: string
+        identity.v1.ChangePasswordResponse:
+            type: object
+            properties: {}
+        identity.v1.CreateRoleRequest:
+            required:
+                - role
+            type: object
+            properties:
+                role:
+                    $ref: '#/components/schemas/identity.v1.Role'
+        identity.v1.CreateRoleResponse:
+            type: object
+            properties:
+                role:
+                    $ref: '#/components/schemas/identity.v1.Role'
+        identity.v1.CreateUserRequest:
+            required:
+                - user
+                - password
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/identity.v1.User'
+                password:
+                    type: string
+        identity.v1.CreateUserResponse:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/identity.v1.User'
+        identity.v1.DeleteRoleResponse:
+            type: object
+            properties: {}
+        identity.v1.DeleteUserResponse:
+            type: object
+            properties: {}
+        identity.v1.GetCurrentUserResponse:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/identity.v1.User'
+                permissions:
+                    type: array
+                    items:
+                        type: string
+        identity.v1.ListPermissionsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/identity.v1.Permission'
+        identity.v1.ListRolesResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/identity.v1.Role'
+                totalSize:
+                    type: integer
+                    format: int32
+        identity.v1.ListUsersResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/identity.v1.User'
+                nextPageToken:
+                    type: string
+                totalSize:
+                    type: integer
+                    format: int32
+        identity.v1.LoginRequest:
+            required:
+                - username
+                - password
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+        identity.v1.LoginResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                refreshToken:
+                    type: string
+                tokenType:
+                    type: string
+                expiresIn:
+                    type: integer
+                    format: int32
+                user:
+                    $ref: '#/components/schemas/identity.v1.User'
+        identity.v1.LogoutRequest:
+            type: object
+            properties:
+                refreshToken:
+                    type: string
+        identity.v1.LogoutResponse:
+            type: object
+            properties: {}
+        identity.v1.Permission:
+            type: object
+            properties:
+                code:
+                    type: string
+                name:
+                    type: string
+                resource:
+                    type: string
+                action:
+                    type: string
+        identity.v1.RefreshRequest:
+            required:
+                - refreshToken
+            type: object
+            properties:
+                refreshToken:
+                    type: string
+        identity.v1.RefreshResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                refreshToken:
+                    type: string
+                tokenType:
+                    type: string
+                expiresIn:
+                    type: integer
+                    format: int32
+        identity.v1.Role:
+            required:
+                - name
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                displayName:
+                    type: string
+                description:
+                    type: string
+                isSystem:
+                    type: boolean
+                permissions:
+                    type: array
+                    items:
+                        type: string
+        identity.v1.UpdateRoleRequest:
+            required:
+                - id
+                - role
+            type: object
+            properties:
+                id:
+                    type: string
+                role:
+                    $ref: '#/components/schemas/identity.v1.Role'
+        identity.v1.UpdateRoleResponse:
+            type: object
+            properties:
+                role:
+                    $ref: '#/components/schemas/identity.v1.Role'
+        identity.v1.UpdateUserRequest:
+            required:
+                - id
+                - user
+            type: object
+            properties:
+                id:
+                    type: string
+                user:
+                    $ref: '#/components/schemas/identity.v1.User'
+                password:
+                    type: string
+        identity.v1.UpdateUserResponse:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/identity.v1.User'
+        identity.v1.User:
+            required:
+                - username
+            type: object
+            properties:
+                id:
+                    type: string
+                username:
+                    type: string
+                displayName:
+                    type: string
+                email:
+                    type: string
+                isAdmin:
+                    type: boolean
+                status:
+                    type: string
+                roles:
+                    type: array
+                    items:
+                        type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                mustChangePassword:
+                    type: boolean
+        plugin.v1.GetPluginResponse:
+            type: object
+            properties:
+                plugin:
+                    $ref: '#/components/schemas/plugin.v1.Plugin'
+        plugin.v1.ListPluginsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/plugin.v1.Plugin'
+        plugin.v1.Plugin:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                version:
+                    type: string
+                description:
+                    type: string
+                icon:
+                    type: string
+                entryUrl:
+                    type: string
+                styles:
+                    type: array
+                    items:
+                        type: string
+                routes:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/plugin.v1.PluginRoute'
+                navigations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/plugin.v1.PluginNav'
+                permissions:
+                    type: array
+                    items:
+                        type: string
+        plugin.v1.PluginNav:
+            type: object
+            properties:
+                label:
+                    type: string
+                icon:
+                    type: string
+                order:
+                    type: integer
+                    format: int32
+                path:
+                    type: string
+                permission:
+                    type: string
+        plugin.v1.PluginRoute:
+            type: object
+            properties:
+                path:
+                    type: string
+                name:
+                    type: string
+                component:
+                    type: string
+                permission:
+                    type: string
+        system.v1.GetHealthResponse:
+            type: object
+            properties:
+                status:
+                    type: string
+        system.v1.GetReadyResponse:
+            type: object
+            properties:
+                status:
+                    type: string
+                checks:
+                    type: object
+                    additionalProperties:
+                        type: string
+        system.v1.GetVersionResponse:
+            type: object
+            properties:
+                version:
+                    type: string
+                goVersion:
+                    type: string
+tags:
+    - name: AuthService
+    - name: PluginService
+    - name: RoleService
+    - name: SystemService
+    - name: UserService

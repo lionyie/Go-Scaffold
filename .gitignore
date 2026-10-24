@@ -1,0 +1,40 @@
+# Build output
+/bin/
+/apps/*/dist/
+/services/internal/webui/dist/*
+!/services/internal/webui/dist/.gitkeep
+/runtime-plugins/*/dist/*
+!/runtime-plugins/*/dist/.gitkeep
+/.scaffold-tmp/
+/extensions/.lock
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Local data
+/data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+
+# Env and local config
+.env
+.env.local
+.env.*.local
+
+# Tooling
+coverage/
+.turbo/
+.vite/
+*.tsbuildinfo
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

@@ -1,0 +1,8 @@
+{
+  "name": "web",
+  "base": "/",
+  "devPort": 5173,
+  "embed": true,
+  "proxy": ["/api", "/proxy", "/healthz", "/readyz"],
+  "fallback": true
+}

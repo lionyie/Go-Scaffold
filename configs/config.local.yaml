@@ -1,0 +1,42 @@
+server:
+  http:
+    network: tcp
+    addr: "${HTTP_ADDR:0.0.0.0:8000}"
+    timeout: 30s
+  grpc:
+    network: tcp
+    addr: "${GRPC_ADDR:0.0.0.0:9000}"
+    timeout: 30s
+
+data:
+  database:
+    driver: "${DB_DRIVER:sqlite}"
+    source: "${DB_SOURCE:file:../data/scaffold.db?_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=busy_timeout(5000)}"
+    auto_migrate: ${DB_AUTO_MIGRATE:true}
+    seed: ${DB_SEED:true}
+    debug: ${DB_DEBUG:false}
+
+auth:
+  jwt:
+    secret: "${JWT_SECRET:dev-only-change-me}"
+    issuer: "${JWT_ISSUER:scaffold}"
+    access_ttl: 900s
+    refresh_ttl: 604800s
+  oauth:
+    auto_register: ${OAUTH_AUTO_REGISTER:false}
+    state_secret: "${OAUTH_STATE_SECRET:dev-only-oauth-state-secret}"
+    allowed_redirect_hosts: ["localhost", "127.0.0.1"]
+    admin_redirect_url: "${OAUTH_ADMIN_REDIRECT_URL:http://localhost:5175/admin/oauth/callback}"
+
+plugins:
+  dir: "${PLUGINS_DIR:../runtime-plugins}"
+  dev: ${PLUGINS_DEV:false}
+  strict: ${PLUGINS_STRICT:false}
+  allowed_upstreams: []
+
+web:
+  dir: "${WEB_DIR:}"
+
+log:
+  level: "${LOG_LEVEL:info}"
+  format: "${LOG_FORMAT:text}"

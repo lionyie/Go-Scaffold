@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package identity.v1;
+
+option go_package = "github.com/example/scaffold/services/api/identity/v1;identityv1";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+
+message User {
+  string id = 1;
+  string username = 2 [(google.api.field_behavior) = REQUIRED];
+  string display_name = 3;
+  string email = 4;
+  bool is_admin = 5;
+  string status = 6;
+  repeated string roles = 7;
+  google.protobuf.Timestamp created_at = 8;
+  bool must_change_password = 9;
+}
+
+service UserService {
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = { get: "/api/v1/users" };
+  }
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/users"
+      body: "*"
+    };
+  }
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/users/{id}"
+      body: "*"
+    };
+  }
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = { delete: "/api/v1/users/{id}" };
+  }
+}
+
+message ListUsersRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  string keyword = 3;
+}
+
+message ListUsersResponse {
+  repeated User items = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+message CreateUserRequest {
+  User user = 1 [(google.api.field_behavior) = REQUIRED];
+  string password = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+  User user = 2 [(google.api.field_behavior) = REQUIRED];
+  string password = 3;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}
+
+message DeleteUserRequest {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message DeleteUserResponse {}

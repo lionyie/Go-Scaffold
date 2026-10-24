@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package notes.v1;
+
+option go_package = "github.com/example/scaffold/services/api/notes/v1;notesv1";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+service NotesService {
+  rpc ListNotes(ListNotesRequest) returns (ListNotesResponse) {
+    option (google.api.http) = { get: "/api/v1/notes" };
+  }
+  rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/notes"
+      body: "*"
+    };
+  }
+}
+
+message Note {
+  string id = 1;
+  string title = 2 [(google.api.field_behavior) = REQUIRED];
+  string body = 3;
+}
+
+message ListNotesRequest {}
+
+message ListNotesResponse {
+  repeated Note items = 1;
+}
+
+message CreateNoteRequest {
+  Note note = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CreateNoteResponse {
+  Note note = 1;
+}

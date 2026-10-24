@@ -1,0 +1,36 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: scaffold
+      MYSQL_USER: scaffold
+      MYSQL_PASSWORD: scaffold
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  server:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    environment:
+      SCAFFOLD_DB_SOURCE: "scaffold:scaffold@tcp(mysql:3306)/scaffold?charset=utf8mb4&parseTime=True&loc=Local"
+      SCAFFOLD_JWT_SECRET: "change-me-in-production"
+      SCAFFOLD_OAUTH_STATE_SECRET: "change-me-oauth-state"
+      SCAFFOLD_PLUGINS_DEV: "false"
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql-data:

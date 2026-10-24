@@ -1,0 +1,12 @@
+{
+  "name": "scaffold",
+  "module": "github.com/example/scaffold/services",
+  "envPrefix": "SCAFFOLD",
+  "npmScope": "@scaffold",
+  "binary": "scaffold",
+  "dbName": "scaffold",
+  "dockerImage": "scaffold",
+  "namespace": "scaffold-system",
+  "displayName": "Scaffold",
+  "description": "A multi-app scaffold with admin, RBAC and on-demand extensions."
+}

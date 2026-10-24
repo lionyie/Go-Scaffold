@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "oauth-wechat",
+  "kind": "feature",
+  "version": "1.0.0",
+  "description": "WeChat Open Platform QR sign-in provider.",
+  "requires": ["auth-core"],
+  "copy": [
+    { "from": "provider.go", "to": "services/internal/auth/oauth/providers/wechat.go" }
+  ],
+  "registries": ["oauth-providers"],
+  "env": [
+    "SCAFFOLD_OAUTH_WECHAT_APP_ID",
+    "SCAFFOLD_OAUTH_WECHAT_APP_SECRET"
+  ],
+  "codegen": false,
+  "targets": { "admin": { "routes": [], "menu": [] }, "web": { "routes": [], "menu": [] } }
+}

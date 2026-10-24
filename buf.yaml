@@ -1,0 +1,19 @@
+version: v2
+modules:
+  - path: contracts/third_party
+  - path: contracts/proto
+  - path: services/internal
+lint:
+  use:
+    - STANDARD
+  except:
+    - ENUM_VALUE_PREFIX
+  ignore:
+    - contracts/third_party
+    - services/internal
+breaking:
+  use:
+    - FILE
+  ignore:
+    - contracts/third_party
+    - services/internal

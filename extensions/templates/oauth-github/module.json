@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "oauth-github",
+  "kind": "feature",
+  "version": "1.0.0",
+  "description": "GitHub OAuth sign-in provider.",
+  "requires": ["auth-core"],
+  "copy": [
+    { "from": "provider.go", "to": "services/internal/auth/oauth/providers/github.go" }
+  ],
+  "registries": ["oauth-providers"],
+  "env": [
+    "SCAFFOLD_OAUTH_GITHUB_CLIENT_ID",
+    "SCAFFOLD_OAUTH_GITHUB_CLIENT_SECRET"
+  ],
+  "codegen": false,
+  "targets": { "admin": { "routes": [], "menu": [] }, "web": { "routes": [], "menu": [] } }
+}

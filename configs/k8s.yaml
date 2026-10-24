@@ -1,0 +1,42 @@
+server:
+  http:
+    network: tcp
+    addr: "0.0.0.0:8000"
+    timeout: 30s
+  grpc:
+    network: tcp
+    addr: "0.0.0.0:9000"
+    timeout: 30s
+
+data:
+  database:
+    driver: "${DB_DRIVER:mysql}"
+    source: "${DB_SOURCE:scaffold:scaffold@tcp(mysql:3306)/scaffold?charset=utf8mb4&parseTime=True&loc=Local}"
+    auto_migrate: true
+    seed: true
+    debug: false
+
+auth:
+  jwt:
+    secret: "${JWT_SECRET:dev-only-change-me}"
+    issuer: "scaffold"
+    access_ttl: 900s
+    refresh_ttl: 604800s
+  oauth:
+    auto_register: ${OAUTH_AUTO_REGISTER:false}
+    state_secret: "${OAUTH_STATE_SECRET:}"
+    allowed_redirect_hosts: ["localhost", "127.0.0.1"]
+    admin_redirect_url: "${OAUTH_ADMIN_REDIRECT_URL:}"
+
+plugins:
+  dir: "/app/runtime-plugins"
+  dev: false
+  strict: false
+  allowed_upstreams: []
+
+web:
+  dir: ""
+
+log:
+  level: "info"
+  format: "json"

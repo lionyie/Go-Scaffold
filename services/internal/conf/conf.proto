@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package conf.v1;
+
+option go_package = "github.com/example/scaffold/services/internal/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Bootstrap {
+  reserved 3, 4;
+  Server server = 1;
+  Data data = 2;
+  Auth auth = 5;
+  Plugins plugins = 6;
+  Web web = 7;
+  Log log = 8;
+}
+
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  message GRPC {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  HTTP http = 1;
+  GRPC grpc = 2;
+}
+
+message Data {
+  message Database {
+    string driver = 1;
+    string source = 2;
+    bool auto_migrate = 3;
+    bool seed = 4;
+    bool debug = 5;
+  }
+  Database database = 1;
+}
+
+message Auth {
+  message JWT {
+    string secret = 1;
+    string issuer = 2;
+    google.protobuf.Duration access_ttl = 3;
+    google.protobuf.Duration refresh_ttl = 4;
+  }
+  message OAuth {
+    bool auto_register = 1;
+    string state_secret = 2;
+    repeated string allowed_redirect_hosts = 3;
+    string admin_redirect_url = 4;
+  }
+  JWT jwt = 1;
+  OAuth oauth = 2;
+}
+
+message Plugins {
+  string dir = 1;
+  bool dev = 2;
+  bool strict = 3;
+  repeated string allowed_upstreams = 4;
+}
+
+message Web {
+  string dir = 1;
+}
+
+message Log {
+  string level = 1;
+  string format = 2;
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "example-notes",
+  "kind": "example",
+  "version": "1.0.0",
+  "description": "A runnable end-to-end slice: proto, Go service, and a page in both web and admin.",
+  "requires": ["auth-core"],
+  "copy": [
+    { "from": "proto/notes/v1/notes.proto", "to": "contracts/proto/notes/v1/notes.proto" },
+    { "from": "services/notes/notes.go", "to": "services/internal/extensions/examples/notes/notes.go" },
+    { "from": "web/NotesView.vue", "to": "apps/web/src/views/example/notes/NotesView.vue" },
+    { "from": "web/NotesView.vue", "to": "apps/admin/src/views/example/notes/NotesView.vue" }
+  ],
+  "registries": ["extensions"],
+  "authzImport": "github.com/example/scaffold/services/api/notes/v1",
+  "authzAlias": "notesv1",
+  "authz": [
+    { "operation": "OperationNotesServiceListNotes", "public": true },
+    { "operation": "OperationNotesServiceCreateNote", "public": true }
+  ],
+  "codegen": true,
+  "generatedDirs": ["services/api/notes/v1"],
+  "targets": {
+    "admin": {
+      "routes": [
+        {
+          "path": "/notes",
+          "name": "example-notes",
+          "component": "views/example/notes/NotesView.vue",
+          "titleKey": "nav.notes"
+        }
+      ],
+      "menu": [{ "label": "Notes", "path": "/notes", "icon": "document", "order": 50 }]
+    },
+    "web": {
+      "routes": [
+        {
+          "path": "/notes",
+          "name": "example-notes",
+          "component": "views/example/notes/NotesView.vue",
+          "titleKey": "nav.notes"
+        }
+      ],
+      "menu": [{ "label": "Notes", "path": "/notes", "icon": "document", "order": 50 }]
+    }
+  }
+}

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scaffold
+  namespace: scaffold-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scaffold
+  template:
+    metadata:
+      labels:
+        app: scaffold
+    spec:
+      containers:
+        - name: scaffold
+          image: scaffold:latest
+          imagePullPolicy: IfNotPresent
+          args: ["-conf", "/app/configs/k8s.yaml"]
+          env:
+            - name: SCAFFOLD_DB_SOURCE
+              value: "scaffold:scaffold@tcp(mysql:3306)/scaffold?charset=utf8mb4&parseTime=True&loc=Local"
+            - name: SCAFFOLD_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: scaffold-secrets
+                  key: jwt-secret
+            - name: SCAFFOLD_OAUTH_STATE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: scaffold-secrets
+                  key: oauth-state-secret
+            - name: SCAFFOLD_PLUGINS_DEV
+              value: "false"
+          ports:
+            - containerPort: 8000
+              name: http
+            - containerPort: 9000
+              name: grpc
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20

@@ -1,0 +1,8 @@
+{
+  "name": "admin",
+  "base": "/admin/",
+  "devPort": 5175,
+  "embed": true,
+  "proxy": ["/api", "/proxy", "/healthz", "/readyz"],
+  "fallback": true
+}

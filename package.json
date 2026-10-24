@@ -1,0 +1,45 @@
+{
+  "name": "scaffold",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "init": "node scripts/init.mjs",
+    "generate": "node scripts/generate.mjs",
+    "verify-generated": "node scripts/verify-generated.mjs",
+    "verify-authz": "node scripts/verify-authz.mjs",
+    "dev:server": "node scripts/dev-server.mjs",
+    "dev:web": "pnpm --filter @scaffold/web dev",
+    "dev:admin": "pnpm --filter @scaffold/admin dev",
+    "build:web": "pnpm --filter @scaffold/web build",
+    "build:admin": "pnpm --filter @scaffold/admin build",
+    "build:plugins": "node scripts/build-plugins.mjs",
+    "build:server": "node scripts/build-server.mjs",
+    "build": "node scripts/build.mjs",
+    "db:reset": "node scripts/db-reset.mjs",
+    "module:add": "node scripts/module.mjs add",
+    "module:remove": "node scripts/module.mjs remove",
+    "module:update": "node scripts/module.mjs update",
+    "module:list": "node scripts/module.mjs list",
+    "module:check-upstream": "node scripts/module.mjs check-upstream",
+    "rename": "node scripts/rename.mjs",
+    "typecheck": "turbo run typecheck",
+    "lint:web": "eslint apps packages extensions/templates scripts",
+    "test:web": "turbo run test",
+    "clean": "node scripts/clean.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.0",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-vue": "10.11.1",
+    "prettier": "3.9.10",
+    "turbo": "2.11.10",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.0"
+  }
+}

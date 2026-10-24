@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package system.v1;
+
+option go_package = "github.com/example/scaffold/services/api/system/v1;systemv1";
+
+import "google/api/annotations.proto";
+
+service SystemService {
+  rpc GetHealth(GetHealthRequest) returns (GetHealthResponse) {
+    option (google.api.http) = { get: "/healthz" };
+  }
+  rpc GetReady(GetReadyRequest) returns (GetReadyResponse) {
+    option (google.api.http) = { get: "/readyz" };
+  }
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse) {
+    option (google.api.http) = { get: "/api/v1/system/version" };
+  }
+}
+
+message GetHealthRequest {}
+
+message GetHealthResponse {
+  string status = 1;
+}
+
+message GetReadyRequest {}
+
+message GetReadyResponse {
+  string status = 1;
+  map<string, string> checks = 2;
+}
+
+message GetVersionRequest {}
+
+message GetVersionResponse {
+  string version = 1;
+  string go_version = 2;
+}

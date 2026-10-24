@@ -1,0 +1,25 @@
+{
+  "name": "@scaffold/plugin-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "echo source-only",
+    "lint": "echo no-lint",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "echo no-tests"
+  },
+  "dependencies": {
+    "vue": "3.5.44",
+    "vue-router": "4.6.4",
+    "pinia": "3.0.4",
+    "vue-i18n": "11.4.16",
+    "element-plus": "2.14.7"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@scaffold/config-vite",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./plugin": "./plugin.ts"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "6.0.10",
+    "pinia": "3.0.4",
+    "vite": "8.3.5",
+    "vue": "3.5.44",
+    "vue-i18n": "11.4.16",
+    "vue-router": "4.6.4"
+  }
+}

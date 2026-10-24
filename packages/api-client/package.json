@@ -1,0 +1,23 @@
+{
+  "name": "@scaffold/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "gen": "openapi-typescript ./generated/openapi.yaml -o ./src/generated/schema.d.ts",
+    "build": "echo source-only",
+    "lint": "echo no-lint",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "echo no-tests"
+  },
+  "dependencies": {
+    "openapi-fetch": "0.17.0"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3"
+  }
+}

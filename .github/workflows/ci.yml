@@ -1,0 +1,116 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  BUF_VERSION: v1.75.0
+  WIRE_VERSION: v0.7.0
+  CONTROLLER_GEN_VERSION: v0.23.0
+
+jobs:
+  codegen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: services/go.mod
+          cache-dependency-path: services/go.sum
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install tools
+        run: |
+          go install github.com/bufbuild/buf/cmd/buf@${BUF_VERSION}
+          go install github.com/google/wire/cmd/wire@${WIRE_VERSION}
+          go install sigs.k8s.io/controller-tools/cmd/controller-gen@${CONTROLLER_GEN_VERSION}
+      - run: pnpm install --frozen-lockfile
+      - name: Generate and verify drift
+        run: |
+          pnpm run generate
+          pnpm run verify-authz
+          git diff --exit-code
+
+  go:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: services/go.mod
+          cache-dependency-path: services/go.sum
+      - run: go vet ./...
+      - run: go test -race ./...
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint:web
+      - run: pnpm run typecheck
+      - run: pnpm run build:web
+      - run: pnpm run build:admin
+
+  extensions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: services/go.mod
+          cache-dependency-path: services/go.sum
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install tools
+        run: |
+          go install github.com/bufbuild/buf/cmd/buf@${BUF_VERSION}
+          go install github.com/google/wire/cmd/wire@${WIRE_VERSION}
+      - run: pnpm install --frozen-lockfile
+      - name: Feature extension lifecycle
+        run: |
+          node scripts/module.mjs add oauth-github
+          node scripts/module.mjs remove oauth-github
+          git diff --exit-code
+      - name: Example extension lifecycle
+        run: |
+          node scripts/module.mjs add example-notes
+          (cd services && go build ./...)
+          node scripts/module.mjs remove example-notes
+          (cd services && go build ./...)
+          git diff --exit-code
+
+  docker:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/docker/Dockerfile
+          push: false
+          tags: scaffold:ci

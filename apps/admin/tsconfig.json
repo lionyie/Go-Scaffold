@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@scaffold/api-client": ["../../packages/api-client/src/index.ts"],
+      "@scaffold/plugin-runtime": ["../../packages/plugin-runtime/src/index.ts"],
+      "@scaffold/shared": ["../../packages/shared/src/index.ts"],
+      "@scaffold/ui": ["../../packages/ui/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "vite.config.ts"]
+}

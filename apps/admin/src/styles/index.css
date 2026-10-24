@@ -1,0 +1,119 @@
+:root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1f2329;
+  background: #f5f7fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.layout {
+  height: 100%;
+}
+
+.sidebar {
+  background: #1d2129;
+  color: #fff;
+}
+
+.sidebar .logo {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar .el-menu {
+  border-right: none;
+  background: transparent;
+}
+
+.sidebar .el-menu-item {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.sidebar .el-menu-item.is-active,
+.sidebar .el-menu-item:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #e5e6eb;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-actions .user {
+  font-size: 13px;
+  color: #4e5969;
+}
+
+.login-page {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #101828 0%, #1d2939 100%);
+}
+
+.login-card {
+  width: 380px;
+  padding: 32px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.login-card h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+}
+
+.login-card p {
+  margin: 0 0 24px;
+  color: #86909c;
+  font-size: 13px;
+}
+
+.page-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.empty-state {
+  padding: 48px 0;
+  text-align: center;
+  color: #86909c;
+}

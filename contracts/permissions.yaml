@@ -1,0 +1,47 @@
+permissions:
+  - code: user:list
+    name: List users
+    resource: user
+    action: list
+  - code: user:create
+    name: Create user
+    resource: user
+    action: create
+  - code: user:update
+    name: Update user
+    resource: user
+    action: update
+  - code: user:delete
+    name: Delete user
+    resource: user
+    action: delete
+
+  - code: role:list
+    name: List roles
+    resource: role
+    action: list
+  - code: role:create
+    name: Create role
+    resource: role
+    action: create
+  - code: role:update
+    name: Update role
+    resource: role
+    action: update
+  - code: role:delete
+    name: Delete role
+    resource: role
+    action: delete
+  - code: role:permission:list
+    name: List permissions
+    resource: role
+    action: permission:list
+
+  - code: plugin:list
+    name: List plugins
+    resource: plugin
+    action: list
+  - code: plugin:read
+    name: Read plugin
+    resource: plugin
+    action: read

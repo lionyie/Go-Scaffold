@@ -1,0 +1,18 @@
+{
+  "name": "@scaffold/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "echo source-only",
+    "lint": "echo no-lint",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "echo no-tests"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

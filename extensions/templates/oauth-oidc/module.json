@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "oauth-oidc",
+  "kind": "feature",
+  "version": "1.0.0",
+  "description": "Generic OpenID Connect provider for enterprise SSO.",
+  "requires": ["auth-core"],
+  "copy": [
+    { "from": "provider.go", "to": "services/internal/auth/oauth/providers/oidc.go" }
+  ],
+  "registries": ["oauth-providers"],
+  "env": [
+    "SCAFFOLD_OAUTH_OIDC_ISSUER",
+    "SCAFFOLD_OAUTH_OIDC_CLIENT_ID",
+    "SCAFFOLD_OAUTH_OIDC_CLIENT_SECRET",
+    "SCAFFOLD_OAUTH_OIDC_SCOPES"
+  ],
+  "codegen": false,
+  "targets": { "admin": { "routes": [], "menu": [] }, "web": { "routes": [], "menu": [] } }
+}

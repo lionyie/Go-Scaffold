@@ -1,0 +1,13 @@
+version: v2
+inputs:
+  - directory: contracts/proto
+plugins:
+  - local: ["go", "run", "github.com/google/gnostic/cmd/protoc-gen-openapi@v0.7.1"]
+    out: packages/api-client/generated
+    strategy: all
+    opt:
+      - fq_schema_naming=true
+      - default_response=false
+      - naming=json
+      - enum_type=string
+      - depth=4
