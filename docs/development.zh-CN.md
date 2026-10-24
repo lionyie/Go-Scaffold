@@ -79,6 +79,24 @@ pnpm run db:reset -- --yes
 `services/internal/data/migrations/` 会在 `AutoMigrate` 之前被读取。当前为空；
 未来接入 `golang-migrate` 的命名规范见该目录的 README。
 
+## 运行时插件开发
+
+```bash
+pnpm run build:plugins
+pnpm run dev:server
+pnpm run dev:admin        # 侧边栏 → Hello plugin
+```
+
+需要热更新时，用 `SCAFFOLD_PLUGINS_DEV=true` 启动后端，并运行插件 Vite 开发服务器：
+
+```bash
+SCAFFOLD_PLUGINS_DEV=true pnpm run dev:server
+pnpm --filter @scaffold/plugin-hello dev
+```
+
+清单、路径约定、后端模式、鉴权与排错详见
+[runtime-plugins/README.zh-CN.md](../runtime-plugins/README.zh-CN.md)。
+
 ## 测试与 lint
 
 ```bash

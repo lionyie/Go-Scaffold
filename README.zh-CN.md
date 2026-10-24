@@ -96,6 +96,24 @@ pnpm run module:add -- oauth-oidc
 
 每个 provider 从环境变量读取配置（例如 `SCAFFOLD_OAUTH_GITHUB_CLIENT_ID` 与 `_CLIENT_SECRET`），配置齐全后会出现在管理端登录页。详见[认证与 SSO](docs/auth.zh-CN.md)。
 
+## 运行时插件（实验性）
+
+仓库内置了一个可运行示例 `runtime-plugins/hello-panel/`：注册路由与侧边栏入口，使用
+宿主提供的 Vuetify 组件（不重复打包），并通过受鉴权的插件代理调用静态 API。
+
+```bash
+pnpm run build:plugins                       # 构建所有已安装插件
+pnpm run dev:server                          # :8000
+pnpm run dev:admin                           # 侧边栏 → Hello plugin
+
+# 插件源码热更新
+SCAFFOLD_PLUGINS_DEV=true pnpm run dev:server
+pnpm --filter @scaffold/plugin-hello dev      # :5174
+```
+
+删除插件目录即可卸载。清单字段、路径约定、后端模式、鉴权与排错详见
+[runtime-plugins/README.zh-CN.md](runtime-plugins/README.zh-CN.md)。
+
 ## 部署
 
 ```bash

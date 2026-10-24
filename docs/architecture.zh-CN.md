@@ -64,8 +64,12 @@ contracts/proto/**/v1         protobuf 契约
   模块，可以添加 protobuf 契约、Go 服务和页面。
 - **Example（示例）**：`kind: "example"` 的功能扩展。内置的 `example-notes`
   是一条完整的纵向切片。
-- **Runtime Plugin（运行时插件）**：启动时从 `runtime-plugins/` 加载。已标记为
-  实验性，不属于 MVP 验收项。
+- **Runtime Plugin（运行时插件）**：`runtime-plugins/` 下的目录，由服务端在启动时加载。
+  它包含清单、浏览器 ESM，以及可选的 static/proxy 后端。内置的 `hello-panel` 演示了
+  Vuetify 页面与静态 API。已标记为实验性，不属于 MVP 验收项。
+  清单的 `entry`/`styles` 相对插件的 `dist/`；宿主通过
+  `/proxy/plugins/<id>/frontend/` 提供。宿主应用全局安装 Vuetify，因此插件复用同一批
+  组件实例，不会重复打包 Vuetify。
 
 两类扩展的注册表都是生成的。手写代码只 import 生成的注册表包，因此安装或删除
 扩展永远不会改动核心 server 或 router 文件。

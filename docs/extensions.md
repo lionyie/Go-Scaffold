@@ -98,6 +98,43 @@ are written next to the target as `<file>.new`, with a diff summary.
 - `example-notes`: a full slice with a proto, in-memory Go service, and pages in
   both apps. It demonstrates the extension registries and is safe to remove.
 
+## Runtime plugins (experimental)
+
+Runtime plugins are not feature extensions. They live under `runtime-plugins/`,
+are loaded by the server at startup, and ship a `plugin.json` manifest, browser
+ESM, optional CSS, and an optional static or proxy backend. They do not run
+codegen and are not compiled into the Go binary or app bundles.
+
+A runnable example is included: `runtime-plugins/hello-panel/`. It registers a
+route and sidebar entry, uses the host's Vuetify components, and calls a static
+API endpoint.
+
+Minimal manifest:
+
+```json
+{
+  "id": "hello-panel",
+  "name": "Hello Panel",
+  "version": "0.1.0",
+  "frontend": {
+    "entry": "index.js",
+    "styles": ["style.css"],
+    "routes": [
+      { "path": "/plugins/hello-panel", "name": "plugin-hello-panel", "component": "HelloView" }
+    ]
+  },
+  "backend": { "mode": "static", "staticDir": "server" }
+}
+```
+
+`entry` and `styles` are relative to the plugin's `dist/`; the host serves them at
+`/proxy/plugins/<id>/frontend/...`. Build with `pnpm run build:plugins`; run with
+HMR via `SCAFFOLD_PLUGINS_DEV=true pnpm run dev:server` plus
+`pnpm --filter @scaffold/plugin-hello dev`.
+
+Full guide: [runtime-plugins/README.md](../runtime-plugins/README.md) and
+[中文](../runtime-plugins/README.zh-CN.md).
+
 ## Upstream tracking
 
 `extensions/upstream.json` pins the go-admin reference commit. `check-upstream`

@@ -164,6 +164,9 @@ importers:
       vue-router:
         specifier: 4.6.4
         version: 4.6.4(vue@3.5.44(typescript@5.9.3))
+      vuetify:
+        specifier: 4.3.0
+        version: 4.3.0(@floating-ui/dom@1.8.0)(@vue/devtools-api@7.7.10)(typescript@5.9.3)(vue-i18n@11.4.16(vue@3.5.44(typescript@5.9.3)))(vue@3.5.44(typescript@5.9.3))
 
   packages/plugin-runtime:
     dependencies:
@@ -179,6 +182,9 @@ importers:
       vue-router:
         specifier: 4.6.4
         version: 4.6.4(vue@3.5.44(typescript@5.9.3))
+      vuetify:
+        specifier: 4.3.0
+        version: 4.3.0(@floating-ui/dom@1.8.0)(@vue/devtools-api@7.7.10)(typescript@5.9.3)(vue-i18n@11.4.16(vue@3.5.44(typescript@5.9.3)))(vue@3.5.44(typescript@5.9.3))
     devDependencies:
       typescript:
         specifier: 5.9.3
@@ -208,6 +214,34 @@ importers:
       vue-tsc:
         specifier: 3.3.13
         version: 3.3.13(typescript@5.9.3)
+
+  runtime-plugins/hello-panel:
+    dependencies:
+      '@scaffold/plugin-runtime':
+        specifier: workspace:*
+        version: link:../../packages/plugin-runtime
+      vue:
+        specifier: 3.5.44
+        version: 3.5.44(typescript@5.9.3)
+    devDependencies:
+      '@scaffold/config-vite':
+        specifier: workspace:*
+        version: link:../../packages/config-vite
+      '@vitejs/plugin-vue':
+        specifier: 6.0.10
+        version: 6.0.10(vite@8.3.5(@types/node@24.10.0))(vue@3.5.44(typescript@5.9.3))
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vite:
+        specifier: 8.3.5
+        version: 8.3.5(@types/node@24.10.0)
+      vue-tsc:
+        specifier: 3.3.13
+        version: 3.3.13(typescript@5.9.3)
+      vuetify:
+        specifier: 4.3.0
+        version: 4.3.0(@floating-ui/dom@1.8.0)(@vue/devtools-api@7.7.10)(typescript@5.9.3)(vue-i18n@11.4.16(vue@3.5.44(typescript@5.9.3)))(vue@3.5.44(typescript@5.9.3))
 
 packages:
 

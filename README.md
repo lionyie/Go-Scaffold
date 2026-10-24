@@ -96,6 +96,26 @@ pnpm run module:add -- oauth-oidc
 
 Each provider reads environment variables (for example `SCAFFOLD_OAUTH_GITHUB_CLIENT_ID` and `_CLIENT_SECRET`) and appears on the admin login page when configured. See [docs/auth.md](docs/auth.md).
 
+## Runtime plugins (experimental)
+
+A runnable example lives in `runtime-plugins/hello-panel/`. It registers a route
+and sidebar entry, uses the host's Vuetify components without bundling Vuetify,
+and calls a static API endpoint through the authenticated plugin proxy.
+
+```bash
+pnpm run build:plugins                       # build every installed plugin
+pnpm run dev:server                          # :8000
+pnpm run dev:admin                           # sidebar → Hello plugin
+
+# HMR for plugin source
+SCAFFOLD_PLUGINS_DEV=true pnpm run dev:server
+pnpm --filter @scaffold/plugin-hello dev      # :5174
+```
+
+Delete the plugin directory to uninstall it. See
+[runtime-plugins/README.md](runtime-plugins/README.md) for the manifest, path
+conventions, backend modes, auth and troubleshooting.
+
 ## Deployment
 
 ```bash

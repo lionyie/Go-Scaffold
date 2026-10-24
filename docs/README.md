@@ -13,6 +13,7 @@ the project, read the documents below in order.
 | [Development](development.md) | First run, the daily three-terminal loop, the full add-a-module chain, code generation, database, tests and lint, production notes | Developers working in this repository daily |
 | [Authentication, RBAC and SSO](auth.md) | Local sign-in, forced password change, the RBAC model, the full OAuth flow, provider environment variables and callback URLs | Anyone touching login/permissions, or wiring up GitHub/Google/WeChat/QQ/OIDC |
 | [Extensions](extensions.md) | `module.mjs` add/list/remove/update, `module.json` fields, lockfile and safety, bundled templates | Anyone installing features, writing runnable examples, or packaging their own extension |
+| [Runtime plugins](../runtime-plugins/README.md) | A different extension model: manifest + browser ESM loaded at startup, Vuetify host components, static/proxy backend, auth, troubleshooting | Anyone adding UI or backend endpoints without touching core code |
 | [Renaming](renaming.md) | `rename.mjs` token-type renaming, scope, safety, verification | Anyone starting their own project from this scaffold |
 | [Optimization log](scaffold-optimization-log.md) | Changes, acceptance commands and results for tasks T1–T15, plus the forced password-change fix and Vuetify migration | Anyone reviewing the structural history and acceptance criteria of this scaffold |
 
@@ -24,6 +25,7 @@ the project, read the documents below in order.
 - **Wire up GitHub sign-in** → [Extensions](extensions.md) + [Auth · Provider environment variables](auth.md#provider-environment-variables)
 - **Make it your own project** → [Renaming](renaming.md)
 - **How the notes example is installed and removed** → [Extensions · Commands](extensions.md#commands)
+- **Write a runtime plugin** → [Runtime plugins](../runtime-plugins/README.md)
 
 ## Important READMEs elsewhere
 

@@ -1,0 +1,25 @@
+{
+  "name": "@scaffold/plugin-hello",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "echo no-lint",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "test": "echo no-tests"
+  },
+  "dependencies": {
+    "@scaffold/plugin-runtime": "workspace:*",
+    "vue": "3.5.44"
+  },
+  "devDependencies": {
+    "@scaffold/config-vite": "workspace:*",
+    "@vitejs/plugin-vue": "6.0.10",
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vue-tsc": "3.3.13",
+    "vuetify": "4.3.0"
+  }
+}

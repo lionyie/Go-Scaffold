@@ -127,6 +127,10 @@ func (r *Registry) serveAPI(w http.ResponseWriter, rq *http.Request, p *Plugin, 
 		writeJSONError(w, http.StatusUnauthorized, "UNAUTHORIZED", "authentication required")
 		return
 	}
+	if principal.MustChangePassword {
+		writeJSONError(w, http.StatusForbidden, "MUST_CHANGE_PASSWORD", "password change required")
+		return
+	}
 	if !principal.IsAdmin && p.Manifest.Backend.Permission != "" {
 		allowed, err := r.checker.HasGlobal(rq.Context(), principal.UserID, p.Manifest.Backend.Permission)
 		if err != nil || !allowed {
@@ -162,9 +166,9 @@ func (r *Registry) proxy(w http.ResponseWriter, rq *http.Request, p *Plugin, pri
 			pr.SetURL(target)
 			pr.Out.URL.Path = joinURLPath(target.Path, tail)
 			pr.Out.Host = target.Host
-			pr.Out.Header.Set("X-Vela-Plugin-Id", pluginID)
-			pr.Out.Header.Set("X-Vela-User-Id", userID)
-			pr.Out.Header.Set("X-Vela-Username", username)
+			pr.Out.Header.Set("X-Scaffold-Plugin-Id", pluginID)
+			pr.Out.Header.Set("X-Scaffold-User-Id", userID)
+			pr.Out.Header.Set("X-Scaffold-Username", username)
 			if !p.Manifest.Backend.ForwardAuthorization {
 				pr.Out.Header.Del("Authorization")
 			}
@@ -218,10 +222,11 @@ func (r *Registry) authenticate(rq *http.Request) (*authpkg.Principal, bool) {
 		return nil, false
 	}
 	return &authpkg.Principal{
-		UserID:    claims.UserID,
-		Username:  claims.Username,
-		SessionID: claims.SessionID,
-		IsAdmin:   claims.Admin,
+		UserID:             claims.UserID,
+		Username:           claims.Username,
+		SessionID:          claims.SessionID,
+		IsAdmin:            claims.Admin,
+		MustChangePassword: claims.MustChangePassword,
 	}, true
 }
 
@@ -281,7 +286,9 @@ func (r *Registry) visible(ctx context.Context, p *Plugin, userID string, admin 
 
 func (r *Registry) toInfo(p *Plugin) *biz.PluginInfo {
 	m := p.Manifest
-	base := proxyPrefix + m.ID + "/"
+	// Manifest entry/styles are paths inside the plugin's dist/ directory.
+	// The public URL always goes through the frontend asset route.
+	base := proxyPrefix + m.ID + "/frontend/"
 	routes := make([]biz.PluginRoute, 0, len(m.Frontend.Routes))
 	navs := make([]biz.PluginNav, 0, len(m.Frontend.Routes))
 	for _, route := range m.Frontend.Routes {

@@ -95,6 +95,40 @@ make example-remove NAME=notes
 - `example-notes`：完整切片，包含 proto、内存版 Go 服务，以及两个应用中的
   页面。它演示了扩展注册表机制，随时可以安全删除。
 
+## 运行时插件（实验性）
+
+运行时插件不是功能扩展。它们位于 `runtime-plugins/`，由服务端在启动时加载，包含
+`plugin.json` 清单、浏览器 ESM、可选 CSS，以及可选的 static/proxy 后端。它们不参与
+代码生成，也不会被编译进 Go 二进制或应用 bundle。
+
+仓库内置了一个可运行示例：`runtime-plugins/hello-panel/`。它注册路由与侧边栏入口，
+使用宿主的 Vuetify 组件，并调用一个静态 API。
+
+最小清单：
+
+```json
+{
+  "id": "hello-panel",
+  "name": "Hello Panel",
+  "version": "0.1.0",
+  "frontend": {
+    "entry": "index.js",
+    "styles": ["style.css"],
+    "routes": [
+      { "path": "/plugins/hello-panel", "name": "plugin-hello-panel", "component": "HelloView" }
+    ]
+  },
+  "backend": { "mode": "static", "staticDir": "server" }
+}
+```
+
+`entry` 与 `styles` 相对插件的 `dist/`；宿主通过 `/proxy/plugins/<id>/frontend/...`
+提供。构建用 `pnpm run build:plugins`；开发模式用
+`SCAFFOLD_PLUGINS_DEV=true pnpm run dev:server` 加
+`pnpm --filter @scaffold/plugin-hello dev`。
+
+完整指南：[runtime-plugins/README.zh-CN.md](../runtime-plugins/README.zh-CN.md)。
+
 ## 上游跟踪
 
 `extensions/upstream.json` 固定 go-admin 的参考 commit。`check-upstream` 使用

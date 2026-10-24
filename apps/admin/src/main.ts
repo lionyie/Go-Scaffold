@@ -4,6 +4,7 @@ import { createPinia } from 'pinia'
 import * as PiniaLib from 'pinia'
 import * as VueI18n from 'vue-i18n'
 import * as VueRouter from 'vue-router'
+import * as VuetifyLib from 'vuetify'
 import 'vuetify/styles'
 import '@mdi/font/css/materialdesignicons.css'
 
@@ -42,6 +43,7 @@ installPluginHost({
   vueRouter: VueRouter,
   piniaLib: PiniaLib,
   vueI18n: VueI18n,
+  vuetifyLib: VuetifyLib,
   router,
   pinia,
   i18n: i18n as unknown as { global: { t: (key: string, ...args: unknown[]) => string } },

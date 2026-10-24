@@ -64,7 +64,7 @@ function toggleLocale(): void {
         v-for="item in plugins.navigations"
         :key="item.path"
         :to="item.path"
-        prepend-icon="mdi-puzzle"
+        :prepend-icon="item.icon || 'mdi-puzzle'"
         rounded="xl"
         class="nav-item"
       >

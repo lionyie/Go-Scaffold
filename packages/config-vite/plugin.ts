@@ -4,14 +4,15 @@ import { defineConfig, type Plugin, type UserConfig } from 'vite'
 import * as Vue from 'vue'
 import * as VueI18n from 'vue-i18n'
 import * as VueRouter from 'vue-router'
+import * as Vuetify from 'vuetify'
 
-type HostProperty = 'vue' | 'vueRouter' | 'piniaLib' | 'vueI18n'
+type HostProperty = 'vue' | 'vueRouter' | 'piniaLib' | 'vueI18n' | 'vuetifyLib'
 
 // The plugin build must use the host's already-loaded library instances. A
 // virtual module re-exports every entry from the host global, which keeps the
 // API surface complete without maintaining a hand-written shim.
 function hostShim(name: HostProperty, specifier: string, lib: object): Plugin {
-  const virtualId = `virtual:vela-host-${name}`
+  const virtualId = `virtual:scaffold-host-${name}`
   const resolvedId = `\0${virtualId}`
   const names = Object.keys(lib).filter(
     (key) => key !== 'default' && /^[A-Za-z_$][\w$]*$/.test(key),
@@ -24,7 +25,7 @@ function hostShim(name: HostProperty, specifier: string, lib: object): Plugin {
   ].join('\n')
 
   return {
-    name: `vela-host-${name}`,
+    name: `scaffold-host-${name}`,
     enforce: 'pre',
     resolveId(id) {
       if (id === specifier) return resolvedId
@@ -49,6 +50,7 @@ export function definePluginConfig(options: PluginConfigOptions = {}): UserConfi
       hostShim('vueRouter', 'vue-router', VueRouter),
       hostShim('piniaLib', 'pinia', Pinia),
       hostShim('vueI18n', 'vue-i18n', VueI18n),
+      hostShim('vuetifyLib', 'vuetify', Vuetify),
       vue(),
     ],
     server: {
@@ -61,6 +63,7 @@ export function definePluginConfig(options: PluginConfigOptions = {}): UserConfi
         entry: options.entry ?? 'src/index.ts',
         formats: ['es'],
         fileName: () => 'index.js',
+        cssFileName: 'style',
       },
       outDir: 'dist',
       emptyOutDir: true,

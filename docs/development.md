@@ -83,6 +83,25 @@ pnpm run db:reset -- --yes
 `services/internal/data/migrations/` is read before `AutoMigrate`. It is empty
 today; see its README for the future `golang-migrate` naming convention.
 
+## Runtime plugin development
+
+```bash
+pnpm run build:plugins
+pnpm run dev:server
+pnpm run dev:admin        # sidebar → Hello plugin
+```
+
+For HMR, run the backend with `SCAFFOLD_PLUGINS_DEV=true` and start the plugin
+Vite server:
+
+```bash
+SCAFFOLD_PLUGINS_DEV=true pnpm run dev:server
+pnpm --filter @scaffold/plugin-hello dev
+```
+
+See [runtime-plugins/README.md](../runtime-plugins/README.md) for the manifest,
+path convention, backend modes, auth and troubleshooting.
+
 ## Tests and lint
 
 ```bash

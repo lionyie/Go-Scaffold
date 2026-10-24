@@ -28,7 +28,7 @@
     "module:check-upstream": "node scripts/module.mjs check-upstream",
     "rename": "node scripts/rename.mjs",
     "typecheck": "turbo run typecheck",
-    "lint:web": "eslint apps packages extensions/templates scripts",
+    "lint:web": "eslint apps packages extensions/templates scripts runtime-plugins",
     "test:web": "turbo run test",
     "clean": "node scripts/clean.mjs"
   },

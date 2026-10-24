@@ -92,7 +92,7 @@ async function onLogout(): Promise<void> {
         v-for="item in pluginItems"
         :key="item.path"
         :to="item.path"
-        prepend-icon="mdi-puzzle"
+        :prepend-icon="item.icon || 'mdi-puzzle'"
         rounded="xl"
         class="nav-item"
       >

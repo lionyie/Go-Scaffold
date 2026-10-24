@@ -30,7 +30,7 @@ export default [
     },
   },
   {
-    files: ['apps/**/*.{ts,vue}', 'packages/**/*.{ts,vue}', 'extensions/templates/**/*.{ts,vue}'],
+    files: ['apps/**/*.{ts,vue}', 'packages/**/*.{ts,vue}', 'extensions/templates/**/*.{ts,vue}', 'runtime-plugins/**/*.{ts,vue}'],
     languageOptions: {
       globals: {
         window: 'readonly',

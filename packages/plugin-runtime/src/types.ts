@@ -42,6 +42,7 @@ export interface PluginHost {
   vueRouter: typeof import('vue-router')
   piniaLib: typeof import('pinia')
   vueI18n: typeof import('vue-i18n')
+  vuetifyLib: typeof import('vuetify')
   router: Router
   pinia: Pinia
   i18n: { global: { t: (key: string, ...args: unknown[]) => string } }
@@ -68,7 +69,7 @@ export interface PluginContext {
   notify: PluginNotify
 }
 
-export interface VelaPluginModule {
+export interface ScaffoldPluginModule {
   activate?(ctx: PluginContext): void | Promise<void>
   deactivate?(): void | Promise<void>
   components?: Record<string, Component>

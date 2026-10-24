@@ -8,7 +8,7 @@ import type {
   PluginLoadResult,
   PluginManifest,
   PluginNotify,
-  VelaPluginModule,
+  ScaffoldPluginModule,
 } from './types'
 
 export interface LoadPluginsOptions {
@@ -26,11 +26,11 @@ const MissingComponent = defineComponent({
 
 function injectStyles(manifest: PluginManifest): void {
   for (const href of manifest.styles) {
-    if (document.querySelector(`link[data-vela-plugin="${manifest.id}"][href="${href}"]`)) continue
+    if (document.querySelector(`link[data-scaffold-plugin="${manifest.id}"][href="${href}"]`)) continue
     const link = document.createElement('link')
     link.rel = 'stylesheet'
     link.href = href
-    link.dataset.velaPlugin = manifest.id
+    link.dataset.scaffoldPlugin = manifest.id
     document.head.appendChild(link)
   }
 }
@@ -48,7 +48,7 @@ export async function loadPlugins(
       injectStyles(manifest)
       const separator = manifest.entryUrl.includes('?') ? '&' : '?'
       const url = `${manifest.entryUrl}${separator}v=${encodeURIComponent(manifest.version)}`
-      const module = (await import(/* @vite-ignore */ url)) as VelaPluginModule
+      const module = (await import(/* @vite-ignore */ url)) as ScaffoldPluginModule
       const components = module.components ?? {}
       const removers: Array<() => void> = []
 

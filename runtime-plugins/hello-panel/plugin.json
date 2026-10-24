@@ -1,0 +1,33 @@
+{
+  "id": "hello-panel",
+  "name": "Hello Panel",
+  "version": "0.1.0",
+  "description": "A minimal runtime plugin built with Vuetify.",
+  "icon": "mdi-hand-wave",
+  "frontend": {
+    "entry": "index.js",
+    "devEntry": "http://localhost:5174/src/index.ts",
+    "styles": ["style.css"],
+    "routes": [
+      {
+        "path": "/plugins/hello-panel",
+        "name": "plugin-hello-panel",
+        "component": "HelloView",
+        "permission": "",
+        "nav": {
+          "label": "Hello plugin",
+          "icon": "mdi-hand-wave",
+          "order": 60,
+          "path": "/plugins/hello-panel",
+          "permission": ""
+        }
+      }
+    ]
+  },
+  "backend": {
+    "mode": "static",
+    "staticDir": "server",
+    "permission": ""
+  },
+  "permissions": []
+}

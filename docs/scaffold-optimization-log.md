@@ -43,6 +43,7 @@ API/SPA smoke                pass
 | --- | --- | --- | --- |
 | Forced password change bug | `/auth/me` was blocked by the must-change guard, so the SPA could not load the user or render a dialog. Authz now allows authenticated-only operations (`/auth/me`, logout) and blocks permissioned operations. The admin app shows a persistent change-password dialog and rotates the access token after a successful change. | Headless Chrome: login as `admin/admin123` → dialog appears on `/admin/profile` → submit new password → `/admin/dashboard` with 0 browser console errors. | pass |
 | Element Plus → Vuetify 4 | Both apps and shared UI moved to Vuetify 4 + MDI; shared light/dark theme, glass surfaces, route/card transitions, snackbar/confirm components, favicon, and localized hero copy. Element Plus removed from all dependencies and templates. | `pnpm -r typecheck`, `pnpm run lint:web`, `pnpm run build:web`, `pnpm run build:admin`, wide screenshots of login/home/dashboard. | pass |
+| Runtime plugin example | Added `runtime-plugins/hello-panel` (Vuetify page + static API), changed manifest `entry`/`styles` to be `dist`-relative, exposed Vuetify globals to plugins, and documented the full workflow. | `pnpm --filter @scaffold/plugin-hello build`; `GET /api/v1/plugins`; asset 200; API 401/403/200; headless admin + web pages with 0 console errors; `SCAFFOLD_PLUGINS_DEV=true` returns `devEntry`. | pass |
 
 ## End notes
 

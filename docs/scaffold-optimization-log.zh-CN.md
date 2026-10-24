@@ -43,6 +43,7 @@ API/SPA 冒烟                   通过
 | --- | --- | --- | --- |
 | 强制改密 Bug | `/auth/me` 被改密守卫拦截，SPA 无法加载用户、无法渲染弹窗。authz 现在放行仅登录态的接口（`/auth/me`、登出），拦截需要权限的接口。管理端展示持久的改密弹窗，改密成功后轮换 access token。 | 无头 Chrome：`admin/admin123` 登录 → `/admin/profile` 出现弹窗 → 提交新密码 → 进入 `/admin/dashboard`，浏览器控制台 0 错误。 | 通过 |
 | Element Plus → Vuetify 4 | 两个应用与共享 UI 迁移到 Vuetify 4 + MDI；共享明暗主题、玻璃质感、路由/卡片转场、Snackbar/确认弹窗、favicon、hero 文案本地化。所有依赖与模板中的 Element Plus 已移除。 | `pnpm -r typecheck`、`pnpm run lint:web`、`pnpm run build:web`、`pnpm run build:admin`，登录/首页/仪表盘宽屏截图。 | 通过 |
+| 运行时插件示例 | 新增 `runtime-plugins/hello-panel`（Vuetify 页面 + 静态 API）；清单 `entry`/`styles` 改为相对 `dist/`；插件可复用宿主 Vuetify 全局组件；补齐完整文档。 | `pnpm --filter @scaffold/plugin-hello build`；`GET /api/v1/plugins`；资源 200；API 401/403/200；管理端与公共站无头浏览器页面 0 控制台错误；`SCAFFOLD_PLUGINS_DEV=true` 返回 `devEntry`。 | 通过 |
 
 ## 说明
 

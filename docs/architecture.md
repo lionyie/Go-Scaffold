@@ -67,8 +67,13 @@ must not import a specific extension.
   `scripts/module.mjs`. It can add protobuf contracts, Go services, and pages.
 - **Example**: a Feature Extension with `kind: "example"`. The bundled
   `example-notes` is a complete vertical slice.
-- **Runtime Plugin**: loaded from `runtime-plugins/` at startup. It is marked
-  experimental and is not part of MVP acceptance.
+- **Runtime Plugin**: a directory under `runtime-plugins/` loaded by the server
+  at startup. It ships a manifest, browser ESM, and an optional static/proxy
+  backend. The included `hello-panel` demonstrates a Vuetify page and a static
+  API. It is marked experimental and is not part of MVP acceptance.
+  Manifest `entry`/`styles` are relative to the plugin's `dist/`; the host serves
+  them under `/proxy/plugins/<id>/frontend/`. Host apps install Vuetify globally,
+  so plugins reuse the same component instances without bundling it.
 
 Both extension registries are generated. Hand-written code imports only the
 generated registry package, so installing or removing an extension never edits
