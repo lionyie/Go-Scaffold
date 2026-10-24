@@ -1,5 +1,7 @@
 # Authentication, RBAC and SSO
 
+[English](auth.md) | [简体中文](auth.zh-CN.md)
+
 ## Local sign-in
 
 `POST /api/v1/auth/login` verifies the password with bcrypt and returns an access

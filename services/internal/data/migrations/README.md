@@ -1,5 +1,7 @@
 # Migrations
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 This directory is intentionally empty. The service currently uses GORM
 `AutoMigrate` for the scaffold schema.
 

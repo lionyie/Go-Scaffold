@@ -1,5 +1,7 @@
 # Architecture
 
+[English](architecture.md) | [简体中文](architecture.zh-CN.md)
+
 ## Goals
 
 - One repository can host multiple runnable ends (`apps/*`) and multiple backend services (`services/cmd/*`).

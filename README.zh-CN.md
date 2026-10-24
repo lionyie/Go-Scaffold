@@ -94,7 +94,7 @@ pnpm run module:add -- oauth-qq
 pnpm run module:add -- oauth-oidc
 ```
 
-每个 provider 从环境变量读取配置（例如 `SCAFFOLD_OAUTH_GITHUB_CLIENT_ID` 与 `_CLIENT_SECRET`），配置齐全后会出现在管理端登录页。详见 [docs/auth.md](docs/auth.md)。
+每个 provider 从环境变量读取配置（例如 `SCAFFOLD_OAUTH_GITHUB_CLIENT_ID` 与 `_CLIENT_SECRET`），配置齐全后会出现在管理端登录页。详见[认证与 SSO](docs/auth.zh-CN.md)。
 
 ## 部署
 
@@ -109,9 +109,9 @@ kubectl apply -f deploy/k8s/
 
 ## 文档
 
-- [架构](docs/architecture.md)
-- [开发流程](docs/development.md)
-- [认证与 SSO](docs/auth.md)
-- [扩展机制](docs/extensions.md)
-- [项目改名](docs/renaming.md)
-- [优化执行日志](docs/scaffold-optimization-log.md)
+- [架构](docs/architecture.zh-CN.md)
+- [开发流程](docs/development.zh-CN.md)
+- [认证与 SSO](docs/auth.zh-CN.md)
+- [扩展机制](docs/extensions.zh-CN.md)
+- [项目改名](docs/renaming.zh-CN.md)
+- [优化执行日志](docs/scaffold-optimization-log.zh-CN.md)

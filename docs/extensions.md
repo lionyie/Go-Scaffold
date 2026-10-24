@@ -1,5 +1,7 @@
 # Extensions
 
+[English](extensions.md) | [简体中文](extensions.zh-CN.md)
+
 Extensions are compile-time modules copied into the tree by
 `scripts/module.mjs`. They are distinct from the experimental runtime plugins in
 `runtime-plugins/`.

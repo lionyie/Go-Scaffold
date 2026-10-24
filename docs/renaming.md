@@ -1,5 +1,7 @@
 # Renaming the scaffold
 
+[English](renaming.md) | [简体中文](renaming.zh-CN.md)
+
 `scripts/rename.mjs` changes the project identity by token type. It never runs a
 global string replace.
 

@@ -1,5 +1,7 @@
 # Development
 
+[English](development.md) | [简体中文](development.zh-CN.md)
+
 ## First run
 
 ```bash

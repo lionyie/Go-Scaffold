@@ -1,5 +1,7 @@
 # Runtime plugins
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 > EXPERIMENTAL — not part of MVP acceptance.
 
 Runtime plugins are loaded by the host at startup and served from

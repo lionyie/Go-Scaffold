@@ -1,5 +1,7 @@
 # Scaffold optimization log
 
+[English](scaffold-optimization-log.md) | [简体中文](scaffold-optimization-log.zh-CN.md)
+
 Format: `任务ID | 变更文件 | 验收命令 | 结果 | 偏差说明`
 
 | Task | Changed | Acceptance command | Result | Deviations |
