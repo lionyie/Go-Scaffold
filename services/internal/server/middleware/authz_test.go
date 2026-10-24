@@ -131,4 +131,10 @@ func TestAuthzMustChangePassword(t *testing.T) {
 	if _, err := runAuthz(t, checker, identityv1.OperationAuthServiceChangePassword, principal); err != nil {
 		t.Fatalf("change-password must be allowed: %v", err)
 	}
+	if _, err := runAuthz(t, checker, identityv1.OperationAuthServiceGetCurrentUser, principal); err != nil {
+		t.Fatalf("get-current-user must be allowed: %v", err)
+	}
+	if _, err := runAuthz(t, checker, identityv1.OperationAuthServiceLogout, principal); err != nil {
+		t.Fatalf("logout must be allowed: %v", err)
+	}
 }

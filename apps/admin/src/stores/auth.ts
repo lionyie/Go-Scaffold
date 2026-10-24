@@ -117,6 +117,13 @@ export const useAuthStore = defineStore('auth', () => {
       body: { oldPassword, newPassword },
     })
     if (error) throw toApiError(error)
+    // The access token issued at login still carries must_change_password.
+    // Rotate it before loading the profile so permissioned calls succeed.
+    const refreshed = await refresh()
+    if (!refreshed) {
+      clear()
+      throw new Error('session expired; please sign in again')
+    }
     await loadMe()
   }
 

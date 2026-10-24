@@ -10,7 +10,7 @@
 ## Layers
 
 ```text
-apps/web, apps/admin          Vue 3 + Vite + Element Plus
+apps/web, apps/admin          Vue 3 + Vite + Vuetify 4
         │
         │  HTTP/JSON (protojson)
         ▼
@@ -82,6 +82,19 @@ core server or router files.
 `services/internal/webui` selects the mount by prefix and serves
 `index.html` for history-mode routes. API and proxy prefixes never fall back to
 an SPA.
+
+## UI system
+
+Both apps use Vuetify 4 with a shared theme from `packages/ui`:
+
+- `scaffoldLight` and `scaffoldDark` themes, persisted in
+  `localStorage["scaffold.theme"]` and switchable from the app bar.
+- MDI icon set, pill buttons, rounded cards, and glass surfaces
+  (`backdrop-filter`) for navigation and app bars.
+- A shared `PageHeader`, snackbar, and confirmation dialog in
+  `packages/ui` so both apps keep the same interaction language.
+- Route transitions and card entrance animations; the login page uses an
+  animated gradient background.
 
 ## Configuration
 

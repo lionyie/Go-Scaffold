@@ -1,9 +1,20 @@
 export default {
-  app: { name: 'Scaffold' },
+  app: { name: 'Scaffold', tagline: 'Multi-app starter' },
   nav: { home: 'Home', plugins: 'Plugins' },
   home: {
     title: 'Welcome to Scaffold',
     subtitle: 'A multi-app starter with an admin console, RBAC and on-demand extensions.',
+    heroA: 'Ship your next product with a',
+    heroB: 'modern foundation',
+    heroC: '.',
+    heroSubtitle:
+      'A multi-app starter with Kratos, protobuf, Vue, Vuetify, RBAC and script-driven extensions. Start with the boring parts already done.',
+    featureRbacTitle: 'RBAC built in',
+    featureRbacText: 'Roles, permissions, forced password rotation and audit-friendly middleware.',
+    featureExtTitle: 'Composable extensions',
+    featureExtText: 'Install GitHub, Google, WeChat, QQ or OIDC sign-in only when you need them.',
+    featureMultiTitle: 'Multi-app ready',
+    featureMultiText: 'Public site, admin console and future mobile or desktop ends in one workspace.',
     apps: 'Apps',
     appsHint: 'Add web, admin, mobile or desktop apps under apps/.',
     extensions: 'Extensions',

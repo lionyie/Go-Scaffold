@@ -6,7 +6,8 @@ A multi-app starter for Go + TypeScript projects. It ships with an admin console
 
 ## What is in the box
 
-- **Apps**: `apps/web` (public site) and `apps/admin` (management console), both Vue 3 + Vite + Element Plus.
+- **Apps**: `apps/web` (public site) and `apps/admin` (management console), both Vue 3 + Vite + Vuetify 4 with a custom light/dark theme, glass surfaces, and page transitions.
+- **UI system**: shared Vuetify theme, MDI icons, snackbar/confirm dialogs, and a forced password-change modal on first admin login.
 - **Services**: one Go module under `services/` with Kratos HTTP/gRPC, protobuf contracts, GORM, JWT auth, RBAC, plugin hosting, and an embedded web UI.
 - **Contracts**: `.proto` sources under `contracts/proto`, generated Go and TypeScript clients.
 - **Extensions**: compile-time feature modules and runnable examples under `extensions/`, managed by `scripts/module.mjs`.

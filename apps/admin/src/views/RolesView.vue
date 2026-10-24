@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
+
+import { PageHeader, confirmDialog, notifyApi } from '@scaffold/ui'
 
 import { errorMessage } from '../api/errors'
 import { api } from '../api/client'
@@ -35,6 +36,21 @@ const form = reactive({
   permissions: [] as string[],
 })
 
+const headers = computed(() => [
+  { title: t('common.name'), key: 'name', sortable: true },
+  { title: t('common.displayName'), key: 'displayName' },
+  { title: t('common.description'), key: 'description' },
+  { title: t('role.permissions'), key: 'permissions', sortable: false },
+  { title: t('role.system'), key: 'isSystem', align: 'center' as const },
+  { title: t('common.actions'), key: 'actions', sortable: false, align: 'end' as const },
+])
+
+const permissionItems = computed(() =>
+  permissions.value
+    .filter((permission) => permission.code)
+    .map((permission) => ({ title: permission.code!, value: permission.code! })),
+)
+
 async function load(): Promise<void> {
   loading.value = true
   try {
@@ -45,7 +61,7 @@ async function load(): Promise<void> {
     rows.value = (roles.data?.items ?? []) as RoleRow[]
     permissions.value = (perms.data?.items ?? []) as PermissionRow[]
   } catch (error) {
-    ElMessage.error(errorMessage(error, (key) => t(key)))
+    notifyApi.error(errorMessage(error, (key) => t(key)))
   } finally {
     loading.value = false
   }
@@ -87,25 +103,27 @@ async function save(): Promise<void> {
       if (error) throw error
     }
     dialog.value = false
+    notifyApi.success(t('common.save'))
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, (key) => t(key)))
+    notifyApi.error(errorMessage(error, (key) => t(key)))
   }
 }
 
 async function remove(row: RoleRow): Promise<void> {
-  try {
-    await ElMessageBox.confirm(t('role.deleteConfirm', { name: row.name }), t('common.confirm'))
-  } catch {
-    return
-  }
+  const confirmed = await confirmDialog(t('common.confirm'), t('role.deleteConfirm', { name: row.name }), {
+    confirmText: t('common.delete'),
+    cancelText: t('common.cancel'),
+  })
+  if (!confirmed) return
   const { error } = await api().DELETE('/api/v1/roles/{id}', {
     params: { path: { id: row.id! } },
   })
   if (error) {
-    ElMessage.error(errorMessage(error, (key) => t(key)))
+    notifyApi.error(errorMessage(error, (key) => t(key)))
     return
   }
+  notifyApi.success(t('common.delete'))
   await load()
 }
 
@@ -114,77 +132,85 @@ onMounted(load)
 
 <template>
   <div class="page-card">
-    <el-card shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>{{ t('role.title') }}</span>
-          <div>
-            <el-button @click="load">{{ t('common.refresh') }}</el-button>
-            <el-button type="primary" @click="openCreate">{{ t('role.create') }}</el-button>
+    <PageHeader :title="t('role.title')" :description="t('app.name')">
+      <template #actions>
+        <v-btn variant="tonal" prepend-icon="mdi-refresh" @click="load">{{ t('common.refresh') }}</v-btn>
+        <v-btn color="primary" prepend-icon="mdi-shield-plus" @click="openCreate">
+          {{ t('role.create') }}
+        </v-btn>
+      </template>
+    </PageHeader>
+
+    <v-card class="pa-2">
+      <v-data-table :headers="headers" :items="rows" :loading="loading" item-value="id" hover>
+        <template #item.permissions="{ item }">
+          <v-chip size="small" color="secondary" variant="tonal">
+            {{ (item.permissions ?? []).length }}
+          </v-chip>
+        </template>
+        <template #item.isSystem="{ item }">
+          <v-icon
+            :icon="item.isSystem ? 'mdi-lock-check' : 'mdi-lock-open-variant-outline'"
+            :color="item.isSystem ? 'warning' : 'medium-emphasis'"
+          />
+        </template>
+        <template #item.actions="{ item }">
+          <v-btn icon="mdi-pencil-outline" size="small" variant="text" @click="openEdit(item)" />
+          <v-btn
+            icon="mdi-trash-can-outline"
+            size="small"
+            variant="text"
+            color="error"
+            :disabled="item.isSystem"
+            @click="remove(item)"
+          />
+        </template>
+        <template #no-data>
+          <div class="empty-state">
+            <v-icon icon="mdi-shield-off-outline" size="42" />
+            <p>{{ t('common.empty') }}</p>
           </div>
-        </div>
-      </template>
+        </template>
+      </v-data-table>
+    </v-card>
 
-      <el-table v-loading="loading" :data="rows" border>
-        <el-table-column prop="name" :label="t('common.name')" min-width="160" />
-        <el-table-column prop="displayName" :label="t('common.displayName')" min-width="160" />
-        <el-table-column prop="description" :label="t('common.description')" min-width="220" />
-        <el-table-column :label="t('role.permissions')" min-width="120">
-          <template #default="{ row }">{{ (row.permissions ?? []).length }}</template>
-        </el-table-column>
-        <el-table-column :label="t('role.system')" width="110">
-          <template #default="{ row }">{{ row.isSystem ? 'yes' : 'no' }}</template>
-        </el-table-column>
-        <el-table-column :label="t('common.actions')" width="160" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" @click="openEdit(row)">{{ t('common.edit') }}</el-button>
-            <el-button
-              link
-              type="danger"
-              :disabled="row.isSystem"
-              @click="remove(row)"
-            >{{ t('common.delete') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <el-dialog v-model="dialog" :title="editing ? t('common.edit') : t('role.create')" width="620px">
-      <el-form label-position="top">
-        <el-form-item :label="t('common.name')">
-          <el-input v-model="form.name" :disabled="Boolean(editing)" placeholder="editor" />
-        </el-form-item>
-        <el-form-item :label="t('common.displayName')">
-          <el-input v-model="form.displayName" />
-        </el-form-item>
-        <el-form-item :label="t('common.description')">
-          <el-input v-model="form.description" type="textarea" />
-        </el-form-item>
-        <el-form-item :label="t('role.permissions')">
-          <el-checkbox-group v-model="form.permissions" class="permission-grid">
-            <el-checkbox v-for="permission in permissions" :key="permission.code" :value="permission.code!">
-              {{ permission.code }}
-            </el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialog = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" @click="save">{{ t('common.save') }}</el-button>
-      </template>
-    </el-dialog>
+    <v-dialog v-model="dialog" max-width="640" transition="dialog-bottom-transition">
+      <v-card>
+        <v-card-title class="text-h6 font-weight-bold px-6 pt-5">
+          {{ editing ? t('common.edit') : t('role.create') }}
+        </v-card-title>
+        <v-card-text class="px-6">
+          <v-form @submit.prevent="save">
+            <v-text-field v-model="form.name" :label="t('common.name')" :disabled="Boolean(editing)" class="mb-3" />
+            <v-text-field v-model="form.displayName" :label="t('common.displayName')" class="mb-3" />
+            <v-textarea v-model="form.description" :label="t('common.description')" rows="2" class="mb-3" />
+            <v-select
+              v-model="form.permissions"
+              :items="permissionItems"
+              :label="t('role.permissions')"
+              multiple
+              chips
+              closable-chips
+              density="comfortable"
+            />
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="px-6 pb-5">
+          <v-spacer />
+          <v-btn variant="text" @click="dialog = false">{{ t('common.cancel') }}</v-btn>
+          <v-btn color="primary" @click="save">{{ t('common.save') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <style scoped>
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.permission-grid {
+.empty-state {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px 12px;
+  place-items: center;
+  gap: 8px;
+  padding: 40px 0;
+  color: rgb(var(--v-theme-on-surface-variant));
 }
 </style>

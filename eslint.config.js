@@ -73,6 +73,7 @@ export default [
       'vue/multi-word-component-names': 'off',
       'vue/require-default-prop': 'off',
       'vue/attributes-order': 'off',
+      'vue/valid-v-slot': ['error', { allowModifiers: true }],
     },
   },
   prettier,

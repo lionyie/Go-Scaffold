@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
+
+import { PageHeader, notifyApi } from '@scaffold/ui'
 
 import { errorMessage } from '../api/errors'
 import { api } from '../api/client'
@@ -17,6 +18,13 @@ const { t } = useI18n()
 const rows = ref<PermissionRow[]>([])
 const loading = ref(false)
 
+const headers = computed(() => [
+  { title: t('permission.code'), key: 'code' },
+  { title: t('common.name'), key: 'name' },
+  { title: t('permission.resource'), key: 'resource' },
+  { title: t('permission.action'), key: 'action' },
+])
+
 async function load(): Promise<void> {
   loading.value = true
   try {
@@ -24,7 +32,7 @@ async function load(): Promise<void> {
     if (error) throw error
     rows.value = (data?.items ?? []) as PermissionRow[]
   } catch (error) {
-    ElMessage.error(errorMessage(error, (key) => t(key)))
+    notifyApi.error(errorMessage(error, (key) => t(key)))
   } finally {
     loading.value = false
   }
@@ -35,27 +43,19 @@ onMounted(load)
 
 <template>
   <div class="page-card">
-    <el-card shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>{{ t('permission.title') }}</span>
-          <el-button @click="load">{{ t('common.refresh') }}</el-button>
-        </div>
+    <PageHeader :title="t('permission.title')" :description="t('app.name')">
+      <template #actions>
+        <v-btn variant="tonal" prepend-icon="mdi-refresh" @click="load">{{ t('common.refresh') }}</v-btn>
       </template>
-      <el-table v-loading="loading" :data="rows" border>
-        <el-table-column prop="code" :label="t('permission.code')" min-width="200" />
-        <el-table-column prop="name" :label="t('common.name')" min-width="200" />
-        <el-table-column prop="resource" :label="t('permission.resource')" min-width="140" />
-        <el-table-column prop="action" :label="t('permission.action')" min-width="140" />
-      </el-table>
-    </el-card>
+    </PageHeader>
+    <v-card class="pa-2">
+      <v-data-table :headers="headers" :items="rows" :loading="loading" item-value="code" hover>
+        <template #item.code="{ item }">
+          <v-chip color="primary" variant="tonal" size="small" prepend-icon="mdi-key-outline">
+            {{ item.code }}
+          </v-chip>
+        </template>
+      </v-data-table>
+    </v-card>
   </div>
 </template>
-
-<style scoped>
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-</style>

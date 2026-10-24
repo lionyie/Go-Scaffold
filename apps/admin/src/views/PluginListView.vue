@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
@@ -10,36 +11,59 @@ const { t } = useI18n()
 const router = useRouter()
 const plugins = usePluginStore()
 
-async function refresh(): Promise<void> {
-  await plugins.loadAll(router)
-}
+const headers = computed(() => [
+  { title: t('common.name'), key: 'id' },
+  { title: t('common.displayName'), key: 'name' },
+  { title: 'Version', key: 'version' },
+  { title: t('common.description'), key: 'description' },
+  { title: t('plugin.entry'), key: 'entryUrl' },
+])
+
+onMounted(() => {
+  plugins.loadAll(router).catch(() => undefined)
+})
 </script>
 
 <template>
   <div class="page-card">
     <PageHeader :title="t('plugin.title')" :description="t('plugin.installed')">
       <template #actions>
-        <el-button @click="refresh">{{ t('common.refresh') }}</el-button>
+        <v-btn variant="tonal" prepend-icon="mdi-refresh" @click="plugins.loadAll(router)">
+          {{ t('common.refresh') }}
+        </v-btn>
       </template>
     </PageHeader>
 
-    <el-table :data="plugins.manifests" border>
-      <el-table-column prop="id" :label="t('common.name')" min-width="160" />
-      <el-table-column prop="name" :label="t('common.displayName')" min-width="160" />
-      <el-table-column prop="version" label="Version" width="120" />
-      <el-table-column prop="description" :label="t('common.description')" min-width="240" />
-      <el-table-column prop="entryUrl" :label="t('plugin.entry')" min-width="260" />
-      <template #empty>
-        <div class="empty-state">{{ t('common.empty') }}</div>
-      </template>
-    </el-table>
+    <v-card class="pa-2">
+      <v-data-table :headers="headers" :items="plugins.manifests" :loading="plugins.loading" hover>
+        <template #item.id="{ item }">
+          <v-chip color="primary" variant="tonal" size="small">{{ item.id }}</v-chip>
+        </template>
+        <template #no-data>
+          <div class="empty-state">
+            <v-icon icon="mdi-puzzle-outline" size="42" />
+            <p>{{ t('common.empty') }}</p>
+          </div>
+        </template>
+      </v-data-table>
 
-    <el-alert
-      v-if="plugins.failures.length > 0"
-      type="error"
-      :closable="false"
-      style="margin-top: 12px"
-      :title="plugins.failures.map((item) => `${item.id}: ${item.error}`).join('; ')"
-    />
+      <v-alert
+        v-if="plugins.failures.length > 0"
+        type="error"
+        variant="tonal"
+        class="ma-4"
+        :text="plugins.failures.map((item) => `${item.id}: ${item.error}`).join('; ')"
+      />
+    </v-card>
   </div>
 </template>
+
+<style scoped>
+.empty-state {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  padding: 40px 0;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+</style>

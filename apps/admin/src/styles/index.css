@@ -1,7 +1,7 @@
 :root {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #1f2329;
-  background: #f5f7fa;
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -15,105 +15,122 @@ body,
   margin: 0;
 }
 
+body {
+  overflow-x: hidden;
+  background: rgb(var(--v-theme-background));
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
-.layout {
-  height: 100%;
-}
-
-.sidebar {
-  background: #1d2129;
-  color: #fff;
-}
-
-.sidebar .logo {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.sidebar .el-menu {
-  border-right: none;
-  background: transparent;
-}
-
-.sidebar .el-menu-item {
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.sidebar .el-menu-item.is-active,
-.sidebar .el-menu-item:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff;
-  border-bottom: 1px solid #e5e6eb;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-actions .user {
-  font-size: 13px;
-  color: #4e5969;
-}
-
-.login-page {
-  height: 100%;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, #101828 0%, #1d2939 100%);
-}
-
-.login-card {
-  width: 380px;
-  padding: 32px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-}
-
-.login-card h1 {
-  margin: 0 0 4px;
-  font-size: 22px;
-}
-
-.login-card p {
-  margin: 0 0 24px;
-  color: #86909c;
-  font-size: 13px;
-}
-
 .page-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
+  animation: card-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
+.glass {
+  background: rgba(var(--v-theme-surface), 0.72);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
 }
 
-.empty-state {
-  padding: 48px 0;
-  text-align: center;
-  color: #86909c;
+.gradient-text {
+  background: linear-gradient(120deg, rgb(var(--v-theme-primary)), rgb(var(--v-theme-secondary)) 55%, rgb(var(--v-theme-accent)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hover-lift {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 22px 48px -24px rgba(var(--v-theme-primary), 0.55);
+}
+
+.metric-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.metric-card::after {
+  content: '';
+  position: absolute;
+  inset: -60% -20% auto;
+  height: 180px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.28), transparent 68%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 26px 54px -26px rgba(var(--v-theme-primary), 0.6);
+}
+.metric-card:hover::after {
+  opacity: 1;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.26s ease, transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(12px, -22px, 0) scale(1.06);
+  }
+}
+
+.blob {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(70px);
+  opacity: 0.55;
+  animation: float 12s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.v-card {
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.06);
+}
+
+.v-btn {
+  letter-spacing: 0;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--v-theme-on-surface), 0.18);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
 }

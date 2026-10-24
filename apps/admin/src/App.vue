@@ -1,5 +1,9 @@
 <script setup lang="ts"></script>
 
 <template>
-  <router-view />
+  <v-app>
+    <router-view />
+    <AppSnackbar />
+    <ConfirmDialog />
+  </v-app>
 </template>

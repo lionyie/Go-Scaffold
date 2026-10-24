@@ -1,5 +1,5 @@
 export default {
-  app: { name: 'Scaffold 管理端' },
+  app: { name: 'Scaffold 管理端', tagline: '多端脚手架' },
   nav: {
     dashboard: '概览',
     users: '用户',
@@ -16,6 +16,14 @@ export default {
     submit: '登录',
     failed: '登录失败',
     oauth: '或使用第三方登录',
+    heroChip: 'Scaffold 管理端',
+    heroTitleA: '更快构建',
+    heroTitleB: '多端产品，',
+    heroTitleC: '\n无需重写基础设施。',
+    heroSubtitle: 'Kratos + protobuf 服务、现代管理端、RBAC 与按需 SSO 扩展，开箱即用。',
+    heroRbac: 'RBAC',
+    heroExtensions: '扩展',
+    heroOauth: 'OAuth / OIDC',
   },
   common: {
     create: '新建',
@@ -68,8 +76,13 @@ export default {
     changePassword: '修改密码',
     oldPassword: '当前密码',
     newPassword: '新密码',
+    confirmPassword: '确认新密码',
+    passwordHint: '至少 8 个字符',
     mustChange: '首次登录必须修改密码后才能继续。',
+    mustChangeTitle: '设置新密码',
     changed: '密码已修改',
+    newPasswordTooShort: '新密码至少需要 8 个字符。',
+    passwordMismatch: '两次输入的密码不一致。',
   },
   oauth: {
     callbackTitle: '正在登录',

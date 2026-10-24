@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
+
+import { PageHeader, notifyApi } from '@scaffold/ui'
 
 import { errorMessage } from '../api/errors'
 import { useAuthStore } from '../stores/auth'
@@ -14,8 +15,12 @@ interface ProviderInfo {
 const { t } = useI18n()
 const auth = useAuthStore()
 const providers = ref<ProviderInfo[]>([])
-const form = reactive({ oldPassword: '', newPassword: '' })
+const form = reactive({ oldPassword: '', newPassword: '', confirmPassword: '' })
 const saving = ref(false)
+
+const canSubmit = computed(
+  () => form.oldPassword.length > 0 && form.newPassword.length >= 8 && form.newPassword === form.confirmPassword,
+)
 
 async function loadProviders(): Promise<void> {
   try {
@@ -29,14 +34,16 @@ async function loadProviders(): Promise<void> {
 }
 
 async function changePassword(): Promise<void> {
+  if (!canSubmit.value) return
   saving.value = true
   try {
     await auth.changePassword(form.oldPassword, form.newPassword)
     form.oldPassword = ''
     form.newPassword = ''
-    ElMessage.success(t('profile.changed'))
+    form.confirmPassword = ''
+    notifyApi.success(t('profile.changed'))
   } catch (error) {
-    ElMessage.error(errorMessage(error, (key) => t(key)))
+    notifyApi.error(errorMessage(error, (key) => t(key)))
   } finally {
     saving.value = false
   }
@@ -47,53 +54,121 @@ onMounted(loadProviders)
 
 <template>
   <div class="page-card">
-    <el-alert
+    <PageHeader :title="t('profile.title')" :description="auth.user?.username" />
+
+    <v-alert
       v-if="auth.user?.mustChangePassword"
       type="warning"
-      :closable="false"
-      :title="t('profile.mustChange')"
-      style="margin-bottom: 16px"
-    />
+      variant="tonal"
+      class="mb-5"
+      prominent
+      icon="mdi-lock-alert"
+    >
+      {{ t('profile.mustChange') }}
+    </v-alert>
 
-    <el-card shadow="never">
-      <template #header>{{ t('profile.title') }}</template>
-      <el-descriptions :column="2" border>
-        <el-descriptions-item :label="t('common.name')">{{ auth.user?.username }}</el-descriptions-item>
-        <el-descriptions-item :label="t('common.displayName')">
-          {{ auth.user?.displayName || '—' }}
-        </el-descriptions-item>
-        <el-descriptions-item label="Email">{{ auth.user?.email || '—' }}</el-descriptions-item>
-        <el-descriptions-item :label="t('user.admin')">
-          {{ auth.user?.isAdmin ? 'yes' : 'no' }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('user.roles')" :span="2">
-          <el-tag v-for="role in auth.user?.roles ?? []" :key="role" style="margin-right: 6px">
-            {{ role }}
-          </el-tag>
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-card>
+    <v-row>
+      <v-col cols="12" lg="7">
+        <v-card class="pa-2">
+          <v-card-item>
+            <template #title>{{ t('profile.title') }}</template>
+          </v-card-item>
+          <v-card-text>
+            <v-list lines="two">
+              <v-list-item prepend-icon="mdi-account-outline" :title="t('common.name')">
+                <template #subtitle>{{ auth.user?.username }}</template>
+              </v-list-item>
+              <v-list-item prepend-icon="mdi-badge-account-outline" :title="t('common.displayName')">
+                <template #subtitle>{{ auth.user?.displayName || '—' }}</template>
+              </v-list-item>
+              <v-list-item prepend-icon="mdi-email-outline" title="Email">
+                <template #subtitle>{{ auth.user?.email || '—' }}</template>
+              </v-list-item>
+              <v-list-item prepend-icon="mdi-crown-outline" :title="t('user.admin')">
+                <template #subtitle>{{ auth.user?.isAdmin ? 'yes' : 'no' }}</template>
+              </v-list-item>
+              <v-list-item prepend-icon="mdi-shield-check-outline" :title="t('user.roles')">
+                <template #subtitle>
+                  <v-chip
+                    v-for="role in auth.user?.roles ?? []"
+                    :key="role"
+                    size="small"
+                    color="primary"
+                    variant="tonal"
+                    class="mr-1 mt-1"
+                  >
+                    {{ role }}
+                  </v-chip>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-    <el-card shadow="never" style="margin-top: 16px">
-      <template #header>{{ t('profile.changePassword') }}</template>
-      <el-form label-position="top" style="max-width: 420px">
-        <el-form-item :label="t('profile.oldPassword')">
-          <el-input v-model="form.oldPassword" type="password" autocomplete="current-password" />
-        </el-form-item>
-        <el-form-item :label="t('profile.newPassword')">
-          <el-input v-model="form.newPassword" type="password" autocomplete="new-password" />
-        </el-form-item>
-        <el-button type="primary" :loading="saving" @click="changePassword">
-          {{ t('common.save') }}
-        </el-button>
-      </el-form>
-    </el-card>
+      <v-col cols="12" lg="5">
+        <v-card>
+          <v-card-item>
+            <template #title>{{ t('profile.changePassword') }}</template>
+          </v-card-item>
+          <v-card-text>
+            <v-form @submit.prevent="changePassword">
+              <v-text-field
+                v-model="form.oldPassword"
+                :label="t('profile.oldPassword')"
+                type="password"
+                prepend-inner-icon="mdi-lock-outline"
+                autocomplete="current-password"
+                class="mb-3"
+              />
+              <v-text-field
+                v-model="form.newPassword"
+                :label="t('profile.newPassword')"
+                type="password"
+                prepend-inner-icon="mdi-lock-plus-outline"
+                autocomplete="new-password"
+                :hint="t('profile.passwordHint')"
+                :persistent-hint="true"
+                class="mb-4"
+              />
+              <v-text-field
+                v-model="form.confirmPassword"
+                :label="t('profile.confirmPassword')"
+                type="password"
+                prepend-inner-icon="mdi-lock-check-outline"
+                autocomplete="new-password"
+                class="mb-4"
+              />
+              <v-btn
+                type="submit"
+                color="primary"
+                block
+                :loading="saving"
+                :disabled="!canSubmit"
+              >
+                {{ t('common.save') }}
+              </v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
 
-    <el-card v-if="providers.length > 0" shadow="never" style="margin-top: 16px">
-      <template #header>{{ t('oauth.linked') }}</template>
-      <el-tag v-for="provider in providers" :key="provider.name" style="margin-right: 8px">
-        {{ provider.displayName }}
-      </el-tag>
-    </el-card>
+        <v-card v-if="providers.length > 0" class="mt-4">
+          <v-card-item>
+            <template #title>{{ t('oauth.linked') }}</template>
+          </v-card-item>
+          <v-card-text class="d-flex flex-wrap ga-2">
+            <v-chip
+              v-for="provider in providers"
+              :key="provider.name"
+              color="secondary"
+              variant="tonal"
+              prepend-icon="mdi-link-variant"
+            >
+              {{ provider.displayName }}
+            </v-chip>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>

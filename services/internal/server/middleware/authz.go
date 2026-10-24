@@ -30,7 +30,10 @@ func Authz(checker rbac.Checker) middleware.Middleware {
 			if !ok {
 				return nil, biz.ErrUnauthorized()
 			}
-			if principal.MustChangePassword && operation != identityChangePasswordOperation {
+			// Authenticated-only operations such as GetCurrentUser and Logout
+			// stay available so the client can render and complete the forced
+			// password rotation flow. Permissioned operations are blocked.
+			if principal.MustChangePassword && rule.Code != "" && operation != identityChangePasswordOperation {
 				return nil, biz.ErrMustChangePassword()
 			}
 			if principal.IsAdmin || rule.Code == "" {

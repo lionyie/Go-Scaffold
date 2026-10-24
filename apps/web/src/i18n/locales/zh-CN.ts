@@ -1,9 +1,20 @@
 export default {
-  app: { name: 'Scaffold' },
+  app: { name: 'Scaffold', tagline: '多端脚手架' },
   nav: { home: '首页', plugins: '插件' },
   home: {
     title: '欢迎使用 Scaffold',
     subtitle: '一个多端脚手架：内置管理端、RBAC 与按需扩展。',
+    heroA: '用',
+    heroB: '现代基础设施',
+    heroC: '\n更快交付下一个产品。',
+    heroSubtitle:
+      '一个包含 Kratos、protobuf、Vue、Vuetify、RBAC 与脚本化扩展的多端脚手架，把枯燥的部分先做好。',
+    featureRbacTitle: '内置 RBAC',
+    featureRbacText: '角色、权限、强制改密与鉴权中间件，默认就是生产可用的形状。',
+    featureExtTitle: '可组合扩展',
+    featureExtText: 'GitHub、Google、微信、QQ 或 OIDC 登录，需要时再安装。',
+    featureMultiTitle: '多端就绪',
+    featureMultiText: '公共站、管理端以及未来的移动端/桌面端共处一个 workspace。',
     apps: '多端',
     appsHint: '在 apps/ 下添加 web、admin、mobile 或 desktop。',
     extensions: '扩展',

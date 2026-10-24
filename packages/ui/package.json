@@ -13,10 +13,12 @@
     "test": "echo no-tests"
   },
   "dependencies": {
-    "vue": "3.5.44"
+    "@mdi/font": "^7.4.47",
+    "vue": "3.5.44",
+    "vuetify": "4.3.0"
   },
   "devDependencies": {
-    "vue-tsc": "3.3.13",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vue-tsc": "3.3.13"
   }
 }

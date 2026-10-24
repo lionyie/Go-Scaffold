@@ -1,5 +1,5 @@
 export default {
-  app: { name: 'Scaffold Admin' },
+  app: { name: 'Scaffold Admin', tagline: 'Multi-app starter' },
   nav: {
     dashboard: 'Dashboard',
     users: 'Users',
@@ -16,6 +16,15 @@ export default {
     submit: 'Sign in',
     failed: 'Sign in failed',
     oauth: 'Or continue with',
+    heroChip: 'Scaffold Admin',
+    heroTitleA: 'Build',
+    heroTitleB: 'multi-app',
+    heroTitleC: '\nproducts without rebuilding the foundation.',
+    heroSubtitle:
+      'Kratos + protobuf services, a modern admin console, RBAC, and on-demand SSO extensions — ready on day one.',
+    heroRbac: 'RBAC',
+    heroExtensions: 'Extensions',
+    heroOauth: 'OAuth / OIDC',
   },
   common: {
     create: 'Create',
@@ -68,8 +77,13 @@ export default {
     changePassword: 'Change password',
     oldPassword: 'Current password',
     newPassword: 'New password',
+    confirmPassword: 'Confirm new password',
+    passwordHint: 'At least 8 characters',
     mustChange: 'You must change the seeded password before continuing.',
+    mustChangeTitle: 'Set a new password',
     changed: 'Password changed',
+    newPasswordTooShort: 'The new password must be at least 8 characters.',
+    passwordMismatch: 'The two passwords do not match.',
   },
   oauth: {
     callbackTitle: 'Signing in',

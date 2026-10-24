@@ -9,7 +9,7 @@ export default defineConfig({
   base: app.base,
   plugins: [vue()],
   resolve: {
-    dedupe: ['vue', 'vue-router', 'pinia', 'vue-i18n', 'element-plus'],
+    dedupe: ['vue', 'vue-router', 'pinia', 'vue-i18n', 'vuetify'],
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@scaffold/api-client': fileURLToPath(new URL('../../packages/api-client/src', import.meta.url)),

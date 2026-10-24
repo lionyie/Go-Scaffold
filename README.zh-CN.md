@@ -6,7 +6,8 @@
 
 ## 内置内容
 
-- **多端**：`apps/web`（公共站）与 `apps/admin`（管理端），Vue 3 + Vite + Element Plus。
+- **多端**：`apps/web`（公共站）与 `apps/admin`（管理端），Vue 3 + Vite + Vuetify 4，自带明暗主题、玻璃质感与页面转场。
+- **UI 体系**：共享 Vuetify 主题、MDI 图标、Snackbar/确认弹窗，以及首次登录强制的改密弹窗。
 - **后端**：`services/` 单一 Go module，Kratos HTTP/gRPC、protobuf 契约、GORM、JWT、RBAC、插件宿主、内嵌前端资源。
 - **契约**：`contracts/proto` 下的 `.proto` 源文件，生成 Go 与 TypeScript 客户端。
 - **扩展**：`extensions/` 下的编译期功能模块与可运行示例，由 `scripts/module.mjs` 管理。

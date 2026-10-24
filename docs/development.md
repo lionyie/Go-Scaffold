@@ -20,9 +20,10 @@ pnpm run dev:web      # http://localhost:5173
 pnpm run dev:admin    # http://localhost:5175/admin/
 ```
 
-The seeded administrator is `admin / admin123`. The first login forces a
-password change; until then every other authenticated endpoint returns
-`MUST_CHANGE_PASSWORD`.
+The seeded administrator is `admin / admin123`. The first login opens a
+persistent change-password dialog. Until it is completed, authenticated-only
+endpoints (`/auth/me`, logout, change password) work, while permissioned
+endpoints return `MUST_CHANGE_PASSWORD`.
 
 ## Add a backend module
 

@@ -7,9 +7,12 @@ token (15 minutes) and a rotating refresh token (7 days). Tokens are JWTs signed
 with `SCAFFOLD_JWT_SECRET`; the refresh token is stored as a SHA-256 hash.
 
 The seeded administrator is `admin / admin123` with
-`must_change_password=true`. Until `POST /api/v1/auth/password` succeeds, every
-operation except password change and public endpoints returns
-`MUST_CHANGE_PASSWORD`. The authz middleware enforces this, not just the UI.
+`must_change_password=true`. Until `POST /api/v1/auth/password` succeeds,
+authenticated-only operations such as `GET /api/v1/auth/me` and logout remain
+available, while every permissioned operation returns `MUST_CHANGE_PASSWORD`.
+This lets the admin app render a persistent change-password dialog. The authz
+middleware enforces the restriction, not just the UI. After a successful change
+the SPA rotates its access token before loading the dashboard.
 
 Login failures are rate limited in memory: five failures per IP + username in a
 minute return HTTP 429.
