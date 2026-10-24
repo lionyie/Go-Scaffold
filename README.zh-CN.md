@@ -109,6 +109,8 @@ kubectl apply -f deploy/k8s/
 
 ## 文档
 
+完整索引见[文档目录（中文）](docs/README.zh-CN.md)。
+
 - [架构](docs/architecture.zh-CN.md)
 - [开发流程](docs/development.zh-CN.md)
 - [认证与 SSO](docs/auth.zh-CN.md)

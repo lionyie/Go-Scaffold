@@ -109,6 +109,8 @@ The single binary embeds both SPAs: `/` serves the public app, `/admin/` serves 
 
 ## Documentation
 
+The full index lives in [docs/README.md](docs/README.md).
+
 - [Architecture](docs/architecture.md)
 - [Development](docs/development.md)
 - [Authentication and SSO](docs/auth.md)
