@@ -6,7 +6,7 @@ Format: `任务ID | 变更文件 | 验收命令 | 结果 | 偏差说明`
 
 | Task | Changed | Acceptance command | Result | Deviations |
 | --- | --- | --- | --- | --- |
-| Phase 0 | `apps/{web,admin}`, `services/`, `contracts/`, `extensions/`, `runtime-plugins/`, `deploy/`, `configs/`, `scripts/` | `pnpm run generate`; `go -C services build ./...`; `pnpm run typecheck` | pass | Repo has no commits; see end note |
+| Phase 0 | `apps/{web,admin}`, `services/`, `contracts/`, `extensions/`, `runtime-plugins/`, `deploy/`, `configs/`, `scripts/` | `pnpm run generate`; `go -C services build ./...`; `pnpm run typecheck` | pass | Phase 0 predates the first commit; see end note |
 | T1 | `extensions/` (was modules), `runtime-plugins/` (was plugins), registries, docs, CI, ignores | `grep -rn "modules/templates\|internal/modules\|installed\.json\|plugins/example" ...` | no matches (exit 1) | `.turbo` cache removed because it still referenced the old plugin path |
 | T3 | `package.json`, `Makefile`, `scripts/{init,tool-versions,generate,verify-*}.mjs` | `pnpm run init && pnpm run generate && pnpm run build` (no make) | pass | Added `scripts/build.mjs` to orchestrate web + admin + plugins + server |
 | T2 | `scripts/module.mjs`, `extensions/installed.lock.json`, templates | `add`; duplicate `add`; `remove`; `update`; `remove --force` | pass: duplicate refused, update wrote `.new`, force remove cleaned it | Lock uses a simple pid lock, not `proper-lockfile` |
@@ -47,9 +47,10 @@ API/SPA smoke                pass
 
 ## End notes
 
-- The repository still has no commits. `verify-generated` therefore reports
-  “no commits yet; skipping diff check”. CI drift verification becomes active
-  after the first commit.
+- The repository now has commits. `verify-generated` runs `git diff --exit-code`
+  and `git diff --cached --exit-code`, and fails when generated outputs drift.
+  The “no commits yet; skipping diff check” branch only applies to a fresh copy
+  before the first commit. CI runs the same drift check in the `codegen` job.
 - `go test -race` requires a C compiler on Windows; this machine has none. The
   same tests run in CI on Linux with `-race`.
 - The go-admin reference is tracked, not merged. go-admin is Gin-based; this

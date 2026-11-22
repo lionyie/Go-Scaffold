@@ -1,5 +1,7 @@
 # 数据库迁移
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 此目录刻意留空。当前服务使用 GORM `AutoMigrate` 管理脚手架的 schema。
 
 引入真正的迁移工具后（例如 `golang-migrate`），请把

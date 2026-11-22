@@ -140,6 +140,14 @@ Full guide: [runtime-plugins/README.md](../runtime-plugins/README.md) and
 `extensions/upstream.json` pins the go-admin reference commit. `check-upstream`
 uses `git ls-remote`; when the network is unavailable it reports `offline` and
 still exits 0. `--strict` exits non-zero for offline or outdated references.
-`extensions/upstream-report.md` is the human-readable report. Upstream code is
-not merged automatically because go-admin is Gin-based and this scaffold is
-Kratos-based; the report is a migration checklist.
+`check-upstream` writes a human-readable report to
+`extensions/upstream-report.md`. That file is generated on demand and gitignored,
+so it may not exist in a fresh checkout. Upstream code is not merged
+automatically because go-admin is Gin-based and this scaffold is Kratos-based;
+treat the report as a migration checklist, not a checked-in document.
+
+## Related
+
+- Guides: [Runtime plugins](../runtime-plugins/README.md) · [Architecture](architecture.md) · [Auth](auth.md)
+- Roles: [Plugin and extension author](roles/plugin-author.md) · [Backend developer](roles/backend.md)
+- All roles: [Role guides](roles/README.md)

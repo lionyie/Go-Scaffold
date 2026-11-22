@@ -125,3 +125,9 @@ buf lint
   seeded password still requires rotation.
 - The in-memory OAuth store is single-replica only. Replace it with Redis or a
   database implementation before scaling out.
+
+## Related
+
+- Guides: [Architecture](architecture.md) · [Extensions](extensions.md) · [Renaming](renaming.md)
+- Roles: [New member onboarding](roles/onboarding.md) · [Backend developer](roles/backend.md) · [Frontend and UI](roles/frontend-ui.md) · [Testing and QA](roles/testing-qa.md)
+- All roles: [Role guides](roles/README.md)

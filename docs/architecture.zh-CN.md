@@ -100,3 +100,9 @@ contracts/proto/**/v1         protobuf 契约
 
 运行时配置在 `configs/{config.local,docker,k8s}.yaml`。环境变量统一使用
 `SCAFFOLD_` 前缀。生产环境启动时拒绝默认的 JWT 与 OAuth state 密钥。
+
+## 相关
+
+- 指南：[开发指南](development.zh-CN.md) · [认证与 SSO](auth.zh-CN.md) · [扩展机制](extensions.zh-CN.md)
+- 角色：[架构与技术负责人](roles/architecture-lead.zh-CN.md) · [后端开发](roles/backend.zh-CN.md) · [前端与 UI](roles/frontend-ui.zh-CN.md)
+- 全部角色：[角色指南](roles/README.zh-CN.md)

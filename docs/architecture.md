@@ -108,3 +108,9 @@ Both apps use Vuetify 4 with a shared theme from `packages/ui`:
 Runtime config lives in `configs/{config.local,docker,k8s}.yaml`. Environment
 variables use the `SCAFFOLD_` prefix. Production startup refuses default JWT and
 OAuth state secrets.
+
+## Related
+
+- Guides: [Development](development.md) · [Auth and RBAC](auth.md) · [Extensions](extensions.md)
+- Roles: [Architecture lead](roles/architecture-lead.md) · [Backend developer](roles/backend.md) · [Frontend and UI](roles/frontend-ui.md)
+- All roles: [Role guides](roles/README.md)

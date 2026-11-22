@@ -3,7 +3,21 @@
 [English](README.md) | [简体中文](README.zh-CN.md)
 
 This is the complete documentation for the Scaffold starter. If you are new to
-the project, read the documents below in order.
+the project, read the documents below in order, or pick your role first.
+
+## Start by role
+
+| Role | Start here | Then read |
+| --- | --- | --- |
+| New member | [Onboarding](roles/onboarding.md) | [Architecture](architecture.md), [Development](development.md) |
+| Backend developer | [Backend](roles/backend.md) | [Architecture](architecture.md), [Auth](auth.md), [Development](development.md) |
+| Frontend / UI developer | [Frontend and UI](roles/frontend-ui.md) | [Architecture · UI system](architecture.md#ui-system), [Development](development.md) |
+| DevOps / SRE | [DevOps and SRE](roles/devops.md) | [Architecture · Single binary](architecture.md#single-binary-two-spas), [Auth](auth.md) |
+| Plugin / extension author | [Plugin and extension](roles/plugin-author.md) | [Extensions](extensions.md), [Runtime plugins](../runtime-plugins/README.md) |
+| Testing / QA | [Testing and QA](roles/testing-qa.md) | [Development · Tests and lint](development.md#tests-and-lint), [Auth](auth.md) |
+| Architecture / tech lead | [Architecture lead](roles/architecture-lead.md) | [Architecture](architecture.md), [Auth](auth.md), [Extensions](extensions.md) |
+
+The detailed role index is [docs/roles/README.md](roles/README.md).
 
 ## Directory
 
@@ -16,10 +30,12 @@ the project, read the documents below in order.
 | [Runtime plugins](../runtime-plugins/README.md) | A different extension model: manifest + browser ESM loaded at startup, Vuetify host components, static/proxy backend, auth, troubleshooting | Anyone adding UI or backend endpoints without touching core code |
 | [Renaming](renaming.md) | `rename.mjs` token-type renaming, scope, safety, verification | Anyone starting their own project from this scaffold |
 | [Optimization log](scaffold-optimization-log.md) | Changes, acceptance commands and results for tasks T1–T15, plus the forced password-change fix and Vuetify migration | Anyone reviewing the structural history and acceptance criteria of this scaffold |
+| [Role guides](roles/README.md) | Seven role-based routes into the repository, with ownership boundaries and shared reading | Anyone who wants a role-focused route through the docs |
 
 ## Quick links
 
 - **Get running in 5 minutes** → [Development · First run](development.md#first-run)
+- **Choose a role-based reading path** → [Role guides](roles/README.md)
 - **What can and cannot be edited** → [Architecture · Boundaries](architecture.md#boundaries)
 - **Add a backend API + page** → [Development · Add a backend module](development.md#add-a-backend-module)
 - **Wire up GitHub sign-in** → [Extensions](extensions.md) + [Auth · Provider environment variables](auth.md#provider-environment-variables)

@@ -131,9 +131,23 @@ The single binary embeds both SPAs: `/` serves the public app, `/admin/` serves 
 
 The full index lives in [docs/README.md](docs/README.md).
 
+**New to the project?** Pick your role in [docs/roles/](docs/roles/README.md):
+
+- [New member onboarding](docs/roles/onboarding.md)
+- [Backend developer](docs/roles/backend.md)
+- [Frontend / UI developer](docs/roles/frontend-ui.md)
+- [DevOps / SRE](docs/roles/devops.md)
+- [Plugin / extension author](docs/roles/plugin-author.md)
+- [Testing / QA](docs/roles/testing-qa.md)
+- [Architecture / tech lead](docs/roles/architecture-lead.md)
+
+Topic references:
+
 - [Architecture](docs/architecture.md)
 - [Development](docs/development.md)
 - [Authentication and SSO](docs/auth.md)
 - [Extensions](docs/extensions.md)
 - [Renaming](docs/renaming.md)
 - [Optimization log](docs/scaffold-optimization-log.md)
+
+The Chinese entry point is [docs/README.zh-CN.md](docs/README.zh-CN.md).

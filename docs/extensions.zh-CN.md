@@ -133,6 +133,13 @@ make example-remove NAME=notes
 
 `extensions/upstream.json` 固定 go-admin 的参考 commit。`check-upstream` 使用
 `git ls-remote`；网络不可用时报告 `offline` 并仍以 0 退出。`--strict` 会在
-离线或过期时以非零退出。`extensions/upstream-report.md` 是人类可读的报告。
-上游代码不会被自动合并——go-admin 基于 Gin，本脚手架基于 Kratos；报告只作为
-迁移清单。
+离线或过期时以非零退出。`check-upstream` 会把人类可读的报告写到
+`extensions/upstream-report.md`。该文件按需生成且已被 gitignore，因此在新检出
+的仓库中可能不存在。上游代码不会被自动合并——go-admin 基于 Gin，本脚手架基于
+Kratos；请把报告当作迁移清单，而不是仓库内的固定文档。
+
+## 相关
+
+- 指南：[运行时插件](../runtime-plugins/README.zh-CN.md) · [架构](architecture.zh-CN.md) · [认证与 SSO](auth.zh-CN.md)
+- 角色：[插件与扩展开发](roles/plugin-author.zh-CN.md) · [后端开发](roles/backend.zh-CN.md)
+- 全部角色：[角色指南](roles/README.zh-CN.md)

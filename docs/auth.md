@@ -107,3 +107,9 @@ The RBAC model and admin UX are inspired by
 simple role-permission table instead of Casbin and does not copy go-admin code.
 `extensions/upstream.json` pins the reference commit, and
 `pnpm run module:check-upstream` reports whether it moved.
+
+## Related
+
+- Guides: [Architecture](architecture.md) · [Extensions](extensions.md) · [Development](development.md)
+- Roles: [Backend developer](roles/backend.md) · [DevOps and SRE](roles/devops.md) · [Testing and QA](roles/testing-qa.md)
+- All roles: [Role guides](roles/README.md)

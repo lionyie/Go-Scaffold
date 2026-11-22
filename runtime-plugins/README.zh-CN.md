@@ -191,3 +191,10 @@ Vite 加载。修改清单仍需重启后端，因为注册表在启动时加载
 | API 403 `FORBIDDEN` | 未授予 `backend.permission` |
 | `devEntry` 不生效 | `plugins.dev=true` / `SCAFFOLD_PLUGINS_DEV=true`；开发服务器在 5174 端口 |
 | 组件没有渲染 | 宿主必须安装 Vuetify；插件模板可直接使用全局组件 |
+
+## 相关
+
+- [插件与扩展开发指南](../docs/roles/plugin-author.zh-CN.md)
+- [扩展机制](../docs/extensions.zh-CN.md)
+- [架构 · 扩展与运行时插件](../docs/architecture.zh-CN.md)
+- [角色指南](../docs/roles/README.zh-CN.md)

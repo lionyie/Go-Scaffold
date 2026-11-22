@@ -205,3 +205,10 @@ The example declares the global components in `src/components.d.ts` for
 | API 403 `FORBIDDEN` | `backend.permission` is not granted |
 | `devEntry` not used | `plugins.dev=true` / `SCAFFOLD_PLUGINS_DEV=true`; dev server on port 5174 |
 | Component is not rendered | The host app must have Vuetify installed; plugin templates can use global components |
+
+## Related
+
+- [Plugin and extension author guide](../docs/roles/plugin-author.md)
+- [Extensions](../docs/extensions.md)
+- [Architecture · Extensions vs runtime plugins](../docs/architecture.md#extensions-vs-runtime-plugins)
+- [Role guides](../docs/roles/README.md)

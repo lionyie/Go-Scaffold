@@ -118,3 +118,9 @@ Linux 上会带 `-race` 执行。
 - 首次生产启动前设置 `SCAFFOLD_SEED_ADMIN_PASSWORD`，或交互式修改 seed 密码。
   只要 seed 密码仍待轮换，生产环境就拒绝启动。
 - 内存版 OAuth store 只支持单副本。水平扩容前请替换为 Redis 或数据库实现。
+
+## 相关
+
+- 指南：[架构](architecture.zh-CN.md) · [扩展机制](extensions.zh-CN.md) · [项目改名](renaming.zh-CN.md)
+- 角色：[新人全栈入门](roles/onboarding.zh-CN.md) · [后端开发](roles/backend.zh-CN.md) · [前端与 UI](roles/frontend-ui.zh-CN.md) · [测试与 QA](roles/testing-qa.zh-CN.md)
+- 全部角色：[角色指南](roles/README.zh-CN.md)

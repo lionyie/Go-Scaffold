@@ -129,9 +129,23 @@ kubectl apply -f deploy/k8s/
 
 完整索引见[文档目录（中文）](docs/README.zh-CN.md)。
 
+**刚加入项目？** 按角色选择阅读：[docs/roles/](docs/roles/README.zh-CN.md)：
+
+- [新人全栈入门](docs/roles/onboarding.zh-CN.md)
+- [后端开发](docs/roles/backend.zh-CN.md)
+- [前端 / UI 开发](docs/roles/frontend-ui.zh-CN.md)
+- [运维 / SRE](docs/roles/devops.zh-CN.md)
+- [插件 / 扩展开发](docs/roles/plugin-author.zh-CN.md)
+- [测试 / QA](docs/roles/testing-qa.zh-CN.md)
+- [架构 / 技术负责人](docs/roles/architecture-lead.zh-CN.md)
+
+主题参考：
+
 - [架构](docs/architecture.zh-CN.md)
 - [开发流程](docs/development.zh-CN.md)
 - [认证与 SSO](docs/auth.zh-CN.md)
 - [扩展机制](docs/extensions.zh-CN.md)
 - [项目改名](docs/renaming.zh-CN.md)
 - [优化执行日志](docs/scaffold-optimization-log.zh-CN.md)
+
+英文版入口见 [docs/README.md](docs/README.md)。

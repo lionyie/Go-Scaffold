@@ -78,3 +78,9 @@ pnpm typecheck
 ```
 
 The original repository is untouched by this test.
+
+## Related
+
+- Guides: [Architecture](architecture.md) · [Development](development.md)
+- Roles: [Architecture lead](roles/architecture-lead.md) · [New member onboarding](roles/onboarding.md)
+- All roles: [Role guides](roles/README.md)

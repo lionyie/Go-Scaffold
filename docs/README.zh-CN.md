@@ -2,7 +2,21 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-这里是 Scaffold 脚手架的完整文档。如果你是第一次接触这个项目，建议按下面的顺序阅读。
+这里是 Scaffold 脚手架的完整文档。如果你是第一次接触这个项目，建议按下面的顺序阅读，或者先按角色选择入口。
+
+## 按角色阅读
+
+| 角色 | 从这里开始 | 接着读 |
+| --- | --- | --- |
+| 新成员 | [新人全栈入门](roles/onboarding.zh-CN.md) | [架构](architecture.zh-CN.md)、[开发指南](development.zh-CN.md) |
+| 后端开发 | [后端开发指南](roles/backend.zh-CN.md) | [架构](architecture.zh-CN.md)、[认证与 SSO](auth.zh-CN.md)、[开发指南](development.zh-CN.md) |
+| 前端 / UI 开发 | [前端与 UI 开发指南](roles/frontend-ui.zh-CN.md) | [架构](architecture.zh-CN.md)、[开发指南](development.zh-CN.md) |
+| 运维 / SRE | [运维与 SRE 指南](roles/devops.zh-CN.md) | [架构](architecture.zh-CN.md)、[认证与 SSO](auth.zh-CN.md) |
+| 插件 / 扩展作者 | [插件与扩展开发指南](roles/plugin-author.zh-CN.md) | [扩展机制](extensions.zh-CN.md)、[运行时插件](../runtime-plugins/README.zh-CN.md) |
+| 测试 / QA | [测试与质量保障指南](roles/testing-qa.zh-CN.md) | [开发指南 · 测试与 lint](development.zh-CN.md#测试与-lint)、[认证与 SSO](auth.zh-CN.md) |
+| 架构 / 技术负责人 | [架构与技术负责人指南](roles/architecture-lead.zh-CN.md) | [架构](architecture.zh-CN.md)、[认证与 SSO](auth.zh-CN.md)、[扩展机制](extensions.zh-CN.md) |
+
+详细角色索引见 [docs/roles/README.zh-CN.md](roles/README.zh-CN.md)。
 
 ## 文档目录
 
@@ -15,10 +29,12 @@
 | [运行时插件（runtime plugins）](../runtime-plugins/README.zh-CN.md) | 另一种扩展模型：清单 + 浏览器 ESM，启动时加载；Vuetify 宿主组件、static/proxy 后端、鉴权、排错 | 想在不改核心代码的前提下添加 UI 或后端接口的人 |
 | [项目改名（renaming）](renaming.zh-CN.md) | `rename.mjs` 按 token 类型改名、作用范围、安全措施、验证方式 | 用这个脚手架启动自己的新项目的人 |
 | [优化执行日志（scaffold-optimization-log）](scaffold-optimization-log.zh-CN.md) | T1–T15 任务的变更、验收命令与结果，以及强制改密修复与 Vuetify 迁移的后记 | 想了解脚手架经历了哪些结构性改动、验收标准是什么的人 |
+| [角色指南（roles）](roles/README.zh-CN.md) | 七类角色的专属阅读路径、职责边界与共读清单 | 想按岗位快速切入文档的人 |
 
 ## 快速跳转
 
 - **5 分钟跑起来** → [开发指南 · 首次运行](development.zh-CN.md#首次运行)
+- **按角色选择阅读路径** → [角色指南](roles/README.zh-CN.md)
 - **这个目录里什么能改、什么不能改** → [架构 · 边界规则](architecture.zh-CN.md#边界规则)
 - **怎么加一个后端接口 + 页面** → [开发指南 · 新增后端模块](development.zh-CN.md#新增后端模块)
 - **怎么接入 GitHub 登录** → [扩展机制](extensions.zh-CN.md) + [认证与 SSO · Provider 环境变量](auth.zh-CN.md#provider-环境变量)

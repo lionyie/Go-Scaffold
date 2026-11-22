@@ -6,7 +6,7 @@
 
 | 任务 | 变更 | 验收命令 | 结果 | 偏差 |
 | --- | --- | --- | --- | --- |
-| Phase 0 | `apps/{web,admin}`、`services/`、`contracts/`、`extensions/`、`runtime-plugins/`、`deploy/`、`configs/`、`scripts/` | `pnpm run generate`；`go -C services build ./...`；`pnpm run typecheck` | 通过 | 仓库尚无 commit，见文末说明 |
+| Phase 0 | `apps/{web,admin}`、`services/`、`contracts/`、`extensions/`、`runtime-plugins/`、`deploy/`、`configs/`、`scripts/` | `pnpm run generate`；`go -C services build ./...`；`pnpm run typecheck` | 通过 | Phase 0 早于首次提交，见文末说明 |
 | T1 | `extensions/`（原 modules）、`runtime-plugins/`（原 plugins）、注册表、文档、CI、ignore 规则 | `grep -rn "modules/templates\|internal/modules\|installed\.json\|plugins/example" ...` | 无匹配（exit 1） | `.turbo` 缓存仍引用旧插件路径，已删除 |
 | T3 | `package.json`、`Makefile`、`scripts/{init,tool-versions,generate,verify-*}.mjs` | 无 make 环境下 `pnpm run init && pnpm run generate && pnpm run build` | 通过 | 新增 `scripts/build.mjs` 编排 web + admin + plugins + server |
 | T2 | `scripts/module.mjs`、`extensions/installed.lock.json`、模板 | `add`；重复 `add`；`remove`；`update`；`remove --force` | 通过：重复安装被拒绝、update 写出 `.new`、force 删除清理干净 | 进程锁用简单 pid 锁，未用 `proper-lockfile` |
@@ -47,8 +47,10 @@ API/SPA 冒烟                   通过
 
 ## 说明
 
-- 仓库目前仍没有 commit。因此 `verify-generated` 会提示"no commits yet;
-  skipping diff check"。完成首次提交后，CI 的生成物防漂移校验才会生效。
+- 仓库现在已有 commit。`verify-generated` 会执行 `git diff --exit-code` 与
+  `git diff --cached --exit-code`，生成物漂移时失败；“no commits yet;
+  skipping diff check” 分支只适用于首次提交前的新副本。CI 的 `codegen` job
+  会执行同样的漂移校验。
 - `go test -race` 在 Windows 上需要 C 编译器，本机没有。同样的测试会在 CI 的
   Linux 上带 `-race` 运行。
 - go-admin 仅做跟踪，不合并。go-admin 基于 Gin，本脚手架基于 Kratos。

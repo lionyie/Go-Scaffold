@@ -98,3 +98,9 @@ RBAC 模型与管理端交互借鉴了
 [go-admin](https://github.com/go-admin-team/go-admin)，但本脚手架使用简单的
 角色-权限表而非 Casbin，也不复制 go-admin 代码。`extensions/upstream.json`
 固定了参考 commit，`pnpm run module:check-upstream` 会报告上游是否移动。
+
+## 相关
+
+- 指南：[架构](architecture.zh-CN.md) · [扩展机制](extensions.zh-CN.md) · [开发指南](development.zh-CN.md)
+- 角色：[后端开发](roles/backend.zh-CN.md) · [运维与 SRE](roles/devops.zh-CN.md) · [测试与 QA](roles/testing-qa.zh-CN.md)
+- 全部角色：[角色指南](roles/README.zh-CN.md)

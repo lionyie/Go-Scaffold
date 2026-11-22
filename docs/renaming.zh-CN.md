@@ -76,3 +76,9 @@ pnpm typecheck
 ```
 
 此测试不会改动原仓库。
+
+## 相关
+
+- 指南：[架构](architecture.zh-CN.md) · [开发指南](development.zh-CN.md)
+- 角色：[架构与技术负责人](roles/architecture-lead.zh-CN.md) · [新人全栈入门](roles/onboarding.zh-CN.md)
+- 全部角色：[角色指南](roles/README.zh-CN.md)
