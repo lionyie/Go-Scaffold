@@ -59,6 +59,9 @@ pnpm run dev:admin     # http://localhost:5175/admin/
 
 Sign in with `admin / admin123`. The first login forces a password change; after that, the account can manage users, roles, and permissions.
 
+Open `http://localhost:8000/swagger/` for the Swagger UI. It is enabled by
+default in local development and force-disabled in production.
+
 ## Common commands
 
 `pnpm` scripts are the source of truth. `make <target>` is a thin alias.
@@ -145,6 +148,7 @@ Topic references:
 
 - [Architecture](docs/architecture.md)
 - [Development](docs/development.md)
+- [API reference](docs/development.md#api-reference-and-swagger-ui)
 - [Authentication and SSO](docs/auth.md)
 - [Extensions](docs/extensions.md)
 - [Renaming](docs/renaming.md)

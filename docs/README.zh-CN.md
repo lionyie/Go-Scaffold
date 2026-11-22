@@ -24,6 +24,7 @@
 | --- | --- | --- |
 | [架构（architecture）](architecture.zh-CN.md) | 分层结构、依赖方向、五条边界规则、生成物清单、单二进制双 SPA、UI 体系 | 想理解项目全貌的所有人，**建议先读** |
 | [开发指南（development）](development.zh-CN.md) | 首次运行、日常三终端流程、新增后端模块的完整链路、代码生成、数据库、测试与 lint、生产注意事项 | 日常在这个仓库里写代码的开发者 |
+| [API 参考（api）](development.zh-CN.md#api-参考与-swagger-ui) | 从 `contracts/proto` 生成的 OpenAPI 文档与 Swagger UI，含环境开关 | 想浏览或调试 HTTP API 的人 |
 | [认证与 SSO（auth）](auth.zh-CN.md) | 本地登录、强制改密、RBAC 模型、第三方登录全流程、各 provider 的环境变量与回调地址 | 做登录/权限相关功能，或要接入 GitHub/Google/微信/QQ/OIDC 的人 |
 | [扩展机制（extensions）](extensions.zh-CN.md) | `module.mjs` 的 add/list/remove/update、`module.json` 清单字段、锁文件与安全机制、内置模板 | 想安装功能模块、写可运行示例，或自己封装扩展的人 |
 | [运行时插件（runtime plugins）](../runtime-plugins/README.zh-CN.md) | 另一种扩展模型：清单 + 浏览器 ESM，启动时加载；Vuetify 宿主组件、static/proxy 后端、鉴权、排错 | 想在不改核心代码的前提下添加 UI 或后端接口的人 |
@@ -34,6 +35,7 @@
 ## 快速跳转
 
 - **5 分钟跑起来** → [开发指南 · 首次运行](development.zh-CN.md#首次运行)
+- **浏览或调试 HTTP API** → [开发指南 · API 参考](development.zh-CN.md#api-参考与-swagger-ui)（仅非生产环境）
 - **按角色选择阅读路径** → [角色指南](roles/README.zh-CN.md)
 - **这个目录里什么能改、什么不能改** → [架构 · 边界规则](architecture.zh-CN.md#边界规则)
 - **怎么加一个后端接口 + 页面** → [开发指南 · 新增后端模块](development.zh-CN.md#新增后端模块)

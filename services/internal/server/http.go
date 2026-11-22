@@ -2,6 +2,7 @@ package server
 
 import (
 	"log/slog"
+	"os"
 
 	"github.com/go-kratos/kratos/v3/middleware/logging"
 	"github.com/go-kratos/kratos/v3/middleware/recovery"
@@ -20,6 +21,7 @@ import (
 	"github.com/example/scaffold/services/internal/plugin"
 	"github.com/example/scaffold/services/internal/server/middleware"
 	"github.com/example/scaffold/services/internal/service"
+	"github.com/example/scaffold/services/internal/swagger"
 	"github.com/example/scaffold/services/internal/webui"
 )
 
@@ -70,6 +72,10 @@ func NewHTTPServer(
 	// its own authentication and authorization for /api requests.
 	srv.HandlePrefix("/proxy/plugins/", registry.Handler())
 	srv.HandlePrefix("/api/v1/auth/oauth/", NewOAuthHandler(bc, oauthStore, oauthUC, tokens))
+	if swagger.Allowed(bc.GetSwagger(), os.Getenv("APP_ENV")) {
+		srv.HandlePrefix("/swagger", swagger.NewHandler())
+		log.Info("swagger ui enabled", "path", "/swagger/")
+	}
 	extregistry.RegisterAll(srv)
 	return srv
 }

@@ -86,6 +86,13 @@ admin on 5175, or the built binary on 8000):
 - [ ] `curl http://127.0.0.1:8000/healthz` and `/readyz` both return 200
 - [ ] Enter a wrong password 5 times in a row for the same account — the 6th attempt returns 429 (login rate limit)
 
+## API Reference (Swagger UI) smoke check
+
+- [ ] In development, `GET /swagger/` returns 200 and renders Swagger UI.
+- [ ] `GET /swagger/openapi.yaml` returns 200 and contains `openapi: 3.0.3`.
+- [ ] With `APP_ENV=production`, `/swagger/` and `/swagger/openapi.yaml` return 404.
+- [ ] Disabling `SCAFFOLD_SWAGGER_ENABLED` in a non-production environment also returns 404.
+
 ## Adding Go tests
 
 Follow the patterns already in the repo:

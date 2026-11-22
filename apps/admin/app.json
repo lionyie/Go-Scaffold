@@ -3,6 +3,6 @@
   "base": "/admin/",
   "devPort": 5175,
   "embed": true,
-  "proxy": ["/api", "/proxy", "/healthz", "/readyz"],
+  "proxy": ["/api", "/proxy", "/healthz", "/readyz", "/swagger"],
   "fallback": true
 }

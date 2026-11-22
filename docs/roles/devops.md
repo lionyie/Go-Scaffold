@@ -114,6 +114,20 @@ Current gaps to plan around:
 - Logs go to stdout; `log.format` is `text` locally and `json` in `configs/docker.yaml` and `configs/k8s.yaml` (`SCAFFOLD_LOG_FORMAT` / `SCAFFOLD_LOG_LEVEL` to override).
 - There is **no metrics or tracing wired** — no Prometheus endpoint and no OpenTelemetry exporter. Treat log aggregation as your only signal until that changes.
 
+## API Reference (Swagger UI)
+
+Non-production deployments can expose the generated OpenAPI document at `/swagger/`.
+It is controlled by `swagger.enabled` (`SCAFFOLD_SWAGGER_ENABLED`):
+
+- `configs/config.local.yaml` defaults it on.
+- `configs/docker.yaml` and `configs/k8s.yaml` default it off.
+- `APP_ENV=production` force-disables it even when the flag is true.
+- When off, `/swagger/` returns 404 and is not part of the SPA fallback.
+
+For staging, add `SCAFFOLD_SWAGGER_ENABLED: "true"` to the container environment
+and do not set `APP_ENV=production`. Never expose `/swagger/` through a public
+Ingress or load balancer in production.
+
 ## Scaling Limits
 
 Horizontal scaling is currently constrained:

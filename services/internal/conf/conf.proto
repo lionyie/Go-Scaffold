@@ -14,6 +14,7 @@ message Bootstrap {
   Plugins plugins = 6;
   Web web = 7;
   Log log = 8;
+  Swagger swagger = 9;
 }
 
 message Server {
@@ -73,4 +74,8 @@ message Web {
 message Log {
   string level = 1;
   string format = 2;
+}
+
+message Swagger {
+  bool enabled = 1;
 }

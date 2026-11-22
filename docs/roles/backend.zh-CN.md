@@ -77,6 +77,18 @@ pnpm run dev:server  # HTTP :8000，gRPC :9000
 9. 运行 `pnpm run verify-authz`；操作未登记或权限编码不存在都会报错。
 10. 在 `services/` 下运行 `go vet ./...` 和 `go test ./...`。
 
+## API 参考（Swagger UI）
+
+`pnpm run generate` 也会生成嵌入后端的 OpenAPI 文档。非生产环境下服务端通过
+`/swagger/` 提供：
+
+- UI：`http://localhost:8000/swagger/`
+- Spec：`http://localhost:8000/swagger/openapi.yaml`
+
+带 `google.api.http` 注解的新 RPC 在重新生成后会出现在这里。生产环境会强制关闭该
+端点，可用 `SCAFFOLD_SWAGGER_ENABLED` 控制；详见
+[开发指南 · API 参考](../development.zh-CN.md#api-参考与-swagger-ui)。
+
 ## 数据与迁移
 
 - 当 `data.database.auto_migrate` 为 true 时，启动时执行 GORM `AutoMigrate`（见 `services/internal/data/database/data.go`）；新的持久化类型要加进那里的 `AutoMigrate` 调用。

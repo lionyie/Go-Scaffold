@@ -39,7 +39,19 @@ pnpm run dev:web      # public SPA:   http://localhost:5173
 pnpm run dev:admin    # admin SPA:    http://localhost:5175/admin/
 ```
 
-Each Vite dev server proxies `/api`, `/proxy`, `/healthz`, and `/readyz` to `http://127.0.0.1:8000`, so frontend and backend stay same-origin with no CORS setup. Backend defaults come from `configs/config.local.yaml`: SQLite at `data/scaffold.db` (created automatically), HTTP `0.0.0.0:8000`, gRPC `:9000`.
+Each Vite dev server proxies `/api`, `/proxy`, `/healthz`, `/readyz`, and
+`/swagger` to `http://127.0.0.1:8000`, so frontend and backend stay same-origin
+with no CORS setup. Backend defaults come from `configs/config.local.yaml`:
+SQLite at `data/scaffold.db` (created automatically), HTTP `0.0.0.0:8000`,
+gRPC `:9000`.
+
+## API Reference (Swagger UI)
+
+After the backend starts, open `http://localhost:8000/swagger/` to browse the
+generated HTTP API. The same UI is reachable through the Vite proxy at
+`http://localhost:5173/swagger/` and `http://localhost:5175/swagger/`. It is
+enabled for local development and force-disabled in production. See
+[Development · API reference](../development.md#api-reference-and-swagger-ui).
 
 ## Login and forced password change
 

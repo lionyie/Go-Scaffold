@@ -65,6 +65,19 @@ Summarized from [Architecture: Boundaries](../architecture.md#boundaries):
 
 Do-not-edit set: `services/api/**` (except `identity/v1/redact.go`), `conf.pb.go`, `permissions_gen.go`, all `*_gen` files/dirs, `packages/api-client/generated/**`, `packages/api-client/src/generated/**`, `apps/*/src/router/features.gen.ts`. CI reruns `generate` and fails on any `git diff`.
 
+## API Reference (Swagger UI)
+
+The same `protoc-gen-openapi` generator produces two committed documents:
+
+- `packages/api-client/generated/openapi.yaml` for the TypeScript client.
+- `services/internal/swagger/generated/openapi.yaml`, embedded in the Go binary
+  and served by Swagger UI at `/swagger/` in non-production environments.
+
+Treat both as generated outputs (see the do-not-edit set above). The exposure
+policy is `swagger.enabled` in config plus a hard `APP_ENV=production` disable;
+review any change that weakens the production gate. See
+[Development · API reference](../development.md#api-reference-and-swagger-ui).
+
 ## Extension vs runtime plugin vs core
 
 | | Core | Feature extension | Runtime plugin (experimental) |

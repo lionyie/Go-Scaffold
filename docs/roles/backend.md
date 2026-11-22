@@ -78,6 +78,19 @@ pnpm run dev:server  # HTTP :8000, gRPC :9000
 9. Run `pnpm run verify-authz`; it fails when an operation is unmapped or a code does not exist.
 10. Run `go vet ./...` and `go test ./...` under `services/`.
 
+## API Reference (Swagger UI)
+
+`pnpm run generate` also produces the OpenAPI document embedded in the backend.
+In non-production environments the server exposes it at `/swagger/`:
+
+- UI: `http://localhost:8000/swagger/`
+- Spec: `http://localhost:8000/swagger/openapi.yaml`
+
+New RPCs with `google.api.http` annotations appear there after regeneration. The
+endpoint is force-disabled in production and can be toggled with
+`SCAFFOLD_SWAGGER_ENABLED`; see
+[Development · API reference](../development.md#api-reference-and-swagger-ui).
+
 ## Data & Migrations
 
 - GORM `AutoMigrate` runs at startup when `data.database.auto_migrate` is true (see `services/internal/data/database/data.go`); new persistent types are added to the `AutoMigrate` call there.

@@ -11,3 +11,5 @@ plugins:
       - naming=json
       - enum_type=string
       - depth=4
+      - title=Scaffold API
+      - description=Proto-generated HTTP API for the Scaffold admin console and public site.

@@ -39,7 +39,14 @@ pnpm run dev:web      # 公开站点：http://localhost:5173
 pnpm run dev:admin    # 管理后台：http://localhost:5175/admin/
 ```
 
-两个 Vite 开发服务器都会把 `/api`、`/proxy`、`/healthz`、`/readyz` 代理到 `http://127.0.0.1:8000`，前后端同源，无需配置 CORS。后端默认配置来自 `configs/config.local.yaml`：SQLite 落在 `data/scaffold.db`（自动创建），HTTP 监听 `0.0.0.0:8000`，gRPC 监听 `:9000`。
+两个 Vite 开发服务器都会把 `/api`、`/proxy`、`/healthz`、`/readyz`、`/swagger` 代理到 `http://127.0.0.1:8000`，前后端同源，无需配置 CORS。后端默认配置来自 `configs/config.local.yaml`：SQLite 落在 `data/scaffold.db`（自动创建），HTTP 监听 `0.0.0.0:8000`，gRPC 监听 `:9000`。
+
+## API 参考（Swagger UI）
+
+后端启动后打开 `http://localhost:8000/swagger/` 即可浏览生成的 HTTP API。通过 Vite
+代理也可以访问 `http://localhost:5173/swagger/` 与
+`http://localhost:5175/swagger/`。本地开发默认开启，生产环境强制关闭。详见
+[开发指南 · API 参考](../development.zh-CN.md#api-参考与-swagger-ui)。
 
 ## 登录与强制改密
 

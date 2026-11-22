@@ -114,6 +114,19 @@ docker build -f deploy/docker/Dockerfile -t scaffold:local .
 - 日志输出到 stdout；`log.format` 本地为 `text`，`configs/docker.yaml` 和 `configs/k8s.yaml` 中为 `json`（可用 `SCAFFOLD_LOG_FORMAT` / `SCAFFOLD_LOG_LEVEL` 覆盖）。
 - **目前没有接入指标和链路追踪** —— 没有 Prometheus 端点，也没有 OpenTelemetry exporter。在此之前，日志聚合是你唯一的观测手段。
 
+## API 参考（Swagger UI）
+
+非生产部署可以在 `/swagger/` 暴露生成的 OpenAPI 文档，由 `swagger.enabled`
+（`SCAFFOLD_SWAGGER_ENABLED`）控制：
+
+- `configs/config.local.yaml` 默认开启。
+- `configs/docker.yaml` 与 `configs/k8s.yaml` 默认关闭。
+- `APP_ENV=production` 时即使开关为 true 也会强制关闭。
+- 关闭时 `/swagger/` 返回 404，不属于 SPA 回退。
+
+staging 环境可在容器环境变量中加入 `SCAFFOLD_SWAGGER_ENABLED: "true"`，并且不要设置
+`APP_ENV=production`。生产环境不要通过公网 Ingress 或负载均衡暴露 `/swagger/`。
+
 ## 扩缩容限制
 
 目前水平扩容受到以下约束：

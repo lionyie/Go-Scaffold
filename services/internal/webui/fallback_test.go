@@ -40,6 +40,9 @@ func TestSPAFallback(t *testing.T) {
 		{"/assets/x.js", http.StatusOK, "web-js"},
 		{"/api/v1/plugins", http.StatusNotFound, ""},
 		{"/proxy/plugins/x/frontend/index.js", http.StatusNotFound, ""},
+		{"/swagger", http.StatusNotFound, ""},
+		{"/swagger/", http.StatusNotFound, ""},
+		{"/swagger/openapi.yaml", http.StatusNotFound, ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.path, func(t *testing.T) {

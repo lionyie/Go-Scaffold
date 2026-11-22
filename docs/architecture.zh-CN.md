@@ -58,6 +58,13 @@ contracts/proto/**/v1         protobuf 契约
 | 扩展注册表 | `extensions/installed.lock.json` | 生成的 `*_gen` 包和 `features.gen.ts` |
 | Web/admin 产物 | `apps/*/dist` | 打包时复制到 `services/internal/webui/dist/{web,admin}` |
 
+### API 参考（Swagger UI）
+
+OpenAPI 文档还会生成到 Go 模块并嵌入二进制
+（`services/internal/swagger/generated/openapi.yaml`）。非生产环境下服务端通过
+`/swagger/` 提供 Swagger UI；生产环境会强制关闭该路由。详见
+[开发指南 · API 参考](development.zh-CN.md#api-参考与-swagger-ui)。
+
 ## 扩展与运行时插件
 
 - **Feature Extension（功能扩展）**：编译期由 `scripts/module.mjs` 复制进代码树的

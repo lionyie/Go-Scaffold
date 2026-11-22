@@ -9,6 +9,7 @@ require (
 	github.com/google/wire v0.7.0
 	github.com/gorilla/mux v1.8.1
 	github.com/ncruces/go-sqlite3/gormlite v0.34.0
+	github.com/swaggest/swgui v1.8.9
 	golang.org/x/crypto v0.58.0
 	golang.org/x/mod v0.42.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20261019180522-ce908d29299b
@@ -31,6 +32,7 @@ require (
 	github.com/ncruces/go-sqlite3 v0.34.0 // indirect
 	github.com/ncruces/go-sqlite3-wasm/v2 v2.1.35300 // indirect
 	github.com/ncruces/julianday v1.0.0 // indirect
+	github.com/vearutop/statigz v1.4.0 // indirect
 	golang.org/x/net v0.60.0 // indirect
 	golang.org/x/sync v0.24.0 // indirect
 	golang.org/x/sys v0.49.0 // indirect

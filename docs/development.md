@@ -58,6 +58,35 @@ endpoints return `MUST_CHANGE_PASSWORD`.
 The pipeline must be idempotent: running it twice should leave the tree
 unchanged. CI enforces this with `git diff --exit-code`.
 
+## API reference and Swagger UI
+
+The HTTP API is described by an OpenAPI 3.0.3 document generated from the
+`google.api.http` annotations in `contracts/proto`. The backend serves Swagger UI
+in non-production environments:
+
+- UI: `http://localhost:8000/swagger/`
+- Spec: `http://localhost:8000/swagger/openapi.yaml`
+- Through the Vite dev servers: `http://localhost:5173/swagger/` and
+  `http://localhost:5175/swagger/`
+
+`pnpm run generate` writes the spec to
+`services/internal/swagger/generated/openapi.yaml` and embeds it in the Go
+binary. The same generator also writes the TypeScript client spec to
+`packages/api-client/generated/openapi.yaml`.
+
+Environment gating:
+
+- `configs/config.local.yaml` enables it by default.
+- `configs/docker.yaml` and `configs/k8s.yaml` disable it by default.
+- Set `SCAFFOLD_SWAGGER_ENABLED=true` to enable it in staging.
+- `APP_ENV=production` always disables it, regardless of the flag.
+- When disabled, `/swagger/` returns 404 instead of falling back to the SPA.
+
+The generated document does not declare a security scheme. Protected endpoints
+still require `Authorization: Bearer <token>`; see [Authentication](auth.md) for
+how to obtain a token. The generator currently emits only `200` responses and no
+`securitySchemes`, so the UI is intended for browsing and local debugging.
+
 ## Extensions and examples
 
 ```bash

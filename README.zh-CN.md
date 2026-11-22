@@ -59,6 +59,8 @@ pnpm run dev:admin     # http://localhost:5175/admin/
 
 使用 `admin / admin123` 登录。首次登录会强制修改密码；之后即可管理用户、角色与权限。
 
+本地开发默认开启 Swagger UI：`http://localhost:8000/swagger/`；生产环境会强制关闭。
+
 ## 常用命令
 
 `pnpm` 脚本是唯一真实入口，`make <target>` 只是别名。
@@ -143,6 +145,7 @@ kubectl apply -f deploy/k8s/
 
 - [架构](docs/architecture.zh-CN.md)
 - [开发流程](docs/development.zh-CN.md)
+- [API 参考](docs/development.zh-CN.md#api-参考与-swagger-ui)
 - [认证与 SSO](docs/auth.zh-CN.md)
 - [扩展机制](docs/extensions.zh-CN.md)
 - [项目改名](docs/renaming.zh-CN.md)

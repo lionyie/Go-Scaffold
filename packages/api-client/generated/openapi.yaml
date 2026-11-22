@@ -3,7 +3,8 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: Scaffold API
+    description: Proto-generated HTTP API for the Scaffold admin console and public site.
     version: 0.0.1
 paths:
     /api/v1/auth/login:

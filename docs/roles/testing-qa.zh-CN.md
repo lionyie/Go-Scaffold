@@ -74,6 +74,13 @@ CI 在 Linux 上执行 `go test -race ./...`，本地不带 `-race` 的运行只
 - [ ] `curl http://127.0.0.1:8000/healthz` 与 `/readyz` 均返回 200
 - [ ] 同一账号连续输错密码 5 次——第 6 次返回 429（登录限流）
 
+## API 参考（Swagger UI）冒烟检查
+
+- [ ] 开发环境 `GET /swagger/` 返回 200 并渲染 Swagger UI。
+- [ ] `GET /swagger/openapi.yaml` 返回 200，内容包含 `openapi: 3.0.3`。
+- [ ] `APP_ENV=production` 时，`/swagger/` 与 `/swagger/openapi.yaml` 均返回 404。
+- [ ] 非生产环境关闭 `SCAFFOLD_SWAGGER_ENABLED` 时同样返回 404。
+
 ## 新增 Go 测试指南
 
 沿用仓库现有模式：

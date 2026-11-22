@@ -65,6 +65,18 @@ contracts/proto/**/v1         protobuf 契约
 
 禁改清单：`services/api/**`（`identity/v1/redact.go` 除外）、`conf.pb.go`、`permissions_gen.go`、所有 `*_gen` 文件/目录、`packages/api-client/generated/**`、`packages/api-client/src/generated/**`、`apps/*/src/router/features.gen.ts`。CI 会重跑 `generate`，出现任何 `git diff` 即失败。
 
+## API 参考（Swagger UI）
+
+同一个 `protoc-gen-openapi` 生成器会产出两份已提交文档：
+
+- `packages/api-client/generated/openapi.yaml`，供 TypeScript 客户端使用。
+- `services/internal/swagger/generated/openapi.yaml`，嵌入 Go 二进制，并在非生产
+  环境通过 `/swagger/` 提供 Swagger UI。
+
+两者都属于生成物（见上面的禁改清单）。曝光策略是配置中的 `swagger.enabled` 加上
+`APP_ENV=production` 的硬关闭；任何削弱生产门禁的改动都需要评审。详见
+[开发指南 · API 参考](../development.zh-CN.md#api-参考与-swagger-ui)。
+
 ## 扩展 vs 运行时插件 vs 核心
 
 | | 核心 | 编译期扩展 | 运行时插件（实验性） |

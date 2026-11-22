@@ -24,7 +24,8 @@
 1. [架构](../architecture.zh-CN.md) — 分层、依赖方向、边界规则、生成物。
 2. [开发指南](../development.zh-CN.md) — 首次运行、日常流程、新增模块完整链路。
 3. [认证与 SSO](../auth.zh-CN.md) — 访问控制如何端到端生效。
-4. [文档索引](../README.zh-CN.md) — 完整的主题文档索引。
+4. [API 参考](../development.zh-CN.md#api-参考与-swagger-ui) — Swagger UI 与生成的 OpenAPI 文档。
+5. [文档索引](../README.zh-CN.md) — 完整的主题文档索引。
 
 ## 职责一览
 

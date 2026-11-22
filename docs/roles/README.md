@@ -25,7 +25,8 @@ pages tell you which parts matter for your job and in what order to read them.
 1. [Architecture](../architecture.md) — layers, dependency direction, boundary rules, generated outputs.
 2. [Development](../development.md) — first run, the daily loop, and the full add-a-module chain.
 3. [Authentication, RBAC and SSO](../auth.md) — how access is enforced end to end.
-4. [Documentation index](../README.md) — the complete topic-based index.
+4. [API reference](../development.md#api-reference-and-swagger-ui) — the Swagger UI and the generated OpenAPI document.
+5. [Documentation index](../README.md) — the complete topic-based index.
 
 ## Ownership at a glance
 

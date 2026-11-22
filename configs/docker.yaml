@@ -37,6 +37,9 @@ plugins:
 web:
   dir: ""
 
+swagger:
+  enabled: ${SWAGGER_ENABLED:false}
+
 log:
   level: "info"
   format: "json"

@@ -136,5 +136,6 @@ func isReserved(p string) bool {
 		strings.HasPrefix(p, "proxy/") ||
 		strings.HasPrefix(p, "healthz") ||
 		strings.HasPrefix(p, "readyz") ||
-		p == "api" || p == "proxy"
+		strings.HasPrefix(p, "swagger/") ||
+		p == "api" || p == "proxy" || p == "swagger"
 }

@@ -55,6 +55,34 @@ pnpm run dev:admin    # http://localhost:5175/admin/
 流水线必须是幂等的：跑两次之后文件不应有变化。CI 用 `git diff --exit-code`
 强制这一点。
 
+## API 参考与 Swagger UI
+
+HTTP API 由 `contracts/proto` 里的 `google.api.http` 注解生成 OpenAPI 3.0.3 文档。
+后端在非生产环境提供 Swagger UI：
+
+- UI：`http://localhost:8000/swagger/`
+- Spec：`http://localhost:8000/swagger/openapi.yaml`
+- 通过 Vite 开发服务器：`http://localhost:5173/swagger/` 与
+  `http://localhost:5175/swagger/`
+
+`pnpm run generate` 会把 spec 写到
+`services/internal/swagger/generated/openapi.yaml`，并嵌入 Go 二进制。同一个生成器
+还会把 TypeScript 客户端使用的 spec 写到
+`packages/api-client/generated/openapi.yaml`。
+
+环境开关：
+
+- `configs/config.local.yaml` 默认开启。
+- `configs/docker.yaml` 与 `configs/k8s.yaml` 默认关闭。
+- 在 staging 设置 `SCAFFOLD_SWAGGER_ENABLED=true` 开启。
+- `APP_ENV=production` 时无论开关如何都强制关闭。
+- 关闭时 `/swagger/` 返回 404，不会回退到 SPA。
+
+生成的文档没有声明 security scheme。受保护接口仍需
+`Authorization: Bearer <token>`；token 获取方式见[认证与 SSO](auth.zh-CN.md)。
+当前生成器只输出 `200` 响应，也没有 `securitySchemes`，因此该 UI 主要用于浏览和
+本地调试。
+
 ## 扩展与示例
 
 ```bash

@@ -61,6 +61,14 @@ must not import a specific extension.
 | Extension registries | `extensions/installed.lock.json` | generated `*_gen` packages and `features.gen.ts` |
 | Web/admin bundles | `apps/*/dist` | `services/internal/webui/dist/{web,admin}` at packaging time |
 
+### API reference (Swagger UI)
+
+The OpenAPI document is also generated into the Go module and embedded in the
+binary (`services/internal/swagger/generated/openapi.yaml`). In non-production
+environments the server serves it with Swagger UI at `/swagger/`; production
+force-disables the route. See
+[Development · API reference](development.md#api-reference-and-swagger-ui).
+
 ## Extensions vs runtime plugins
 
 - **Feature Extension**: compile-time code copied into the tree by

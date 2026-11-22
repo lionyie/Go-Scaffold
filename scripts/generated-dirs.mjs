@@ -7,6 +7,7 @@ export const codegenDirs = [
   { path: 'services/internal/pkg/rbac/permissions_gen.go' },
   { path: 'packages/api-client/generated' },
   { path: 'packages/api-client/src/generated' },
+  { path: 'services/internal/swagger/generated' },
   { path: 'packages/shared/src/permissions.gen.ts' },
 ]
 

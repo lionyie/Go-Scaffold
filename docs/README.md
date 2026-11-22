@@ -25,6 +25,7 @@ The detailed role index is [docs/roles/README.md](roles/README.md).
 | --- | --- | --- |
 | [Architecture](architecture.md) | Layered structure, dependency direction, boundary rules, generated outputs, single-binary dual SPA, UI system | Everyone who wants the full picture — **read this first** |
 | [Development](development.md) | First run, the daily three-terminal loop, the full add-a-module chain, code generation, database, tests and lint, production notes | Developers working in this repository daily |
+| [API reference](development.md#api-reference-and-swagger-ui) | Swagger UI and the OpenAPI document generated from `contracts/proto`, with environment gating | Anyone browsing or testing the HTTP API |
 | [Authentication, RBAC and SSO](auth.md) | Local sign-in, forced password change, the RBAC model, the full OAuth flow, provider environment variables and callback URLs | Anyone touching login/permissions, or wiring up GitHub/Google/WeChat/QQ/OIDC |
 | [Extensions](extensions.md) | `module.mjs` add/list/remove/update, `module.json` fields, lockfile and safety, bundled templates | Anyone installing features, writing runnable examples, or packaging their own extension |
 | [Runtime plugins](../runtime-plugins/README.md) | A different extension model: manifest + browser ESM loaded at startup, Vuetify host components, static/proxy backend, auth, troubleshooting | Anyone adding UI or backend endpoints without touching core code |
@@ -35,6 +36,7 @@ The detailed role index is [docs/roles/README.md](roles/README.md).
 ## Quick links
 
 - **Get running in 5 minutes** → [Development · First run](development.md#first-run)
+- **Browse or test the HTTP API** → [Development · API reference](development.md#api-reference-and-swagger-ui) (non-production only)
 - **Choose a role-based reading path** → [Role guides](roles/README.md)
 - **What can and cannot be edited** → [Architecture · Boundaries](architecture.md#boundaries)
 - **Add a backend API + page** → [Development · Add a backend module](development.md#add-a-backend-module)
