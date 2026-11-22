@@ -167,17 +167,19 @@ func (x *PluginRoute) GetPermission() string {
 }
 
 type Plugin struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Version       string                 `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
-	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	Icon          string                 `protobuf:"bytes,5,opt,name=icon,proto3" json:"icon,omitempty"`
-	EntryUrl      string                 `protobuf:"bytes,6,opt,name=entry_url,json=entryUrl,proto3" json:"entry_url,omitempty"`
-	Styles        []string               `protobuf:"bytes,7,rep,name=styles,proto3" json:"styles,omitempty"`
-	Routes        []*PluginRoute         `protobuf:"bytes,8,rep,name=routes,proto3" json:"routes,omitempty"`
-	Navigations   []*PluginNav           `protobuf:"bytes,9,rep,name=navigations,proto3" json:"navigations,omitempty"`
-	Permissions   []string               `protobuf:"bytes,10,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name        string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Version     string                 `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
+	Description string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Icon        string                 `protobuf:"bytes,5,opt,name=icon,proto3" json:"icon,omitempty"`
+	EntryUrl    string                 `protobuf:"bytes,6,opt,name=entry_url,json=entryUrl,proto3" json:"entry_url,omitempty"`
+	Styles      []string               `protobuf:"bytes,7,rep,name=styles,proto3" json:"styles,omitempty"`
+	Routes      []*PluginRoute         `protobuf:"bytes,8,rep,name=routes,proto3" json:"routes,omitempty"`
+	Navigations []*PluginNav           `protobuf:"bytes,9,rep,name=navigations,proto3" json:"navigations,omitempty"`
+	Permissions []string               `protobuf:"bytes,10,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	// source is bundled or installed.
+	Source        string `protobuf:"bytes,11,opt,name=source,proto3" json:"source,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -280,6 +282,13 @@ func (x *Plugin) GetPermissions() []string {
 		return x.Permissions
 	}
 	return nil
+}
+
+func (x *Plugin) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
 }
 
 type ListPluginsRequest struct {
@@ -450,6 +459,228 @@ func (x *GetPluginResponse) GetPlugin() *Plugin {
 	return nil
 }
 
+type InstallPluginRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Origin:
+	//
+	//	*InstallPluginRequest_GitUrl
+	//	*InstallPluginRequest_ArchiveBase64
+	Origin        isInstallPluginRequest_Origin `protobuf_oneof:"origin"`
+	GitRef        string                        `protobuf:"bytes,3,opt,name=git_ref,json=gitRef,proto3" json:"git_ref,omitempty"`
+	Replace       bool                          `protobuf:"varint,4,opt,name=replace,proto3" json:"replace,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InstallPluginRequest) Reset() {
+	*x = InstallPluginRequest{}
+	mi := &file_plugin_v1_plugin_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InstallPluginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InstallPluginRequest) ProtoMessage() {}
+
+func (x *InstallPluginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_plugin_v1_plugin_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InstallPluginRequest.ProtoReflect.Descriptor instead.
+func (*InstallPluginRequest) Descriptor() ([]byte, []int) {
+	return file_plugin_v1_plugin_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *InstallPluginRequest) GetOrigin() isInstallPluginRequest_Origin {
+	if x != nil {
+		return x.Origin
+	}
+	return nil
+}
+
+func (x *InstallPluginRequest) GetGitUrl() string {
+	if x != nil {
+		if x, ok := x.Origin.(*InstallPluginRequest_GitUrl); ok {
+			return x.GitUrl
+		}
+	}
+	return ""
+}
+
+func (x *InstallPluginRequest) GetArchiveBase64() string {
+	if x != nil {
+		if x, ok := x.Origin.(*InstallPluginRequest_ArchiveBase64); ok {
+			return x.ArchiveBase64
+		}
+	}
+	return ""
+}
+
+func (x *InstallPluginRequest) GetGitRef() string {
+	if x != nil {
+		return x.GitRef
+	}
+	return ""
+}
+
+func (x *InstallPluginRequest) GetReplace() bool {
+	if x != nil {
+		return x.Replace
+	}
+	return false
+}
+
+type isInstallPluginRequest_Origin interface {
+	isInstallPluginRequest_Origin()
+}
+
+type InstallPluginRequest_GitUrl struct {
+	GitUrl string `protobuf:"bytes,1,opt,name=git_url,json=gitUrl,proto3,oneof"`
+}
+
+type InstallPluginRequest_ArchiveBase64 struct {
+	ArchiveBase64 string `protobuf:"bytes,2,opt,name=archive_base64,json=archiveBase64,proto3,oneof"`
+}
+
+func (*InstallPluginRequest_GitUrl) isInstallPluginRequest_Origin() {}
+
+func (*InstallPluginRequest_ArchiveBase64) isInstallPluginRequest_Origin() {}
+
+type InstallPluginResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Plugin        *Plugin                `protobuf:"bytes,1,opt,name=plugin,proto3" json:"plugin,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InstallPluginResponse) Reset() {
+	*x = InstallPluginResponse{}
+	mi := &file_plugin_v1_plugin_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InstallPluginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InstallPluginResponse) ProtoMessage() {}
+
+func (x *InstallPluginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_plugin_v1_plugin_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InstallPluginResponse.ProtoReflect.Descriptor instead.
+func (*InstallPluginResponse) Descriptor() ([]byte, []int) {
+	return file_plugin_v1_plugin_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *InstallPluginResponse) GetPlugin() *Plugin {
+	if x != nil {
+		return x.Plugin
+	}
+	return nil
+}
+
+type UninstallPluginRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UninstallPluginRequest) Reset() {
+	*x = UninstallPluginRequest{}
+	mi := &file_plugin_v1_plugin_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UninstallPluginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UninstallPluginRequest) ProtoMessage() {}
+
+func (x *UninstallPluginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_plugin_v1_plugin_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UninstallPluginRequest.ProtoReflect.Descriptor instead.
+func (*UninstallPluginRequest) Descriptor() ([]byte, []int) {
+	return file_plugin_v1_plugin_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UninstallPluginRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type UninstallPluginResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UninstallPluginResponse) Reset() {
+	*x = UninstallPluginResponse{}
+	mi := &file_plugin_v1_plugin_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UninstallPluginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UninstallPluginResponse) ProtoMessage() {}
+
+func (x *UninstallPluginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_plugin_v1_plugin_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UninstallPluginResponse.ProtoReflect.Descriptor instead.
+func (*UninstallPluginResponse) Descriptor() ([]byte, []int) {
+	return file_plugin_v1_plugin_proto_rawDescGZIP(), []int{10}
+}
+
 var File_plugin_v1_plugin_proto protoreflect.FileDescriptor
 
 const file_plugin_v1_plugin_proto_rawDesc = "" +
@@ -469,7 +700,7 @@ const file_plugin_v1_plugin_proto_rawDesc = "" +
 	"\tcomponent\x18\x03 \x01(\tR\tcomponent\x12\x1e\n" +
 	"\n" +
 	"permission\x18\x04 \x01(\tR\n" +
-	"permission\"\xbb\x02\n" +
+	"permission\"\xd3\x02\n" +
 	"\x06Plugin\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
@@ -481,17 +712,31 @@ const file_plugin_v1_plugin_proto_rawDesc = "" +
 	"\x06routes\x18\b \x03(\v2\x16.plugin.v1.PluginRouteR\x06routes\x126\n" +
 	"\vnavigations\x18\t \x03(\v2\x14.plugin.v1.PluginNavR\vnavigations\x12 \n" +
 	"\vpermissions\x18\n" +
-	" \x03(\tR\vpermissions\"\x14\n" +
+	" \x03(\tR\vpermissions\x12\x16\n" +
+	"\x06source\x18\v \x01(\tR\x06source\"\x14\n" +
 	"\x12ListPluginsRequest\">\n" +
 	"\x13ListPluginsResponse\x12'\n" +
 	"\x05items\x18\x01 \x03(\v2\x11.plugin.v1.PluginR\x05items\"(\n" +
 	"\x10GetPluginRequest\x12\x14\n" +
 	"\x02id\x18\x01 \x01(\tB\x04\xe2A\x01\x02R\x02id\">\n" +
 	"\x11GetPluginResponse\x12)\n" +
-	"\x06plugin\x18\x01 \x01(\v2\x11.plugin.v1.PluginR\x06plugin2\xdc\x01\n" +
+	"\x06plugin\x18\x01 \x01(\v2\x11.plugin.v1.PluginR\x06plugin\"\x97\x01\n" +
+	"\x14InstallPluginRequest\x12\x19\n" +
+	"\agit_url\x18\x01 \x01(\tH\x00R\x06gitUrl\x12'\n" +
+	"\x0earchive_base64\x18\x02 \x01(\tH\x00R\rarchiveBase64\x12\x17\n" +
+	"\agit_ref\x18\x03 \x01(\tR\x06gitRef\x12\x18\n" +
+	"\areplace\x18\x04 \x01(\bR\areplaceB\b\n" +
+	"\x06origin\"B\n" +
+	"\x15InstallPluginResponse\x12)\n" +
+	"\x06plugin\x18\x01 \x01(\v2\x11.plugin.v1.PluginR\x06plugin\".\n" +
+	"\x16UninstallPluginRequest\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\tB\x04\xe2A\x01\x02R\x02id\"\x19\n" +
+	"\x17UninstallPluginResponse2\xcc\x03\n" +
 	"\rPluginService\x12e\n" +
 	"\vListPlugins\x12\x1d.plugin.v1.ListPluginsRequest\x1a\x1e.plugin.v1.ListPluginsResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/v1/plugins\x12d\n" +
-	"\tGetPlugin\x12\x1b.plugin.v1.GetPluginRequest\x1a\x1c.plugin.v1.GetPluginResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/api/v1/plugins/{id}B=Z;github.com/example/scaffold/services/api/plugin/v1;pluginv1b\x06proto3"
+	"\tGetPlugin\x12\x1b.plugin.v1.GetPluginRequest\x1a\x1c.plugin.v1.GetPluginResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/api/v1/plugins/{id}\x12v\n" +
+	"\rInstallPlugin\x12\x1f.plugin.v1.InstallPluginRequest\x1a .plugin.v1.InstallPluginResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/api/v1/plugins/install\x12v\n" +
+	"\x0fUninstallPlugin\x12!.plugin.v1.UninstallPluginRequest\x1a\".plugin.v1.UninstallPluginResponse\"\x1c\x82\xd3\xe4\x93\x02\x16*\x14/api/v1/plugins/{id}B=Z;github.com/example/scaffold/services/api/plugin/v1;pluginv1b\x06proto3"
 
 var (
 	file_plugin_v1_plugin_proto_rawDescOnce sync.Once
@@ -505,30 +750,39 @@ func file_plugin_v1_plugin_proto_rawDescGZIP() []byte {
 	return file_plugin_v1_plugin_proto_rawDescData
 }
 
-var file_plugin_v1_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_plugin_v1_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_plugin_v1_plugin_proto_goTypes = []any{
-	(*PluginNav)(nil),           // 0: plugin.v1.PluginNav
-	(*PluginRoute)(nil),         // 1: plugin.v1.PluginRoute
-	(*Plugin)(nil),              // 2: plugin.v1.Plugin
-	(*ListPluginsRequest)(nil),  // 3: plugin.v1.ListPluginsRequest
-	(*ListPluginsResponse)(nil), // 4: plugin.v1.ListPluginsResponse
-	(*GetPluginRequest)(nil),    // 5: plugin.v1.GetPluginRequest
-	(*GetPluginResponse)(nil),   // 6: plugin.v1.GetPluginResponse
+	(*PluginNav)(nil),               // 0: plugin.v1.PluginNav
+	(*PluginRoute)(nil),             // 1: plugin.v1.PluginRoute
+	(*Plugin)(nil),                  // 2: plugin.v1.Plugin
+	(*ListPluginsRequest)(nil),      // 3: plugin.v1.ListPluginsRequest
+	(*ListPluginsResponse)(nil),     // 4: plugin.v1.ListPluginsResponse
+	(*GetPluginRequest)(nil),        // 5: plugin.v1.GetPluginRequest
+	(*GetPluginResponse)(nil),       // 6: plugin.v1.GetPluginResponse
+	(*InstallPluginRequest)(nil),    // 7: plugin.v1.InstallPluginRequest
+	(*InstallPluginResponse)(nil),   // 8: plugin.v1.InstallPluginResponse
+	(*UninstallPluginRequest)(nil),  // 9: plugin.v1.UninstallPluginRequest
+	(*UninstallPluginResponse)(nil), // 10: plugin.v1.UninstallPluginResponse
 }
 var file_plugin_v1_plugin_proto_depIdxs = []int32{
-	1, // 0: plugin.v1.Plugin.routes:type_name -> plugin.v1.PluginRoute
-	0, // 1: plugin.v1.Plugin.navigations:type_name -> plugin.v1.PluginNav
-	2, // 2: plugin.v1.ListPluginsResponse.items:type_name -> plugin.v1.Plugin
-	2, // 3: plugin.v1.GetPluginResponse.plugin:type_name -> plugin.v1.Plugin
-	3, // 4: plugin.v1.PluginService.ListPlugins:input_type -> plugin.v1.ListPluginsRequest
-	5, // 5: plugin.v1.PluginService.GetPlugin:input_type -> plugin.v1.GetPluginRequest
-	4, // 6: plugin.v1.PluginService.ListPlugins:output_type -> plugin.v1.ListPluginsResponse
-	6, // 7: plugin.v1.PluginService.GetPlugin:output_type -> plugin.v1.GetPluginResponse
-	6, // [6:8] is the sub-list for method output_type
-	4, // [4:6] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	1,  // 0: plugin.v1.Plugin.routes:type_name -> plugin.v1.PluginRoute
+	0,  // 1: plugin.v1.Plugin.navigations:type_name -> plugin.v1.PluginNav
+	2,  // 2: plugin.v1.ListPluginsResponse.items:type_name -> plugin.v1.Plugin
+	2,  // 3: plugin.v1.GetPluginResponse.plugin:type_name -> plugin.v1.Plugin
+	2,  // 4: plugin.v1.InstallPluginResponse.plugin:type_name -> plugin.v1.Plugin
+	3,  // 5: plugin.v1.PluginService.ListPlugins:input_type -> plugin.v1.ListPluginsRequest
+	5,  // 6: plugin.v1.PluginService.GetPlugin:input_type -> plugin.v1.GetPluginRequest
+	7,  // 7: plugin.v1.PluginService.InstallPlugin:input_type -> plugin.v1.InstallPluginRequest
+	9,  // 8: plugin.v1.PluginService.UninstallPlugin:input_type -> plugin.v1.UninstallPluginRequest
+	4,  // 9: plugin.v1.PluginService.ListPlugins:output_type -> plugin.v1.ListPluginsResponse
+	6,  // 10: plugin.v1.PluginService.GetPlugin:output_type -> plugin.v1.GetPluginResponse
+	8,  // 11: plugin.v1.PluginService.InstallPlugin:output_type -> plugin.v1.InstallPluginResponse
+	10, // 12: plugin.v1.PluginService.UninstallPlugin:output_type -> plugin.v1.UninstallPluginResponse
+	9,  // [9:13] is the sub-list for method output_type
+	5,  // [5:9] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_plugin_v1_plugin_proto_init() }
@@ -536,13 +790,17 @@ func file_plugin_v1_plugin_proto_init() {
 	if File_plugin_v1_plugin_proto != nil {
 		return
 	}
+	file_plugin_v1_plugin_proto_msgTypes[7].OneofWrappers = []any{
+		(*InstallPluginRequest_GitUrl)(nil),
+		(*InstallPluginRequest_ArchiveBase64)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_plugin_v1_plugin_proto_rawDesc), len(file_plugin_v1_plugin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

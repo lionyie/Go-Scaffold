@@ -32,6 +32,8 @@ type OAuthUser struct {
 	EmailVerified  bool
 	Name           string
 	Avatar         string
+	// Roles are provider roles that map directly to permission codes.
+	Roles []string
 }
 
 // PKCE carries the proof key for providers that support it.
@@ -49,6 +51,13 @@ type Provider interface {
 	AuthCodeURL(ctx context.Context, state, redirectURL, nonce string, pkce *PKCE) string
 	Exchange(ctx context.Context, code, redirectURL string, pkce *PKCE) (*Token, error)
 	UserInfo(ctx context.Context, token *Token) (*OAuthUser, error)
+}
+
+// NonceVerifier is implemented by providers that can bind an ID token to the
+// nonce issued at authorization time. Providers that do not implement it fall
+// back to UserInfo.
+type NonceVerifier interface {
+	UserInfoWithNonce(ctx context.Context, token *Token, nonce string) (*OAuthUser, error)
 }
 
 var (

@@ -103,6 +103,21 @@ func PermissionToProto(p *biz.Permission) *identityv1.Permission {
 		Name:     p.Name,
 		Resource: p.Resource,
 		Action:   p.Action,
+		Source:   p.Source,
+	}
+}
+
+// PermissionFromProto converts a transport permission into the domain shape.
+func PermissionFromProto(p *identityv1.Permission) *biz.Permission {
+	if p == nil {
+		return nil
+	}
+	return &biz.Permission{
+		Code:     p.GetCode(),
+		Name:     p.GetName(),
+		Resource: p.GetResource(),
+		Action:   p.GetAction(),
+		Source:   p.GetSource(),
 	}
 }
 
@@ -150,6 +165,7 @@ func PluginToProto(p *biz.PluginInfo) *pluginv1.Plugin {
 		Routes:      routes,
 		Navigations: navs,
 		Permissions: p.Permissions,
+		Source:      p.Source,
 	}
 }
 

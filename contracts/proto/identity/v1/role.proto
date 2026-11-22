@@ -12,6 +12,9 @@ message Permission {
   string name = 2;
   string resource = 3;
   string action = 4;
+  // Source is one of builtin, plugin, or custom. Builtin and plugin
+  // permissions are managed by code and cannot be deleted.
+  string source = 5;
 }
 
 message Role {
@@ -44,6 +47,21 @@ service RoleService {
   }
   rpc ListPermissions(ListPermissionsRequest) returns (ListPermissionsResponse) {
     option (google.api.http) = { get: "/api/v1/permissions" };
+  }
+  rpc CreatePermission(CreatePermissionRequest) returns (CreatePermissionResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/permissions"
+      body: "*"
+    };
+  }
+  rpc UpdatePermission(UpdatePermissionRequest) returns (UpdatePermissionResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/permissions/{code}"
+      body: "*"
+    };
+  }
+  rpc DeletePermission(DeletePermissionRequest) returns (DeletePermissionResponse) {
+    option (google.api.http) = { delete: "/api/v1/permissions/{code}" };
   }
 }
 
@@ -85,3 +103,26 @@ message ListPermissionsRequest {}
 message ListPermissionsResponse {
   repeated Permission items = 1;
 }
+
+message CreatePermissionRequest {
+  Permission permission = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CreatePermissionResponse {
+  Permission permission = 1;
+}
+
+message UpdatePermissionRequest {
+  string code = 1 [(google.api.field_behavior) = REQUIRED];
+  Permission permission = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdatePermissionResponse {
+  Permission permission = 1;
+}
+
+message DeletePermissionRequest {
+  string code = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message DeletePermissionResponse {}

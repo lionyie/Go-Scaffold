@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package identity.v1;
+
+option go_package = "github.com/example/scaffold/services/api/identity/v1;identityv1";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+// OperationInfo describes one HTTP operation and the permission that guards it.
+message OperationInfo {
+  // operation is the protobuf operation name, e.g.
+  // /identity.v1.RoleService/ListRoles.
+  string operation = 1;
+  string service = 2;
+  // method is the HTTP method.
+  string method = 3;
+  string path = 4;
+  // permission is the effective permission code, or empty when the operation is
+  // public or authenticated-only.
+  string permission = 5;
+  // static_permission is the code declared in the compiled mapping.
+  string static_permission = 6;
+  // source is one of public, authenticated, static, database, or none.
+  string source = 7;
+  // locked operations cannot be rebound through the API.
+  bool locked = 8;
+}
+
+service AuthzService {
+  rpc ListOperations(ListOperationsRequest) returns (ListOperationsResponse) {
+    option (google.api.http) = { get: "/api/v1/operations" };
+  }
+  rpc SetOperationPermission(SetOperationPermissionRequest) returns (SetOperationPermissionResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/operations/permission"
+      body: "*"
+    };
+  }
+  rpc ResetOperationPermission(ResetOperationPermissionRequest) returns (ResetOperationPermissionResponse) {
+    option (google.api.http) = { delete: "/api/v1/operations/permission" };
+  }
+}
+
+message ListOperationsRequest {}
+
+message ListOperationsResponse {
+  repeated OperationInfo items = 1;
+}
+
+message SetOperationPermissionRequest {
+  string operation = 1 [(google.api.field_behavior) = REQUIRED];
+  string permission = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message SetOperationPermissionResponse {
+  OperationInfo operation = 1;
+}
+
+message ResetOperationPermissionRequest {
+  string operation = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message ResetOperationPermissionResponse {
+  OperationInfo operation = 1;
+}

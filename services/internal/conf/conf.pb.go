@@ -268,6 +268,8 @@ type Plugins struct {
 	Dev              bool                   `protobuf:"varint,2,opt,name=dev,proto3" json:"dev,omitempty"`
 	Strict           bool                   `protobuf:"varint,3,opt,name=strict,proto3" json:"strict,omitempty"`
 	AllowedUpstreams []string               `protobuf:"bytes,4,rep,name=allowed_upstreams,json=allowedUpstreams,proto3" json:"allowed_upstreams,omitempty"`
+	InstallDir       string                 `protobuf:"bytes,5,opt,name=install_dir,json=installDir,proto3" json:"install_dir,omitempty"`
+	AllowedRepos     []string               `protobuf:"bytes,6,rep,name=allowed_repos,json=allowedRepos,proto3" json:"allowed_repos,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -326,6 +328,20 @@ func (x *Plugins) GetStrict() bool {
 func (x *Plugins) GetAllowedUpstreams() []string {
 	if x != nil {
 		return x.AllowedUpstreams
+	}
+	return nil
+}
+
+func (x *Plugins) GetInstallDir() string {
+	if x != nil {
+		return x.InstallDir
+	}
+	return ""
+}
+
+func (x *Plugins) GetAllowedRepos() []string {
+	if x != nil {
+		return x.AllowedRepos
 	}
 	return nil
 }
@@ -848,12 +864,15 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\rauto_register\x18\x01 \x01(\bR\fautoRegister\x12!\n" +
 	"\fstate_secret\x18\x02 \x01(\tR\vstateSecret\x124\n" +
 	"\x16allowed_redirect_hosts\x18\x03 \x03(\tR\x14allowedRedirectHosts\x12,\n" +
-	"\x12admin_redirect_url\x18\x04 \x01(\tR\x10adminRedirectUrl\"r\n" +
+	"\x12admin_redirect_url\x18\x04 \x01(\tR\x10adminRedirectUrl\"\xb8\x01\n" +
 	"\aPlugins\x12\x10\n" +
 	"\x03dir\x18\x01 \x01(\tR\x03dir\x12\x10\n" +
 	"\x03dev\x18\x02 \x01(\bR\x03dev\x12\x16\n" +
 	"\x06strict\x18\x03 \x01(\bR\x06strict\x12+\n" +
-	"\x11allowed_upstreams\x18\x04 \x03(\tR\x10allowedUpstreams\"\x17\n" +
+	"\x11allowed_upstreams\x18\x04 \x03(\tR\x10allowedUpstreams\x12\x1f\n" +
+	"\vinstall_dir\x18\x05 \x01(\tR\n" +
+	"installDir\x12#\n" +
+	"\rallowed_repos\x18\x06 \x03(\tR\fallowedRepos\"\x17\n" +
 	"\x03Web\x12\x10\n" +
 	"\x03dir\x18\x01 \x01(\tR\x03dir\"3\n" +
 	"\x03Log\x12\x14\n" +

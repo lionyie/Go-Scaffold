@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strings"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
+	"github.com/example/scaffold/services/internal/biz"
 	"github.com/example/scaffold/services/internal/data/model"
 	authpkg "github.com/example/scaffold/services/internal/pkg/auth"
 	"github.com/example/scaffold/services/internal/pkg/id"
@@ -65,12 +67,16 @@ func seedPermissions(tx *gorm.DB) error {
 			Name:     p.Name,
 			Resource: p.Resource,
 			Action:   p.Action,
+			Source:   biz.PermissionSourceBuiltin,
 		})
 	}
 	if err := tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&rows).Error; err != nil {
 		return err
 	}
-	return tx.Where("code NOT IN ?", codes).Delete(&model.PermissionPO{}).Error
+	// Only prune stale builtin rows. Plugin and custom permissions are owned by
+	// the plugin registry and the admin API respectively.
+	return tx.Where("source = ? AND code NOT IN ?", biz.PermissionSourceBuiltin, codes).
+		Delete(&model.PermissionPO{}).Error
 }
 
 func seedRoles(tx *gorm.DB) error {
@@ -81,7 +87,7 @@ func seedRoles(tx *gorm.DB) error {
 	readOnly := []string{
 		rbac.PermUserList,
 		rbac.PermRoleList,
-		rbac.PermRolePermissionList,
+		rbac.PermPermissionList,
 		rbac.PermPluginList,
 		rbac.PermPluginRead,
 	}
@@ -126,6 +132,10 @@ func (s *Seeder) seedAdmin(tx *gorm.DB) error {
 		password = "admin123"
 		mustChange = true
 	}
+	seedEmail := strings.TrimSpace(os.Getenv("SCAFFOLD_SEED_ADMIN_EMAIL"))
+	if seedEmail == "" {
+		seedEmail = "admin@example.com"
+	}
 
 	var user model.UserPO
 	err := tx.Where("username = ?", "admin").First(&user).Error
@@ -138,6 +148,7 @@ func (s *Seeder) seedAdmin(tx *gorm.DB) error {
 			ID:                 id.New(),
 			Username:           "admin",
 			DisplayName:        "Administrator",
+			Email:              seedEmail,
 			PasswordHash:       hash,
 			IsAdmin:            true,
 			MustChangePassword: mustChange,
@@ -152,15 +163,26 @@ func (s *Seeder) seedAdmin(tx *gorm.DB) error {
 		}
 	} else if err != nil {
 		return err
-	} else if seedPassword != "" && user.MustChangePassword {
-		hash, hashErr := authpkg.HashPassword(seedPassword)
-		if hashErr != nil {
-			return hashErr
+	} else {
+		changed := false
+		if seedPassword != "" && user.MustChangePassword {
+			hash, hashErr := authpkg.HashPassword(seedPassword)
+			if hashErr != nil {
+				return hashErr
+			}
+			user.PasswordHash = hash
+			user.MustChangePassword = false
+			changed = true
 		}
-		user.PasswordHash = hash
-		user.MustChangePassword = false
-		if err := tx.Save(&user).Error; err != nil {
-			return err
+		// SSO links by verified email, so the seeded admin needs one.
+		if user.Email == "" && seedEmail != "" {
+			user.Email = seedEmail
+			changed = true
+		}
+		if changed {
+			if err := tx.Save(&user).Error; err != nil {
+				return err
+			}
 		}
 	}
 

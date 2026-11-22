@@ -45,6 +45,18 @@ func ErrRoleAlreadyExists() error {
 	return kerrors.Conflict(commonv1.ErrorReason_ROLE_ALREADY_EXISTS.String(), "role already exists")
 }
 
+func ErrPermissionNotFound() error {
+	return kerrors.NotFound(commonv1.ErrorReason_PERMISSION_NOT_FOUND.String(), "permission not found")
+}
+
+func ErrPermissionAlreadyExists() error {
+	return kerrors.Conflict(commonv1.ErrorReason_PERMISSION_ALREADY_EXISTS.String(), "permission already exists")
+}
+
+func ErrPermissionReadOnly() error {
+	return kerrors.Forbidden(commonv1.ErrorReason_PERMISSION_READ_ONLY.String(), "builtin and plugin permissions cannot be deleted")
+}
+
 func ErrInvalidArgument(message string) error {
 	return kerrors.BadRequest(commonv1.ErrorReason_INVALID_ARGUMENT.String(), message)
 }

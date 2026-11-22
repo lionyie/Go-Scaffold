@@ -40,6 +40,8 @@ export default [
         URL: 'readonly',
         Response: 'readonly',
         setTimeout: 'readonly',
+        File: 'readonly',
+        FileReader: 'readonly',
       },
     },
   },

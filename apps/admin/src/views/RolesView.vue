@@ -45,11 +45,59 @@ const headers = computed(() => [
   { title: t('common.actions'), key: 'actions', sortable: false, align: 'end' as const },
 ])
 
-const permissionItems = computed(() =>
-  permissions.value
-    .filter((permission) => permission.code)
-    .map((permission) => ({ title: permission.code!, value: permission.code! })),
-)
+const permissionSearch = ref('')
+
+const permissionGroups = computed(() => {
+  const keyword = permissionSearch.value.trim().toLowerCase()
+  const groups = new Map<string, PermissionRow[]>()
+  for (const permission of permissions.value) {
+    if (!permission.code) continue
+    if (keyword && !`${permission.code} ${permission.name ?? ''}`.toLowerCase().includes(keyword)) continue
+    const resource = permission.resource || 'other'
+    const items = groups.get(resource) ?? []
+    items.push(permission)
+    groups.set(resource, items)
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([resource, items]) => ({
+      resource,
+      items: items.sort((a, b) => a.code!.localeCompare(b.code!)),
+    }))
+})
+
+const selectedCount = computed(() => form.permissions.length)
+
+function isSelected(code: string): boolean {
+  return form.permissions.includes(code)
+}
+
+function setSelected(code: string, selected: boolean): void {
+  const next = new Set(form.permissions)
+  if (selected) next.add(code)
+  else next.delete(code)
+  form.permissions = [...next]
+}
+
+function setGroupSelected(items: PermissionRow[], selected: boolean): void {
+  const next = new Set(form.permissions)
+  for (const item of items) {
+    if (!item.code) continue
+    if (selected) next.add(item.code)
+    else next.delete(item.code)
+  }
+  form.permissions = [...next]
+}
+
+function selectAllVisible(): void {
+  form.permissions = [
+    ...new Set(permissionGroups.value.flatMap((group) => group.items.map((item) => item.code!))),
+  ]
+}
+
+function clearSelection(): void {
+  form.permissions = []
+}
 
 async function load(): Promise<void> {
   loading.value = true
@@ -174,7 +222,7 @@ onMounted(load)
       </v-data-table>
     </v-card>
 
-    <v-dialog v-model="dialog" max-width="640" transition="dialog-bottom-transition">
+    <v-dialog v-model="dialog" max-width="720" transition="dialog-bottom-transition">
       <v-card>
         <v-card-title class="text-h6 font-weight-bold px-6 pt-5">
           {{ editing ? t('common.edit') : t('role.create') }}
@@ -184,15 +232,66 @@ onMounted(load)
             <v-text-field v-model="form.name" :label="t('common.name')" :disabled="Boolean(editing)" class="mb-3" />
             <v-text-field v-model="form.displayName" :label="t('common.displayName')" class="mb-3" />
             <v-textarea v-model="form.description" :label="t('common.description')" rows="2" class="mb-3" />
-            <v-select
-              v-model="form.permissions"
-              :items="permissionItems"
-              :label="t('role.permissions')"
-              multiple
-              chips
-              closable-chips
-              density="comfortable"
-            />
+            <div class="permission-picker">
+              <div class="permission-picker__toolbar">
+                <v-text-field
+                  v-model="permissionSearch"
+                  :label="t('common.search')"
+                  prepend-inner-icon="mdi-magnify"
+                  density="compact"
+                  hide-details
+                  clearable
+                />
+                <v-btn size="small" variant="text" @click="selectAllVisible">
+                  {{ t('role.selectAll') }}
+                </v-btn>
+                <v-btn size="small" variant="text" @click="clearSelection">
+                  {{ t('role.clear') }}
+                </v-btn>
+                <v-chip size="small" variant="tonal">
+                  {{ t('role.selected', { count: selectedCount }) }}
+                </v-chip>
+              </div>
+              <div class="permission-picker__groups">
+                <div v-for="group in permissionGroups" :key="group.resource" class="permission-group">
+                  <div class="permission-group__header">
+                    <span>{{ group.resource }}</span>
+                    <v-btn
+                      size="x-small"
+                      variant="text"
+                      @click="setGroupSelected(group.items, true)"
+                    >
+                      {{ t('role.selectAll') }}
+                    </v-btn>
+                    <v-btn
+                      size="x-small"
+                      variant="text"
+                      @click="setGroupSelected(group.items, false)"
+                    >
+                      {{ t('role.clear') }}
+                    </v-btn>
+                  </div>
+                  <v-checkbox
+                    v-for="item in group.items"
+                    :key="item.code"
+                    :model-value="isSelected(item.code!)"
+                    density="compact"
+                    hide-details
+                    @update:model-value="(value) => setSelected(item.code!, Boolean(value))"
+                  >
+                    <template #label>
+                      <span class="permission-label">
+                        <code>{{ item.code }}</code>
+                        <span v-if="item.name" class="permission-label__name">{{ item.name }}</span>
+                      </span>
+                    </template>
+                  </v-checkbox>
+                </div>
+                <p v-if="permissionGroups.length === 0" class="empty-state">
+                  {{ t('common.empty') }}
+                </p>
+              </div>
+            </div>
           </v-form>
         </v-card-text>
         <v-card-actions class="px-6 pb-5">
@@ -212,5 +311,66 @@ onMounted(load)
   gap: 8px;
   padding: 40px 0;
   color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.permission-picker {
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.permission-picker__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.permission-picker__toolbar .v-text-field {
+  max-width: 280px;
+}
+
+.permission-picker__groups {
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: 12px;
+}
+
+.permission-group {
+  padding: 8px 0;
+  border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+}
+
+.permission-group:first-child {
+  border-top: 0;
+}
+
+.permission-group__header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.permission-group__header span {
+  margin-right: auto;
+}
+
+.permission-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.permission-label code {
+  font-size: 0.8rem;
+}
+
+.permission-label__name {
+  color: rgb(var(--v-theme-on-surface-variant));
+  font-size: 0.8rem;
 }
 </style>

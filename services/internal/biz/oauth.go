@@ -91,7 +91,7 @@ func (uc *OAuthUsecase) LoginOrRegister(ctx context.Context, provider string, u 
 	if err != nil {
 		return nil, err
 	}
-	return uc.auth.IssueForUser(ctx, user)
+	return uc.auth.IssueForUser(ctx, user, u.Roles)
 }
 
 // LinkAccount binds a provider identity to an authenticated user.

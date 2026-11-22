@@ -28,10 +28,12 @@ const form = reactive({
   displayName: '',
   email: '',
   password: '',
-  roles: '',
+  roles: [] as string[],
   isAdmin: false,
   status: 'active',
 })
+
+const roleItems = ref<{ title: string; value: string }[]>([])
 
 const headers = computed(() => [
   { title: t('common.name'), key: 'username', sortable: true },
@@ -57,6 +59,23 @@ async function load(): Promise<void> {
   }
 }
 
+async function loadRoles(): Promise<void> {
+  try {
+    const { data, error } = await api().GET('/api/v1/roles', {
+      params: { query: { pageSize: 100 } },
+    })
+    if (error) throw error
+    roleItems.value = ((data?.items ?? []) as { name?: string; displayName?: string }[])
+      .filter((role) => role.name)
+      .map((role) => ({
+        title: role.displayName ? `${role.displayName} (${role.name})` : role.name!,
+        value: role.name!,
+      }))
+  } catch {
+    roleItems.value = []
+  }
+}
+
 function openCreate(): void {
   editing.value = null
   Object.assign(form, {
@@ -64,7 +83,7 @@ function openCreate(): void {
     displayName: '',
     email: '',
     password: '',
-    roles: '',
+    roles: [],
     isAdmin: false,
     status: 'active',
   })
@@ -78,7 +97,7 @@ function openEdit(row: UserRow): void {
     displayName: row.displayName ?? '',
     email: row.email ?? '',
     password: '',
-    roles: (row.roles ?? []).join(','),
+    roles: [...(row.roles ?? [])],
     isAdmin: Boolean(row.isAdmin),
     status: row.status ?? 'active',
   })
@@ -92,10 +111,7 @@ async function save(): Promise<void> {
     email: form.email,
     isAdmin: form.isAdmin,
     status: form.status,
-    roles: form.roles
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean),
+    roles: form.roles,
   }
   try {
     if (editing.value?.id) {
@@ -135,7 +151,10 @@ async function remove(row: UserRow): Promise<void> {
   await load()
 }
 
-onMounted(load)
+onMounted(() => {
+  void load()
+  void loadRoles()
+})
 </script>
 
 <template>
@@ -227,7 +246,16 @@ onMounted(load)
               prepend-inner-icon="mdi-lock-outline"
               class="mb-3"
             />
-            <v-text-field v-model="form.roles" :label="t('user.roles')" placeholder="admin,viewer" class="mb-3" />
+            <v-select
+              v-model="form.roles"
+              :items="roleItems"
+              :label="t('user.roles')"
+              multiple
+              chips
+              closable-chips
+              density="comfortable"
+              class="mb-3"
+            />
             <v-switch v-model="form.isAdmin" :label="t('user.admin')" color="primary" inset hide-details />
           </v-form>
         </v-card-text>

@@ -23,11 +23,14 @@ const (
 )
 
 type Permission struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Resource      string                 `protobuf:"bytes,3,opt,name=resource,proto3" json:"resource,omitempty"`
-	Action        string                 `protobuf:"bytes,4,opt,name=action,proto3" json:"action,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Code     string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	Name     string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Resource string                 `protobuf:"bytes,3,opt,name=resource,proto3" json:"resource,omitempty"`
+	Action   string                 `protobuf:"bytes,4,opt,name=action,proto3" json:"action,omitempty"`
+	// Source is one of builtin, plugin, or custom. Builtin and plugin
+	// permissions are managed by code and cannot be deleted.
+	Source        string `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -86,6 +89,13 @@ func (x *Permission) GetResource() string {
 func (x *Permission) GetAction() string {
 	if x != nil {
 		return x.Action
+	}
+	return ""
+}
+
+func (x *Permission) GetSource() string {
+	if x != nil {
+		return x.Source
 	}
 	return ""
 }
@@ -622,17 +632,282 @@ func (x *ListPermissionsResponse) GetItems() []*Permission {
 	return nil
 }
 
+type CreatePermissionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Permission    *Permission            `protobuf:"bytes,1,opt,name=permission,proto3" json:"permission,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreatePermissionRequest) Reset() {
+	*x = CreatePermissionRequest{}
+	mi := &file_identity_v1_role_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreatePermissionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreatePermissionRequest) ProtoMessage() {}
+
+func (x *CreatePermissionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_v1_role_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreatePermissionRequest.ProtoReflect.Descriptor instead.
+func (*CreatePermissionRequest) Descriptor() ([]byte, []int) {
+	return file_identity_v1_role_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *CreatePermissionRequest) GetPermission() *Permission {
+	if x != nil {
+		return x.Permission
+	}
+	return nil
+}
+
+type CreatePermissionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Permission    *Permission            `protobuf:"bytes,1,opt,name=permission,proto3" json:"permission,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreatePermissionResponse) Reset() {
+	*x = CreatePermissionResponse{}
+	mi := &file_identity_v1_role_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreatePermissionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreatePermissionResponse) ProtoMessage() {}
+
+func (x *CreatePermissionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_v1_role_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreatePermissionResponse.ProtoReflect.Descriptor instead.
+func (*CreatePermissionResponse) Descriptor() ([]byte, []int) {
+	return file_identity_v1_role_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *CreatePermissionResponse) GetPermission() *Permission {
+	if x != nil {
+		return x.Permission
+	}
+	return nil
+}
+
+type UpdatePermissionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	Permission    *Permission            `protobuf:"bytes,2,opt,name=permission,proto3" json:"permission,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdatePermissionRequest) Reset() {
+	*x = UpdatePermissionRequest{}
+	mi := &file_identity_v1_role_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdatePermissionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdatePermissionRequest) ProtoMessage() {}
+
+func (x *UpdatePermissionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_v1_role_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdatePermissionRequest.ProtoReflect.Descriptor instead.
+func (*UpdatePermissionRequest) Descriptor() ([]byte, []int) {
+	return file_identity_v1_role_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *UpdatePermissionRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *UpdatePermissionRequest) GetPermission() *Permission {
+	if x != nil {
+		return x.Permission
+	}
+	return nil
+}
+
+type UpdatePermissionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Permission    *Permission            `protobuf:"bytes,1,opt,name=permission,proto3" json:"permission,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdatePermissionResponse) Reset() {
+	*x = UpdatePermissionResponse{}
+	mi := &file_identity_v1_role_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdatePermissionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdatePermissionResponse) ProtoMessage() {}
+
+func (x *UpdatePermissionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_v1_role_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdatePermissionResponse.ProtoReflect.Descriptor instead.
+func (*UpdatePermissionResponse) Descriptor() ([]byte, []int) {
+	return file_identity_v1_role_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *UpdatePermissionResponse) GetPermission() *Permission {
+	if x != nil {
+		return x.Permission
+	}
+	return nil
+}
+
+type DeletePermissionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeletePermissionRequest) Reset() {
+	*x = DeletePermissionRequest{}
+	mi := &file_identity_v1_role_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeletePermissionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeletePermissionRequest) ProtoMessage() {}
+
+func (x *DeletePermissionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_v1_role_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeletePermissionRequest.ProtoReflect.Descriptor instead.
+func (*DeletePermissionRequest) Descriptor() ([]byte, []int) {
+	return file_identity_v1_role_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *DeletePermissionRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+type DeletePermissionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeletePermissionResponse) Reset() {
+	*x = DeletePermissionResponse{}
+	mi := &file_identity_v1_role_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeletePermissionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeletePermissionResponse) ProtoMessage() {}
+
+func (x *DeletePermissionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_v1_role_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeletePermissionResponse.ProtoReflect.Descriptor instead.
+func (*DeletePermissionResponse) Descriptor() ([]byte, []int) {
+	return file_identity_v1_role_proto_rawDescGZIP(), []int{17}
+}
+
 var File_identity_v1_role_proto protoreflect.FileDescriptor
 
 const file_identity_v1_role_proto_rawDesc = "" +
 	"\n" +
-	"\x16identity/v1/role.proto\x12\videntity.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\"h\n" +
+	"\x16identity/v1/role.proto\x12\videntity.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\"\x80\x01\n" +
 	"\n" +
 	"Permission\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
 	"\bresource\x18\x03 \x01(\tR\bresource\x12\x16\n" +
-	"\x06action\x18\x04 \x01(\tR\x06action\"\xb4\x01\n" +
+	"\x06action\x18\x04 \x01(\tR\x06action\x12\x16\n" +
+	"\x06source\x18\x05 \x01(\tR\x06source\"\xb4\x01\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\x04name\x18\x02 \x01(\tB\x04\xe2A\x01\x02R\x04name\x12!\n" +
@@ -662,7 +937,27 @@ const file_identity_v1_role_proto_rawDesc = "" +
 	"\x12DeleteRoleResponse\"\x18\n" +
 	"\x16ListPermissionsRequest\"H\n" +
 	"\x17ListPermissionsResponse\x12-\n" +
-	"\x05items\x18\x01 \x03(\v2\x17.identity.v1.PermissionR\x05items2\xad\x04\n" +
+	"\x05items\x18\x01 \x03(\v2\x17.identity.v1.PermissionR\x05items\"X\n" +
+	"\x17CreatePermissionRequest\x12=\n" +
+	"\n" +
+	"permission\x18\x01 \x01(\v2\x17.identity.v1.PermissionB\x04\xe2A\x01\x02R\n" +
+	"permission\"S\n" +
+	"\x18CreatePermissionResponse\x127\n" +
+	"\n" +
+	"permission\x18\x01 \x01(\v2\x17.identity.v1.PermissionR\n" +
+	"permission\"r\n" +
+	"\x17UpdatePermissionRequest\x12\x18\n" +
+	"\x04code\x18\x01 \x01(\tB\x04\xe2A\x01\x02R\x04code\x12=\n" +
+	"\n" +
+	"permission\x18\x02 \x01(\v2\x17.identity.v1.PermissionB\x04\xe2A\x01\x02R\n" +
+	"permission\"S\n" +
+	"\x18UpdatePermissionResponse\x127\n" +
+	"\n" +
+	"permission\x18\x01 \x01(\v2\x17.identity.v1.PermissionR\n" +
+	"permission\"3\n" +
+	"\x17DeletePermissionRequest\x12\x18\n" +
+	"\x04code\x18\x01 \x01(\tB\x04\xe2A\x01\x02R\x04code\"\x1a\n" +
+	"\x18DeletePermissionResponse2\xbd\a\n" +
 	"\vRoleService\x12a\n" +
 	"\tListRoles\x12\x1d.identity.v1.ListRolesRequest\x1a\x1e.identity.v1.ListRolesResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/api/v1/roles\x12g\n" +
 	"\n" +
@@ -671,7 +966,10 @@ const file_identity_v1_role_proto_rawDesc = "" +
 	"UpdateRole\x12\x1e.identity.v1.UpdateRoleRequest\x1a\x1f.identity.v1.UpdateRoleResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\x1a\x12/api/v1/roles/{id}\x12i\n" +
 	"\n" +
 	"DeleteRole\x12\x1e.identity.v1.DeleteRoleRequest\x1a\x1f.identity.v1.DeleteRoleResponse\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/api/v1/roles/{id}\x12y\n" +
-	"\x0fListPermissions\x12#.identity.v1.ListPermissionsRequest\x1a$.identity.v1.ListPermissionsResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/v1/permissionsBAZ?github.com/example/scaffold/services/api/identity/v1;identityv1b\x06proto3"
+	"\x0fListPermissions\x12#.identity.v1.ListPermissionsRequest\x1a$.identity.v1.ListPermissionsResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/v1/permissions\x12\x7f\n" +
+	"\x10CreatePermission\x12$.identity.v1.CreatePermissionRequest\x1a%.identity.v1.CreatePermissionResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/api/v1/permissions\x12\x86\x01\n" +
+	"\x10UpdatePermission\x12$.identity.v1.UpdatePermissionRequest\x1a%.identity.v1.UpdatePermissionResponse\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\x1a\x1a/api/v1/permissions/{code}\x12\x83\x01\n" +
+	"\x10DeletePermission\x12$.identity.v1.DeletePermissionRequest\x1a%.identity.v1.DeletePermissionResponse\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/api/v1/permissions/{code}BAZ?github.com/example/scaffold/services/api/identity/v1;identityv1b\x06proto3"
 
 var (
 	file_identity_v1_role_proto_rawDescOnce sync.Once
@@ -685,20 +983,26 @@ func file_identity_v1_role_proto_rawDescGZIP() []byte {
 	return file_identity_v1_role_proto_rawDescData
 }
 
-var file_identity_v1_role_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_identity_v1_role_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_identity_v1_role_proto_goTypes = []any{
-	(*Permission)(nil),              // 0: identity.v1.Permission
-	(*Role)(nil),                    // 1: identity.v1.Role
-	(*ListRolesRequest)(nil),        // 2: identity.v1.ListRolesRequest
-	(*ListRolesResponse)(nil),       // 3: identity.v1.ListRolesResponse
-	(*CreateRoleRequest)(nil),       // 4: identity.v1.CreateRoleRequest
-	(*CreateRoleResponse)(nil),      // 5: identity.v1.CreateRoleResponse
-	(*UpdateRoleRequest)(nil),       // 6: identity.v1.UpdateRoleRequest
-	(*UpdateRoleResponse)(nil),      // 7: identity.v1.UpdateRoleResponse
-	(*DeleteRoleRequest)(nil),       // 8: identity.v1.DeleteRoleRequest
-	(*DeleteRoleResponse)(nil),      // 9: identity.v1.DeleteRoleResponse
-	(*ListPermissionsRequest)(nil),  // 10: identity.v1.ListPermissionsRequest
-	(*ListPermissionsResponse)(nil), // 11: identity.v1.ListPermissionsResponse
+	(*Permission)(nil),               // 0: identity.v1.Permission
+	(*Role)(nil),                     // 1: identity.v1.Role
+	(*ListRolesRequest)(nil),         // 2: identity.v1.ListRolesRequest
+	(*ListRolesResponse)(nil),        // 3: identity.v1.ListRolesResponse
+	(*CreateRoleRequest)(nil),        // 4: identity.v1.CreateRoleRequest
+	(*CreateRoleResponse)(nil),       // 5: identity.v1.CreateRoleResponse
+	(*UpdateRoleRequest)(nil),        // 6: identity.v1.UpdateRoleRequest
+	(*UpdateRoleResponse)(nil),       // 7: identity.v1.UpdateRoleResponse
+	(*DeleteRoleRequest)(nil),        // 8: identity.v1.DeleteRoleRequest
+	(*DeleteRoleResponse)(nil),       // 9: identity.v1.DeleteRoleResponse
+	(*ListPermissionsRequest)(nil),   // 10: identity.v1.ListPermissionsRequest
+	(*ListPermissionsResponse)(nil),  // 11: identity.v1.ListPermissionsResponse
+	(*CreatePermissionRequest)(nil),  // 12: identity.v1.CreatePermissionRequest
+	(*CreatePermissionResponse)(nil), // 13: identity.v1.CreatePermissionResponse
+	(*UpdatePermissionRequest)(nil),  // 14: identity.v1.UpdatePermissionRequest
+	(*UpdatePermissionResponse)(nil), // 15: identity.v1.UpdatePermissionResponse
+	(*DeletePermissionRequest)(nil),  // 16: identity.v1.DeletePermissionRequest
+	(*DeletePermissionResponse)(nil), // 17: identity.v1.DeletePermissionResponse
 }
 var file_identity_v1_role_proto_depIdxs = []int32{
 	1,  // 0: identity.v1.ListRolesResponse.items:type_name -> identity.v1.Role
@@ -707,21 +1011,31 @@ var file_identity_v1_role_proto_depIdxs = []int32{
 	1,  // 3: identity.v1.UpdateRoleRequest.role:type_name -> identity.v1.Role
 	1,  // 4: identity.v1.UpdateRoleResponse.role:type_name -> identity.v1.Role
 	0,  // 5: identity.v1.ListPermissionsResponse.items:type_name -> identity.v1.Permission
-	2,  // 6: identity.v1.RoleService.ListRoles:input_type -> identity.v1.ListRolesRequest
-	4,  // 7: identity.v1.RoleService.CreateRole:input_type -> identity.v1.CreateRoleRequest
-	6,  // 8: identity.v1.RoleService.UpdateRole:input_type -> identity.v1.UpdateRoleRequest
-	8,  // 9: identity.v1.RoleService.DeleteRole:input_type -> identity.v1.DeleteRoleRequest
-	10, // 10: identity.v1.RoleService.ListPermissions:input_type -> identity.v1.ListPermissionsRequest
-	3,  // 11: identity.v1.RoleService.ListRoles:output_type -> identity.v1.ListRolesResponse
-	5,  // 12: identity.v1.RoleService.CreateRole:output_type -> identity.v1.CreateRoleResponse
-	7,  // 13: identity.v1.RoleService.UpdateRole:output_type -> identity.v1.UpdateRoleResponse
-	9,  // 14: identity.v1.RoleService.DeleteRole:output_type -> identity.v1.DeleteRoleResponse
-	11, // 15: identity.v1.RoleService.ListPermissions:output_type -> identity.v1.ListPermissionsResponse
-	11, // [11:16] is the sub-list for method output_type
-	6,  // [6:11] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	0,  // 6: identity.v1.CreatePermissionRequest.permission:type_name -> identity.v1.Permission
+	0,  // 7: identity.v1.CreatePermissionResponse.permission:type_name -> identity.v1.Permission
+	0,  // 8: identity.v1.UpdatePermissionRequest.permission:type_name -> identity.v1.Permission
+	0,  // 9: identity.v1.UpdatePermissionResponse.permission:type_name -> identity.v1.Permission
+	2,  // 10: identity.v1.RoleService.ListRoles:input_type -> identity.v1.ListRolesRequest
+	4,  // 11: identity.v1.RoleService.CreateRole:input_type -> identity.v1.CreateRoleRequest
+	6,  // 12: identity.v1.RoleService.UpdateRole:input_type -> identity.v1.UpdateRoleRequest
+	8,  // 13: identity.v1.RoleService.DeleteRole:input_type -> identity.v1.DeleteRoleRequest
+	10, // 14: identity.v1.RoleService.ListPermissions:input_type -> identity.v1.ListPermissionsRequest
+	12, // 15: identity.v1.RoleService.CreatePermission:input_type -> identity.v1.CreatePermissionRequest
+	14, // 16: identity.v1.RoleService.UpdatePermission:input_type -> identity.v1.UpdatePermissionRequest
+	16, // 17: identity.v1.RoleService.DeletePermission:input_type -> identity.v1.DeletePermissionRequest
+	3,  // 18: identity.v1.RoleService.ListRoles:output_type -> identity.v1.ListRolesResponse
+	5,  // 19: identity.v1.RoleService.CreateRole:output_type -> identity.v1.CreateRoleResponse
+	7,  // 20: identity.v1.RoleService.UpdateRole:output_type -> identity.v1.UpdateRoleResponse
+	9,  // 21: identity.v1.RoleService.DeleteRole:output_type -> identity.v1.DeleteRoleResponse
+	11, // 22: identity.v1.RoleService.ListPermissions:output_type -> identity.v1.ListPermissionsResponse
+	13, // 23: identity.v1.RoleService.CreatePermission:output_type -> identity.v1.CreatePermissionResponse
+	15, // 24: identity.v1.RoleService.UpdatePermission:output_type -> identity.v1.UpdatePermissionResponse
+	17, // 25: identity.v1.RoleService.DeletePermission:output_type -> identity.v1.DeletePermissionResponse
+	18, // [18:26] is the sub-list for method output_type
+	10, // [10:18] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_identity_v1_role_proto_init() }
@@ -735,7 +1049,7 @@ func file_identity_v1_role_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_identity_v1_role_proto_rawDesc), len(file_identity_v1_role_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

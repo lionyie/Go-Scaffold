@@ -13,6 +13,7 @@ import (
 	"github.com/example/scaffold/services/internal/conf"
 	authpkg "github.com/example/scaffold/services/internal/pkg/auth"
 	"github.com/example/scaffold/services/internal/pkg/rbac"
+	"github.com/example/scaffold/services/internal/server/authz"
 	"github.com/example/scaffold/services/internal/server/middleware"
 	"github.com/example/scaffold/services/internal/service"
 )
@@ -23,6 +24,7 @@ func NewGRPCServer(
 	svcs *service.Services,
 	tokens *authpkg.TokenManager,
 	checker rbac.Checker,
+	authzManager *authz.Manager,
 	log *slog.Logger,
 ) *kgrpc.Server {
 	cfg := bc.GetServer().GetGrpc()
@@ -32,7 +34,7 @@ func NewGRPCServer(
 			logging.Server(log),
 			middleware.LoginRateLimit(),
 			middleware.Authn(tokens),
-			middleware.Authz(checker),
+			middleware.Authz(authzManager),
 		),
 	}
 	if cfg.GetNetwork() != "" {
@@ -49,6 +51,7 @@ func NewGRPCServer(
 	identityv1.RegisterAuthServiceServer(srv, svcs.Auth)
 	identityv1.RegisterUserServiceServer(srv, svcs.User)
 	identityv1.RegisterRoleServiceServer(srv, svcs.Role)
+	identityv1.RegisterAuthzServiceServer(srv, svcs.Authz)
 	pluginv1.RegisterPluginServiceServer(srv, svcs.Plugin)
 	systemv1.RegisterSystemServiceServer(srv, svcs.System)
 	return srv

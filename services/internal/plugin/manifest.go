@@ -71,6 +71,7 @@ type Permission struct {
 type Plugin struct {
 	Manifest *Manifest
 	Dir      string
+	Source   string
 }
 
 // Validate normalizes and checks a manifest against its directory name.

@@ -18,17 +18,23 @@ var _ = new(context.Context)
 const _ = http.SupportPackageIsVersion3
 
 const OperationPluginServiceGetPlugin = "/plugin.v1.PluginService/GetPlugin"
+const OperationPluginServiceInstallPlugin = "/plugin.v1.PluginService/InstallPlugin"
 const OperationPluginServiceListPlugins = "/plugin.v1.PluginService/ListPlugins"
+const OperationPluginServiceUninstallPlugin = "/plugin.v1.PluginService/UninstallPlugin"
 
 type PluginServiceHTTPServer interface {
 	GetPlugin(context.Context, *GetPluginRequest) (*GetPluginResponse, error)
+	InstallPlugin(context.Context, *InstallPluginRequest) (*InstallPluginResponse, error)
 	ListPlugins(context.Context, *ListPluginsRequest) (*ListPluginsResponse, error)
+	UninstallPlugin(context.Context, *UninstallPluginRequest) (*UninstallPluginResponse, error)
 }
 
 func RegisterPluginServiceHTTPServer(s *http.Server, srv PluginServiceHTTPServer) {
 	r := s.Route("/")
 	r.Handle("GET", "/api/v1/plugins", _PluginService_ListPlugins0_HTTP_Handler(srv))
 	r.Handle("GET", "/api/v1/plugins/{id}", _PluginService_GetPlugin0_HTTP_Handler(srv))
+	r.Handle("POST", "/api/v1/plugins/install", _PluginService_InstallPlugin0_HTTP_Handler(srv))
+	r.Handle("DELETE", "/api/v1/plugins/{id}", _PluginService_UninstallPlugin0_HTTP_Handler(srv))
 }
 
 func _PluginService_ListPlugins0_HTTP_Handler(srv PluginServiceHTTPServer) func(ctx http.Context) error {
@@ -72,9 +78,52 @@ func _PluginService_GetPlugin0_HTTP_Handler(srv PluginServiceHTTPServer) func(ct
 	}
 }
 
+func _PluginService_InstallPlugin0_HTTP_Handler(srv PluginServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in InstallPluginRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPluginServiceInstallPlugin)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.InstallPlugin(ctx, req.(*InstallPluginRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*InstallPluginResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PluginService_UninstallPlugin0_HTTP_Handler(srv PluginServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UninstallPluginRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPluginServiceUninstallPlugin)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UninstallPlugin(ctx, req.(*UninstallPluginRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UninstallPluginResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PluginServiceHTTPClient interface {
 	GetPlugin(ctx context.Context, req *GetPluginRequest, opts ...http.CallOption) (rsp *GetPluginResponse, err error)
+	InstallPlugin(ctx context.Context, req *InstallPluginRequest, opts ...http.CallOption) (rsp *InstallPluginResponse, err error)
 	ListPlugins(ctx context.Context, req *ListPluginsRequest, opts ...http.CallOption) (rsp *ListPluginsResponse, err error)
+	UninstallPlugin(ctx context.Context, req *UninstallPluginRequest, opts ...http.CallOption) (rsp *UninstallPluginResponse, err error)
 }
 
 type PluginServiceHTTPClientImpl struct {
@@ -101,6 +150,23 @@ func (c *PluginServiceHTTPClientImpl) GetPlugin(ctx context.Context, in *GetPlug
 	return &out, nil
 }
 
+func (c *PluginServiceHTTPClientImpl) InstallPlugin(ctx context.Context, in *InstallPluginRequest, opts ...http.CallOption) (*InstallPluginResponse, error) {
+	var out InstallPluginResponse
+	pattern := "/api/v1/plugins/install"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationPluginServiceInstallPlugin),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 func (c *PluginServiceHTTPClientImpl) ListPlugins(ctx context.Context, in *ListPluginsRequest, opts ...http.CallOption) (*ListPluginsResponse, error) {
 	var out ListPluginsResponse
 	pattern := "/api/v1/plugins"
@@ -111,6 +177,22 @@ func (c *PluginServiceHTTPClientImpl) ListPlugins(ctx context.Context, in *ListP
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *PluginServiceHTTPClientImpl) UninstallPlugin(ctx context.Context, in *UninstallPluginRequest, opts ...http.CallOption) (*UninstallPluginResponse, error) {
+	var out UninstallPluginResponse
+	pattern := "/api/v1/plugins/{id}"
+	path := http.BuildPath(pattern, in, http.WithQueryParams())
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.Operation(OperationPluginServiceUninstallPlugin),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

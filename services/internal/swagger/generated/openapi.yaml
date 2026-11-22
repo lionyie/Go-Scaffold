@@ -91,6 +91,52 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/identity.v1.RefreshResponse'
+    /api/v1/operations:
+        get:
+            tags:
+                - AuthzService
+            operationId: AuthzService_ListOperations
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.ListOperationsResponse'
+    /api/v1/operations/permission:
+        put:
+            tags:
+                - AuthzService
+            operationId: AuthzService_SetOperationPermission
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.SetOperationPermissionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.SetOperationPermissionResponse'
+        delete:
+            tags:
+                - AuthzService
+            operationId: AuthzService_ResetOperationPermission
+            parameters:
+                - name: operation
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.ResetOperationPermissionResponse'
     /api/v1/permissions:
         get:
             tags:
@@ -103,6 +149,64 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/identity.v1.ListPermissionsResponse'
+        post:
+            tags:
+                - RoleService
+            operationId: RoleService_CreatePermission
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.CreatePermissionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.CreatePermissionResponse'
+    /api/v1/permissions/{code}:
+        put:
+            tags:
+                - RoleService
+            operationId: RoleService_UpdatePermission
+            parameters:
+                - name: code
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.v1.UpdatePermissionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.UpdatePermissionResponse'
+        delete:
+            tags:
+                - RoleService
+            operationId: RoleService_DeletePermission
+            parameters:
+                - name: code
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.v1.DeletePermissionResponse'
     /api/v1/plugins:
         get:
             tags:
@@ -115,6 +219,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/plugin.v1.ListPluginsResponse'
+    /api/v1/plugins/install:
+        post:
+            tags:
+                - PluginService
+            operationId: PluginService_InstallPlugin
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/plugin.v1.InstallPluginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/plugin.v1.InstallPluginResponse'
     /api/v1/plugins/{id}:
         get:
             tags:
@@ -133,6 +255,23 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/plugin.v1.GetPluginResponse'
+        delete:
+            tags:
+                - PluginService
+            operationId: PluginService_UninstallPlugin
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/plugin.v1.UninstallPluginResponse'
     /api/v1/roles:
         get:
             tags:
@@ -348,6 +487,18 @@ components:
         identity.v1.ChangePasswordResponse:
             type: object
             properties: {}
+        identity.v1.CreatePermissionRequest:
+            required:
+                - permission
+            type: object
+            properties:
+                permission:
+                    $ref: '#/components/schemas/identity.v1.Permission'
+        identity.v1.CreatePermissionResponse:
+            type: object
+            properties:
+                permission:
+                    $ref: '#/components/schemas/identity.v1.Permission'
         identity.v1.CreateRoleRequest:
             required:
                 - role
@@ -375,6 +526,9 @@ components:
             properties:
                 user:
                     $ref: '#/components/schemas/identity.v1.User'
+        identity.v1.DeletePermissionResponse:
+            type: object
+            properties: {}
         identity.v1.DeleteRoleResponse:
             type: object
             properties: {}
@@ -390,6 +544,13 @@ components:
                     type: array
                     items:
                         type: string
+        identity.v1.ListOperationsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/identity.v1.OperationInfo'
         identity.v1.ListPermissionsResponse:
             type: object
             properties:
@@ -451,6 +612,36 @@ components:
         identity.v1.LogoutResponse:
             type: object
             properties: {}
+        identity.v1.OperationInfo:
+            type: object
+            properties:
+                operation:
+                    type: string
+                    description: |-
+                        operation is the protobuf operation name, e.g.
+                         /identity.v1.RoleService/ListRoles.
+                service:
+                    type: string
+                method:
+                    type: string
+                    description: method is the HTTP method.
+                path:
+                    type: string
+                permission:
+                    type: string
+                    description: |-
+                        permission is the effective permission code, or empty when the operation is
+                         public or authenticated-only.
+                staticPermission:
+                    type: string
+                    description: static_permission is the code declared in the compiled mapping.
+                source:
+                    type: string
+                    description: source is one of public, authenticated, static, database, or none.
+                locked:
+                    type: boolean
+                    description: locked operations cannot be rebound through the API.
+            description: OperationInfo describes one HTTP operation and the permission that guards it.
         identity.v1.Permission:
             type: object
             properties:
@@ -462,6 +653,11 @@ components:
                     type: string
                 action:
                     type: string
+                source:
+                    type: string
+                    description: |-
+                        Source is one of builtin, plugin, or custom. Builtin and plugin
+                         permissions are managed by code and cannot be deleted.
         identity.v1.RefreshRequest:
             required:
                 - refreshToken
@@ -481,6 +677,11 @@ components:
                 expiresIn:
                     type: integer
                     format: int32
+        identity.v1.ResetOperationPermissionResponse:
+            type: object
+            properties:
+                operation:
+                    $ref: '#/components/schemas/identity.v1.OperationInfo'
         identity.v1.Role:
             required:
                 - name
@@ -500,6 +701,36 @@ components:
                     type: array
                     items:
                         type: string
+        identity.v1.SetOperationPermissionRequest:
+            required:
+                - operation
+                - permission
+            type: object
+            properties:
+                operation:
+                    type: string
+                permission:
+                    type: string
+        identity.v1.SetOperationPermissionResponse:
+            type: object
+            properties:
+                operation:
+                    $ref: '#/components/schemas/identity.v1.OperationInfo'
+        identity.v1.UpdatePermissionRequest:
+            required:
+                - code
+                - permission
+            type: object
+            properties:
+                code:
+                    type: string
+                permission:
+                    $ref: '#/components/schemas/identity.v1.Permission'
+        identity.v1.UpdatePermissionResponse:
+            type: object
+            properties:
+                permission:
+                    $ref: '#/components/schemas/identity.v1.Permission'
         identity.v1.UpdateRoleRequest:
             required:
                 - id
@@ -563,6 +794,22 @@ components:
             properties:
                 plugin:
                     $ref: '#/components/schemas/plugin.v1.Plugin'
+        plugin.v1.InstallPluginRequest:
+            type: object
+            properties:
+                gitUrl:
+                    type: string
+                archiveBase64:
+                    type: string
+                gitRef:
+                    type: string
+                replace:
+                    type: boolean
+        plugin.v1.InstallPluginResponse:
+            type: object
+            properties:
+                plugin:
+                    $ref: '#/components/schemas/plugin.v1.Plugin'
         plugin.v1.ListPluginsResponse:
             type: object
             properties:
@@ -601,6 +848,9 @@ components:
                     type: array
                     items:
                         type: string
+                source:
+                    type: string
+                    description: source is bundled or installed.
         plugin.v1.PluginNav:
             type: object
             properties:
@@ -626,6 +876,9 @@ components:
                     type: string
                 permission:
                     type: string
+        plugin.v1.UninstallPluginResponse:
+            type: object
+            properties: {}
         system.v1.GetHealthResponse:
             type: object
             properties:
@@ -649,6 +902,7 @@ components:
                     type: string
 tags:
     - name: AuthService
+    - name: AuthzService
     - name: PluginService
     - name: RoleService
     - name: SystemService

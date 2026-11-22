@@ -3,6 +3,7 @@ package providers
 import (
 	"context"
 	"crypto/rsa"
+	"crypto/subtle"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -38,8 +39,14 @@ type oidcProvider struct {
 
 func init() { oauth.Register(&oidcProvider{client: &http.Client{Timeout: 15 * time.Second}}) }
 
-func (p *oidcProvider) Name() string        { return "oidc" }
-func (p *oidcProvider) DisplayName() string { return "SSO" }
+func (p *oidcProvider) Name() string { return "oidc" }
+
+func (p *oidcProvider) DisplayName() string {
+	if name := strings.TrimSpace(os.Getenv("SCAFFOLD_OAUTH_OIDC_DISPLAY_NAME")); name != "" {
+		return name
+	}
+	return "SSO"
+}
 
 func (p *oidcProvider) Enabled() bool {
 	return os.Getenv("SCAFFOLD_OAUTH_OIDC_ISSUER") != "" &&
@@ -123,6 +130,16 @@ func (p *oidcProvider) Exchange(ctx context.Context, code, redirectURL string, p
 }
 
 func (p *oidcProvider) UserInfo(ctx context.Context, token *oauth.Token) (*oauth.OAuthUser, error) {
+	return p.userInfo(ctx, token, "")
+}
+
+// UserInfoWithNonce verifies the ID token and binds it to the nonce issued at
+// authorization time.
+func (p *oidcProvider) UserInfoWithNonce(ctx context.Context, token *oauth.Token, nonce string) (*oauth.OAuthUser, error) {
+	return p.userInfo(ctx, token, nonce)
+}
+
+func (p *oidcProvider) userInfo(ctx context.Context, token *oauth.Token, expectedNonce string) (*oauth.OAuthUser, error) {
 	meta, err := p.metadata(ctx)
 	if err != nil {
 		return nil, err
@@ -131,15 +148,23 @@ func (p *oidcProvider) UserInfo(ctx context.Context, token *oauth.Token) (*oauth
 	if err != nil {
 		return nil, err
 	}
+	if expectedNonce != "" && subtle.ConstantTimeCompare([]byte(claims.Nonce), []byte(expectedNonce)) != 1 {
+		return nil, fmt.Errorf("oidc: id_token nonce mismatch")
+	}
 	if claims.Subject == "" {
 		return nil, fmt.Errorf("oidc: id_token has no subject")
+	}
+	name := claims.Name
+	if strings.TrimSpace(name) == "" {
+		name = claims.PreferredUsername
 	}
 	return &oauth.OAuthUser{
 		ProviderUserID: claims.Subject,
 		Email:          claims.Email,
 		EmailVerified:  claims.EmailVerified,
-		Name:           firstNonEmpty(claims.Name, claims.PreferredUsername),
+		Name:           name,
 		Avatar:         claims.Picture,
+		Roles:          claims.RealmAccess.Roles,
 	}, nil
 }
 
@@ -151,6 +176,9 @@ type oidcClaims struct {
 	PreferredUsername string `json:"preferred_username"`
 	Picture           string `json:"picture"`
 	Nonce             string `json:"nonce"`
+	RealmAccess       struct {
+		Roles []string `json:"roles"`
+	} `json:"realm_access"`
 	jwt.RegisteredClaims
 }
 

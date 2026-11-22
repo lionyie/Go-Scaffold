@@ -9,9 +9,14 @@ export const Permission = {
   RoleCreate: "role:create",
   RoleUpdate: "role:update",
   RoleDelete: "role:delete",
-  RolePermissionList: "role:permission:list",
+  PermissionList: "permission:list",
+  PermissionCreate: "permission:create",
+  PermissionUpdate: "permission:update",
+  PermissionDelete: "permission:delete",
+  PermissionAssign: "permission:assign",
   PluginList: "plugin:list",
   PluginRead: "plugin:read",
+  PluginManage: "plugin:manage",
 } as const
 
 export type PermissionCode = (typeof Permission)[keyof typeof Permission]

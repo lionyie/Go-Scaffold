@@ -37,8 +37,19 @@ var Requirements = map[string]Requirement{
 	identityv1.OperationRoleServiceCreateRole:      {Code: rbac.PermRoleCreate},
 	identityv1.OperationRoleServiceUpdateRole:      {Code: rbac.PermRoleUpdate},
 	identityv1.OperationRoleServiceDeleteRole:      {Code: rbac.PermRoleDelete},
-	identityv1.OperationRoleServiceListPermissions: {Code: rbac.PermRolePermissionList},
+	identityv1.OperationRoleServiceListPermissions: {Code: rbac.PermPermissionList},
+
+	identityv1.OperationRoleServiceCreatePermission: {Code: rbac.PermPermissionCreate},
+	identityv1.OperationRoleServiceUpdatePermission: {Code: rbac.PermPermissionUpdate},
+	identityv1.OperationRoleServiceDeletePermission: {Code: rbac.PermPermissionDelete},
+
+	identityv1.OperationAuthzServiceListOperations:          {Code: rbac.PermPermissionList},
+	identityv1.OperationAuthzServiceSetOperationPermission:  {Code: rbac.PermPermissionAssign},
+	identityv1.OperationAuthzServiceResetOperationPermission: {Code: rbac.PermPermissionAssign},
 
 	pluginv1.OperationPluginServiceListPlugins: {Public: true},
 	pluginv1.OperationPluginServiceGetPlugin:   {Public: true},
+
+	pluginv1.OperationPluginServiceInstallPlugin:   {Code: rbac.PermPluginManage},
+	pluginv1.OperationPluginServiceUninstallPlugin: {Code: rbac.PermPluginManage},
 }

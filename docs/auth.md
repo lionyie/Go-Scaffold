@@ -40,6 +40,57 @@ refresh_tokens(id, user_id, token_hash, session_id, expires_at, revoked_at)
 - `pnpm run verify-authz` fails if a generated operation is missing from the
   mapping, a mapping entry is stale, or a permission code is unknown.
 
+### Permission sources
+
+| Source | Origin | Delete | Edit code |
+| --- | --- | --- | --- |
+| `builtin` | `contracts/permissions.yaml` | no | no |
+| `plugin` | plugin manifest | no | no |
+| `custom` | `POST /api/v1/permissions` (API) | yes | no |
+
+Seeding upserts the builtin catalog and prunes only stale `builtin` rows, so
+custom and plugin permissions survive restarts. Deleting a custom permission
+also removes its `role_permissions` rows in the same transaction.
+
+A custom permission is only a catalog entry: it protects no endpoint until an
+operation is mapped to it, either in `Requirements` or through a runtime binding
+(see below).
+
+### Runtime operation bindings
+
+The compiled mapping in `mapping.go` is the default. The backend
+`PUT /api/v1/operations/permission` can override the permission of an operation
+at runtime. There is no admin UI for this anymore; it is an operator API.
+
+- `services/internal/pkg/operations/operations_gen.go` is generated from the
+  OpenAPI spec, so the catalog always matches the real routes.
+- Overrides live in `operation_permissions(operation, permission_code)`.
+- Public and authenticated-only operations are locked and cannot be rebound.
+- Any other operation can be bound to any existing permission code, including
+  custom ones. This is how a custom permission actually starts guarding an
+  endpoint.
+- Bindings are cached for 30 seconds and invalidated on write.
+- Deleting a custom permission also deletes the operation bindings that
+  referenced it, and those operations fall back to the compiled mapping.
+- Changing bindings requires `permission:assign`; listing requires
+  `permission:list`.
+
+### Session roles
+
+Each session token carries the caller's roles (`roles` claim). Authorization
+checks read these roles directly; there is no per-request database lookup.
+
+- Local password login resolves roles from the local RBAC tables.
+- OIDC login uses the provider's `realm_access.roles`. For Keycloak, a realm
+  role whose name equals a permission code (for example `user:list`) grants that
+  permission directly.
+- A role named `admin` implies `is_admin` (full bypass).
+- `/api/v1/auth/me` returns the roles carried by the session.
+
+Local password login remains available as a fallback. The admin permission
+management UI was removed: Keycloak manages roles for SSO users, and the local
+role page manages roles for password users.
+
 Default roles: `admin` (all permissions) and `viewer` (read-only). The admin
 console uses the generated `Permission` constants for route and menu guards, and
 ESLint rejects permission string literals under `apps/admin/src`.
@@ -93,6 +144,65 @@ http(s)://<host>/api/v1/auth/oauth/<provider>/callback
 WeChat (Open Platform QR) and QQ Connect do not return an email address; they
 never participate in email-based linking. OIDC verifies the ID token signature
 against the issuer JWKS and checks `iss`, `aud`, `exp`, and the nonce.
+
+### Keycloak (OIDC)
+
+`pnpm run module:add oauth-oidc` installs the generic OpenID Connect provider at
+`services/internal/auth/oauth/providers/oidc.go`. A development realm ships in
+`deploy/keycloak/scaffold-realm.json`.
+
+Start Keycloak (opt-in override):
+
+```bash
+docker compose -f deploy/compose/docker-compose.yml \
+               -f deploy/compose/docker-compose.keycloak.yml up -d keycloak
+```
+
+It listens on `http://localhost:8080`, imports realm `scaffold`, and creates:
+
+- client `scaffold-admin` (confidential, secret `dev-scaffold-admin-secret`,
+  PKCE S256)
+- redirect URIs for `http://localhost:8000` and `http://127.0.0.1:8000`
+- dev user `admin@example.com / admin123` with realm role `admin`
+- dev user `viewer@example.com / viewer123` with the composite role `viewer`
+- one realm role per permission code (for example `user:list`)
+
+Realm roles are the permission codes. The ID token's `realm_access.roles` is
+copied into the session, so assigning `user:list` in Keycloak grants the
+`user:list` permission. The `admin` realm role implies `is_admin`.
+
+Configure the API:
+
+```text
+SCAFFOLD_OAUTH_STATE_SECRET=<random>
+SCAFFOLD_OAUTH_OIDC_ISSUER=http://localhost:8080/realms/scaffold
+SCAFFOLD_OAUTH_OIDC_CLIENT_ID=scaffold-admin
+SCAFFOLD_OAUTH_OIDC_CLIENT_SECRET=dev-scaffold-admin-secret
+SCAFFOLD_OAUTH_OIDC_SCOPES=openid email profile
+SCAFFOLD_OAUTH_OIDC_DISPLAY_NAME=Keycloak
+SCAFFOLD_OAUTH_AUTO_REGISTER=true
+```
+
+Account linking:
+
+- A verified email links the Keycloak identity to an existing local user with
+  the same address.
+- The seeded admin uses `admin@example.com`; override it with
+  `SCAFFOLD_SEED_ADMIN_EMAIL`.
+- With `auto_register=true`, an unknown identity creates a local user without
+  administrator rights.
+- Local password login remains enabled alongside SSO.
+
+Security notes:
+
+- PKCE S256 and the OIDC nonce are both verified.
+- Always set `SCAFFOLD_OAUTH_STATE_SECRET`.
+- In the full compose stack the server container uses
+  `extra_hosts: localhost:host-gateway` so it can reach the host-published
+  Keycloak port.
+
+Keycloak is an opt-in provider: the local RBAC and password login remain the
+default, and the scaffold does not require Keycloak to run.
 
 ### Multi-replica deployments
 

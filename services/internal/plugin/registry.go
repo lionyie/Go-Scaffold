@@ -17,25 +17,26 @@ import (
 	"github.com/example/scaffold/services/internal/biz"
 	"github.com/example/scaffold/services/internal/conf"
 	authpkg "github.com/example/scaffold/services/internal/pkg/auth"
-	"github.com/example/scaffold/services/internal/pkg/rbac"
 )
 
 const proxyPrefix = "/proxy/plugins/"
 
 // Registry holds the validated plugins loaded from disk.
 type Registry struct {
-	mu      sync.RWMutex
-	plugins map[string]*Plugin
-	dev     bool
-	checker rbac.Checker
-	tokens  *authpkg.TokenManager
-	log     *slog.Logger
+	mu         sync.RWMutex
+	plugins    map[string]*Plugin
+	dev        bool
+	tokens     *authpkg.TokenManager
+	roles      biz.RoleRepo
+	bundledDir string
+	installDir string
+	installer  *Installer
+	log        *slog.Logger
 }
 
 // NewRegistry loads plugins from the configured directory.
 func NewRegistry(
 	bc *conf.Bootstrap,
-	checker rbac.Checker,
 	tokens *authpkg.TokenManager,
 	roles biz.RoleRepo,
 	log *slog.Logger,
@@ -50,40 +51,150 @@ func NewRegistry(
 	}
 
 	registry := &Registry{
-		plugins: make(map[string]*Plugin, len(plugins)),
-		dev:     cfg.GetDev(),
-		checker: checker,
-		tokens:  tokens,
-		log:     log,
+		plugins:    make(map[string]*Plugin, len(plugins)),
+		dev:        cfg.GetDev(),
+		tokens:     tokens,
+		roles:      roles,
+		bundledDir: cfg.GetDir(),
+		installDir: cfg.GetInstallDir(),
+		log:        log,
 	}
 	for _, p := range plugins {
 		registry.plugins[p.Manifest.ID] = p
+		if !cfg.GetDev() {
+			entry := filepath.Join(p.Dir, "dist", filepath.FromSlash(p.Manifest.Frontend.Entry))
+			if _, err := os.Stat(entry); err != nil {
+				log.Warn("plugin frontend is not built; run pnpm run build:plugins", "id", p.Manifest.ID)
+			}
+		}
 		log.Info("loaded plugin", "id", p.Manifest.ID, "version", p.Manifest.Version)
 	}
-	if err := registry.syncPermissions(context.Background(), roles); err != nil {
+
+	if installDir := strings.TrimSpace(cfg.GetInstallDir()); installDir != "" && installDir != cfg.GetDir() {
+		installed, warnings, err := LoadWithSource(installDir, SourceInstalled, cfg.GetDev(), cfg.GetAllowedUpstreams(), false)
+		if err != nil {
+			return nil, nil, err
+		}
+		for _, warning := range warnings {
+			log.Warn("skipping installed plugin", "err", warning)
+		}
+		for _, p := range installed {
+			if registry.IsBundled(p.Manifest.ID) {
+				log.Warn("installed plugin id collides with a bundled plugin; skipping", "id", p.Manifest.ID)
+				continue
+			}
+			registry.plugins[p.Manifest.ID] = p
+			log.Info("loaded installed plugin", "id", p.Manifest.ID, "version", p.Manifest.Version)
+		}
+	}
+
+	installer, err := NewInstaller(bc, registry, log)
+	if err != nil {
+		return nil, nil, err
+	}
+	registry.installer = installer
+
+	if err := registry.SyncPermissions(context.Background()); err != nil {
 		return nil, nil, err
 	}
 	return registry, func() {}, nil
 }
 
-// syncPermissions makes plugin-declared permissions grantable through the role
+// InstallFromGit installs a plugin from a public HTTPS git repository.
+func (r *Registry) InstallFromGit(ctx context.Context, rawURL, ref string, replace bool) (*biz.PluginInfo, error) {
+	if r.installer == nil {
+		return nil, biz.ErrInternal("plugin installer is unavailable")
+	}
+	p, err := r.installer.InstallFromGit(ctx, rawURL, ref, replace)
+	if err != nil {
+		return nil, err
+	}
+	return r.toInfo(p), nil
+}
+
+// InstallFromArchive installs a plugin from a prebuilt zip archive.
+func (r *Registry) InstallFromArchive(ctx context.Context, data []byte, replace bool) (*biz.PluginInfo, error) {
+	if r.installer == nil {
+		return nil, biz.ErrInternal("plugin installer is unavailable")
+	}
+	p, err := r.installer.InstallFromArchive(ctx, data, replace)
+	if err != nil {
+		return nil, err
+	}
+	return r.toInfo(p), nil
+}
+
+// Uninstall removes an installed plugin.
+func (r *Registry) Uninstall(ctx context.Context, id string) error {
+	if r.installer == nil {
+		return biz.ErrInternal("plugin installer is unavailable")
+	}
+	return r.installer.Uninstall(ctx, id)
+}
+
+// Get returns a plugin by id.
+func (r *Registry) Get(id string) (*Plugin, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	p, ok := r.plugins[id]
+	return p, ok
+}
+
+// Upsert inserts or replaces a plugin.
+func (r *Registry) Upsert(p *Plugin) {
+	r.mu.Lock()
+	r.plugins[p.Manifest.ID] = p
+	r.mu.Unlock()
+}
+
+// Remove deletes a plugin and returns it.
+func (r *Registry) Remove(id string) (*Plugin, bool) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	p, ok := r.plugins[id]
+	if ok {
+		delete(r.plugins, id)
+	}
+	return p, ok
+}
+
+// IsBundled reports whether the id belongs to a bundled plugin.
+func (r *Registry) IsBundled(id string) bool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	p, ok := r.plugins[id]
+	return ok && p.Source == SourceBundled
+}
+
+// SyncPermissions makes plugin-declared permissions grantable through the role
 // API even though the built-in catalog lives in code.
-func (r *Registry) syncPermissions(ctx context.Context, roles biz.RoleRepo) error {
-	var permissions []*biz.Permission
+func (r *Registry) SyncPermissions(ctx context.Context) error {
+	if r.roles == nil {
+		return nil
+	}
+	r.mu.RLock()
+	plugins := make([]*Plugin, 0, len(r.plugins))
 	for _, p := range r.plugins {
+		plugins = append(plugins, p)
+	}
+	r.mu.RUnlock()
+
+	var permissions []*biz.Permission
+	for _, p := range plugins {
 		for _, perm := range p.Manifest.Permissions {
 			permissions = append(permissions, &biz.Permission{
 				Code:     perm.Code,
 				Name:     perm.Name,
 				Resource: "plugin",
 				Action:   p.Manifest.ID,
+				Source:   biz.PermissionSourcePlugin,
 			})
 		}
 	}
 	if len(permissions) == 0 {
 		return nil
 	}
-	return roles.UpsertPermissions(ctx, permissions)
+	return r.roles.UpsertPermissions(ctx, permissions)
 }
 
 // Handler serves plugin assets and API proxies.
@@ -131,12 +242,9 @@ func (r *Registry) serveAPI(w http.ResponseWriter, rq *http.Request, p *Plugin, 
 		writeJSONError(w, http.StatusForbidden, "MUST_CHANGE_PASSWORD", "password change required")
 		return
 	}
-	if !principal.IsAdmin && p.Manifest.Backend.Permission != "" {
-		allowed, err := r.checker.HasGlobal(rq.Context(), principal.UserID, p.Manifest.Backend.Permission)
-		if err != nil || !allowed {
-			writeJSONError(w, http.StatusForbidden, "FORBIDDEN", "permission denied")
-			return
-		}
+	if !principal.IsAdmin && p.Manifest.Backend.Permission != "" && !principal.HasRole(p.Manifest.Backend.Permission) {
+		writeJSONError(w, http.StatusForbidden, "FORBIDDEN", "permission denied")
+		return
 	}
 
 	switch p.Manifest.Backend.Mode {
@@ -238,7 +346,7 @@ func (r *Registry) get(id string) (*Plugin, bool) {
 }
 
 // ListPlugins returns the manifests visible to the caller.
-func (r *Registry) ListPlugins(ctx context.Context, userID string, admin bool) ([]*biz.PluginInfo, error) {
+func (r *Registry) ListPlugins(ctx context.Context, principal *authpkg.Principal) ([]*biz.PluginInfo, error) {
 	r.mu.RLock()
 	plugins := make([]*Plugin, 0, len(r.plugins))
 	for _, p := range r.plugins {
@@ -248,11 +356,7 @@ func (r *Registry) ListPlugins(ctx context.Context, userID string, admin bool) (
 
 	out := make([]*biz.PluginInfo, 0, len(plugins))
 	for _, p := range plugins {
-		visible, err := r.visible(ctx, p, userID, admin)
-		if err != nil {
-			return nil, err
-		}
-		if visible {
+		if visible(principal, p) {
 			out = append(out, r.toInfo(p))
 		}
 	}
@@ -268,20 +372,22 @@ func (r *Registry) GetPlugin(_ context.Context, id string) (*biz.PluginInfo, err
 	return r.toInfo(p), nil
 }
 
-func (r *Registry) visible(ctx context.Context, p *Plugin, userID string, admin bool) (bool, error) {
-	if admin || len(p.Manifest.Permissions) == 0 {
-		return true, nil
+func visible(principal *authpkg.Principal, p *Plugin) bool {
+	if len(p.Manifest.Permissions) == 0 {
+		return true
+	}
+	if principal == nil {
+		return false
+	}
+	if principal.IsAdmin {
+		return true
 	}
 	for _, perm := range p.Manifest.Permissions {
-		allowed, err := r.checker.HasGlobal(ctx, userID, perm.Code)
-		if err != nil {
-			return false, err
-		}
-		if allowed {
-			return true, nil
+		if principal.HasRole(perm.Code) {
+			return true
 		}
 	}
-	return false, nil
+	return false
 }
 
 func (r *Registry) toInfo(p *Plugin) *biz.PluginInfo {
@@ -332,6 +438,7 @@ func (r *Registry) toInfo(p *Plugin) *biz.PluginInfo {
 		Routes:      routes,
 		Navigations: navs,
 		Permissions: permissions,
+		Source:      p.Source,
 	}
 }
 

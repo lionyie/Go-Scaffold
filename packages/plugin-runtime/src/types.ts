@@ -28,6 +28,7 @@ export interface PluginManifest {
   routes: PluginRoute[]
   navigations: PluginNav[]
   permissions: string[]
+  source?: string
 }
 
 export interface PluginNotify {

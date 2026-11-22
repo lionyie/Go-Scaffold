@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/google/wire"
 
+	"github.com/example/scaffold/services/internal/server/authz"
 	"github.com/example/scaffold/services/internal/webui"
 )
 
@@ -10,5 +11,6 @@ import (
 var ProviderSet = wire.NewSet(
 	NewHTTPServer,
 	NewGRPCServer,
+	authz.NewManager,
 	webui.NewHandler,
 )

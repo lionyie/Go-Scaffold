@@ -16,6 +16,7 @@ import (
 	"github.com/example/scaffold/services/internal/pkg/rbac"
 	"github.com/example/scaffold/services/internal/plugin"
 	"github.com/example/scaffold/services/internal/server"
+	"github.com/example/scaffold/services/internal/server/authz"
 	"github.com/example/scaffold/services/internal/service"
 	"github.com/example/scaffold/services/internal/webui"
 	"github.com/go-kratos/kratos/v3"
@@ -42,7 +43,10 @@ func wireApp(bootstrap *conf.Bootstrap, logger *slog.Logger, buildInfo *service.
 	roleRepo := database.NewRoleRepo(databaseData)
 	roleUsecase := biz.NewRoleUsecase(roleRepo)
 	roleService := service.NewRoleService(roleUsecase)
-	registry, cleanup2, err := plugin.NewRegistry(bootstrap, checker, tokenManager, roleRepo, logger)
+	policyRepo := database.NewPolicyRepo(databaseData)
+	manager := authz.NewManager(policyRepo)
+	authzService := service.NewAuthzService(manager)
+	registry, cleanup2, err := plugin.NewRegistry(bootstrap, tokenManager, roleRepo, logger)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
@@ -51,13 +55,13 @@ func wireApp(bootstrap *conf.Bootstrap, logger *slog.Logger, buildInfo *service.
 	pluginService := service.NewPluginService(pluginUsecase)
 	healthChecker := data.NewHealthChecker(databaseData)
 	systemService := service.NewSystemService(healthChecker, buildInfo)
-	services := service.NewServices(authService, userService, roleService, pluginService, systemService)
-	grpcServer := server.NewGRPCServer(bootstrap, services, tokenManager, checker, logger)
+	services := service.NewServices(authService, userService, roleService, authzService, pluginService, systemService)
+	grpcServer := server.NewGRPCServer(bootstrap, services, tokenManager, checker, manager, logger)
 	handler := webui.NewHandler(bootstrap)
 	memoryStore := oauth.NewMemoryStore()
 	oAuthAccountRepo := database.NewOAuthAccountRepo(databaseData)
 	oAuthUsecase := biz.NewOAuthUsecase(oAuthAccountRepo, userRepo, authUsecase, bootstrap)
-	httpServer := server.NewHTTPServer(bootstrap, services, registry, handler, tokenManager, checker, memoryStore, oAuthUsecase, logger)
+	httpServer := server.NewHTTPServer(bootstrap, services, registry, handler, tokenManager, checker, manager, memoryStore, oAuthUsecase, logger)
 	app := newApp(logger, grpcServer, httpServer)
 	return app, func() {
 		cleanup2()

@@ -13,6 +13,7 @@ var ProviderSet = wire.NewSet(
 	database.NewRoleRepo,
 	database.NewRefreshTokenRepo,
 	database.NewRBACRepo,
+	database.NewPolicyRepo,
 	database.NewOAuthAccountRepo,
 	NewHealthChecker,
 )

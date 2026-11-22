@@ -23,12 +23,14 @@ var (
 
 // Claims is the payload carried by both access and refresh tokens.
 type Claims struct {
-	UserID             string `json:"uid"`
-	Username           string `json:"usr"`
-	SessionID          string `json:"sid"`
-	TokenType          string `json:"typ"`
-	Admin              bool   `json:"adm,omitempty"`
-	MustChangePassword bool   `json:"mcp,omitempty"`
+	UserID             string   `json:"uid"`
+	Username           string   `json:"usr"`
+	SessionID          string   `json:"sid"`
+	TokenType          string   `json:"typ"`
+	Admin              bool     `json:"adm,omitempty"`
+	MustChangePassword bool     `json:"mcp,omitempty"`
+	Roles              []string `json:"roles,omitempty"`
+	IdentityProvider   string   `json:"idp,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -60,7 +62,7 @@ func NewTokenManager(bc *conf.Bootstrap) *TokenManager {
 }
 
 // Issue creates an access/refresh token pair for the given identity.
-func (m *TokenManager) Issue(userID, username, sessionID string, admin, mustChangePassword bool) (string, string, int32, error) {
+func (m *TokenManager) Issue(userID, username, sessionID string, admin, mustChangePassword bool, roles []string, identityProvider string) (string, string, int32, error) {
 	now := time.Now()
 	access, err := m.sign(Claims{
 		UserID:             userID,
@@ -69,6 +71,8 @@ func (m *TokenManager) Issue(userID, username, sessionID string, admin, mustChan
 		TokenType:          TokenTypeAccess,
 		Admin:              admin,
 		MustChangePassword: mustChangePassword,
+		Roles:              roles,
+		IdentityProvider:   identityProvider,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    m.issuer,
 			Subject:   userID,
@@ -88,6 +92,8 @@ func (m *TokenManager) Issue(userID, username, sessionID string, admin, mustChan
 		TokenType:          TokenTypeRefresh,
 		Admin:              admin,
 		MustChangePassword: mustChangePassword,
+		Roles:              roles,
+		IdentityProvider:   identityProvider,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    m.issuer,
 			Subject:   userID,

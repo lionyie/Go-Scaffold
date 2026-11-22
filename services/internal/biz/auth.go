@@ -44,7 +44,11 @@ func (uc *AuthUsecase) Login(ctx context.Context, username, password string) (*L
 	if user.Status != "" && user.Status != "active" {
 		return nil, ErrForbidden()
 	}
-	return uc.issue(ctx, user)
+	roles, err := uc.checker.Permissions(ctx, user.ID)
+	if err != nil {
+		return nil, ErrInternal("failed to resolve user roles")
+	}
+	return uc.issue(ctx, user, roles, authpkg.IdentityProviderLocal, user.MustChangePassword)
 }
 
 func (uc *AuthUsecase) Refresh(ctx context.Context, rawToken string) (*LoginResult, error) {
@@ -70,7 +74,7 @@ func (uc *AuthUsecase) Refresh(ctx context.Context, rawToken string) (*LoginResu
 	if err != nil {
 		return nil, ErrTokenInvalid()
 	}
-	return uc.issue(ctx, user)
+	return uc.issueForClaims(ctx, user, claims)
 }
 
 func (uc *AuthUsecase) Logout(ctx context.Context, rawToken string) error {
@@ -89,10 +93,10 @@ func (uc *AuthUsecase) Permissions(ctx context.Context, userID string) ([]string
 	return uc.checker.Permissions(ctx, userID)
 }
 
-// IssueForUser issues a token pair for an already authenticated user. It is
-// used by OAuth and other external identity flows.
-func (uc *AuthUsecase) IssueForUser(ctx context.Context, user *User) (*LoginResult, error) {
-	return uc.issue(ctx, user)
+// IssueForUser issues a token pair for an authenticated external identity. The
+// roles come from the identity provider (for example Keycloak realm roles).
+func (uc *AuthUsecase) IssueForUser(ctx context.Context, user *User, roles []string) (*LoginResult, error) {
+	return uc.issue(ctx, user, roles, authpkg.IdentityProviderOIDC, false)
 }
 
 // ChangePassword rotates the caller's password and clears the forced-rotation
@@ -120,9 +124,12 @@ func (uc *AuthUsecase) ChangePassword(ctx context.Context, userID, oldPassword, 
 	return nil
 }
 
-func (uc *AuthUsecase) issue(ctx context.Context, user *User) (*LoginResult, error) {
+func (uc *AuthUsecase) issue(ctx context.Context, user *User, roles []string, identityProvider string, mustChangePassword bool) (*LoginResult, error) {
 	sessionID := id.New()
-	access, refresh, expiresIn, err := uc.tm.Issue(user.ID, user.Username, sessionID, user.IsAdmin, user.MustChangePassword)
+	admin := user.IsAdmin || hasRole(roles, "admin")
+	access, refresh, expiresIn, err := uc.tm.Issue(
+		user.ID, user.Username, sessionID, admin, mustChangePassword, roles, identityProvider,
+	)
 	if err != nil {
 		return nil, ErrInternal("failed to issue tokens")
 	}
@@ -142,6 +149,26 @@ func (uc *AuthUsecase) issue(ctx context.Context, user *User) (*LoginResult, err
 		ExpiresIn:    expiresIn,
 		User:         user,
 	}, nil
+}
+
+func (uc *AuthUsecase) issueForClaims(ctx context.Context, user *User, claims *authpkg.Claims) (*LoginResult, error) {
+	if claims.IdentityProvider == authpkg.IdentityProviderOIDC {
+		return uc.issue(ctx, user, claims.Roles, authpkg.IdentityProviderOIDC, false)
+	}
+	roles, err := uc.checker.Permissions(ctx, user.ID)
+	if err != nil {
+		return nil, ErrInternal("failed to resolve user roles")
+	}
+	return uc.issue(ctx, user, roles, authpkg.IdentityProviderLocal, user.MustChangePassword)
+}
+
+func hasRole(roles []string, code string) bool {
+	for _, role := range roles {
+		if role == code {
+			return true
+		}
+	}
+	return false
 }
 
 func hashToken(raw string) string {

@@ -13,6 +13,7 @@ import { installPluginHost } from '@scaffold/plugin-runtime'
 
 import App from './App.vue'
 import { configureApi } from './api/client'
+import { vPermission } from './directives/permission'
 import { i18n } from './i18n'
 import router from './router'
 import { useAuthStore } from './stores/auth'
@@ -30,6 +31,7 @@ app.use(i18n)
 app.use(vuetify)
 app.component('AppSnackbar', AppSnackbar)
 app.component('ConfirmDialog', ConfirmDialog)
+app.directive('permission', vPermission)
 
 const auth = useAuthStore()
 configureApi({

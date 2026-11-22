@@ -5,6 +5,7 @@ export const codegenDirs = [
   { path: 'services/api', keep: ['services/api/identity/v1/redact.go'] },
   { path: 'services/internal/conf/conf.pb.go' },
   { path: 'services/internal/pkg/rbac/permissions_gen.go' },
+  { path: 'services/internal/pkg/operations/operations_gen.go' },
   { path: 'packages/api-client/generated' },
   { path: 'packages/api-client/src/generated' },
   { path: 'services/internal/swagger/generated' },

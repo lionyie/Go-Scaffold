@@ -65,3 +65,31 @@ func (s *RoleService) ListPermissions(ctx context.Context, _ *v1.ListPermissions
 	}
 	return &v1.ListPermissionsResponse{Items: assembler.PermissionsToProto(items)}, nil
 }
+
+func (s *RoleService) CreatePermission(ctx context.Context, req *v1.CreatePermissionRequest) (*v1.CreatePermissionResponse, error) {
+	permission, err := s.uc.CreatePermission(ctx, assembler.PermissionFromProto(req.GetPermission()))
+	if err != nil {
+		return nil, err
+	}
+	return &v1.CreatePermissionResponse{Permission: assembler.PermissionToProto(permission)}, nil
+}
+
+func (s *RoleService) UpdatePermission(ctx context.Context, req *v1.UpdatePermissionRequest) (*v1.UpdatePermissionResponse, error) {
+	permission := assembler.PermissionFromProto(req.GetPermission())
+	if permission == nil {
+		return nil, biz.ErrInvalidArgument("permission is required")
+	}
+	permission.Code = req.GetCode()
+	updated, err := s.uc.UpdatePermission(ctx, permission)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.UpdatePermissionResponse{Permission: assembler.PermissionToProto(updated)}, nil
+}
+
+func (s *RoleService) DeletePermission(ctx context.Context, req *v1.DeletePermissionRequest) (*v1.DeletePermissionResponse, error) {
+	if err := s.uc.DeletePermission(ctx, req.GetCode()); err != nil {
+		return nil, err
+	}
+	return &v1.DeletePermissionResponse{}, nil
+}

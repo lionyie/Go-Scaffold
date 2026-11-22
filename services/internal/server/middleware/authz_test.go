@@ -10,7 +10,24 @@ import (
 	identityv1 "github.com/example/scaffold/services/api/identity/v1"
 	systemv1 "github.com/example/scaffold/services/api/system/v1"
 	authpkg "github.com/example/scaffold/services/internal/pkg/auth"
+	"github.com/example/scaffold/services/internal/server/authz"
 )
+
+type fakePolicyRepo struct{}
+
+func (fakePolicyRepo) ListOperationPolicies(context.Context) (map[string]string, error) {
+	return map[string]string{}, nil
+}
+
+func (fakePolicyRepo) GetOperationPolicy(context.Context, string) (string, bool, error) {
+	return "", false, nil
+}
+
+func (fakePolicyRepo) SetOperationPolicy(context.Context, string, string) error { return nil }
+
+func (fakePolicyRepo) DeleteOperationPolicy(context.Context, string) error { return nil }
+
+func (fakePolicyRepo) PermissionExists(context.Context, string) (bool, error) { return true, nil }
 
 type fakeChecker struct {
 	allowed map[string]bool
@@ -61,13 +78,13 @@ func (f *fakeTransport) Operation() string               { return f.operation }
 func (f *fakeTransport) RequestHeader() transport.Header { return fakeHeader{} }
 func (f *fakeTransport) ReplyHeader() transport.Header   { return fakeHeader{} }
 
-func runAuthz(t *testing.T, checker fakeChecker, operation string, principal *authpkg.Principal) (any, error) {
+func runAuthz(t *testing.T, _ fakeChecker, operation string, principal *authpkg.Principal) (any, error) {
 	t.Helper()
 	ctx := transport.NewServerContext(context.Background(), &fakeTransport{operation: operation})
 	if principal != nil {
 		ctx = authpkg.WithPrincipal(ctx, principal)
 	}
-	handler := Authz(checker)(func(context.Context, any) (any, error) { return "ok", nil })
+	handler := Authz(authz.NewManager(fakePolicyRepo{}))(func(context.Context, any) (any, error) { return "ok", nil })
 	return handler(ctx, struct{}{})
 }
 
@@ -109,7 +126,8 @@ func TestAuthzDeniesWithoutPermission(t *testing.T) {
 
 func TestAuthzAllowsWithPermission(t *testing.T) {
 	checker := fakeChecker{allowed: map[string]bool{"u1|user:list": true}}
-	if _, err := runAuthz(t, checker, identityv1.OperationUserServiceListUsers, &authpkg.Principal{UserID: "u1", Username: "viewer"}); err != nil {
+	principal := &authpkg.Principal{UserID: "u1", Username: "viewer", Roles: []string{"user:list"}}
+	if _, err := runAuthz(t, checker, identityv1.OperationUserServiceListUsers, principal); err != nil {
 		t.Fatalf("permission should allow: %v", err)
 	}
 }
@@ -124,7 +142,7 @@ func TestAuthzAdminBypass(t *testing.T) {
 
 func TestAuthzMustChangePassword(t *testing.T) {
 	checker := fakeChecker{allowed: map[string]bool{"u1|user:list": true}}
-	principal := &authpkg.Principal{UserID: "u1", Username: "admin", MustChangePassword: true}
+	principal := &authpkg.Principal{UserID: "u1", Username: "admin", MustChangePassword: true, Roles: []string{"user:list"}}
 	_, err := runAuthz(t, checker, identityv1.OperationUserServiceListUsers, principal)
 	assertCode(t, err, 403, "MUST_CHANGE_PASSWORD")
 

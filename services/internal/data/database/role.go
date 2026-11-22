@@ -148,14 +148,69 @@ func (r *roleRepo) ListPermissions(ctx context.Context) ([]*biz.Permission, erro
 	}
 	items := make([]*biz.Permission, 0, len(rows))
 	for i := range rows {
-		items = append(items, &biz.Permission{
-			Code:     rows[i].Code,
-			Name:     rows[i].Name,
-			Resource: rows[i].Resource,
-			Action:   rows[i].Action,
-		})
+		items = append(items, toBizPermission(&rows[i]))
 	}
 	return items, nil
+}
+
+func (r *roleRepo) CreatePermission(ctx context.Context, permission *biz.Permission) (*biz.Permission, error) {
+	source := permission.Source
+	if source == "" {
+		source = biz.PermissionSourceCustom
+	}
+	po := &model.PermissionPO{
+		Code:     permission.Code,
+		Name:     permission.Name,
+		Resource: permission.Resource,
+		Action:   permission.Action,
+		Source:   source,
+	}
+	if err := r.data.DB.WithContext(ctx).Create(po).Error; err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return nil, biz.ErrPermissionAlreadyExists()
+		}
+		return nil, err
+	}
+	return toBizPermission(po), nil
+}
+
+func (r *roleRepo) UpdatePermission(ctx context.Context, permission *biz.Permission) (*biz.Permission, error) {
+	var po model.PermissionPO
+	if err := r.data.DB.WithContext(ctx).Where("code = ?", permission.Code).First(&po).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, biz.ErrPermissionNotFound()
+		}
+		return nil, err
+	}
+	po.Name = permission.Name
+	po.Resource = permission.Resource
+	po.Action = permission.Action
+	if err := r.data.DB.WithContext(ctx).Save(&po).Error; err != nil {
+		return nil, err
+	}
+	return toBizPermission(&po), nil
+}
+
+func (r *roleRepo) DeletePermission(ctx context.Context, code string) error {
+	var po model.PermissionPO
+	if err := r.data.DB.WithContext(ctx).Where("code = ?", code).First(&po).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return biz.ErrPermissionNotFound()
+		}
+		return err
+	}
+	if po.Source != biz.PermissionSourceCustom {
+		return biz.ErrPermissionReadOnly()
+	}
+	return r.data.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("permission_code = ?", code).Delete(&model.RolePermissionPO{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("permission_code = ?", code).Delete(&model.OperationPolicyPO{}).Error; err != nil {
+			return err
+		}
+		return tx.Delete(&po).Error
+	})
 }
 
 func (r *roleRepo) UpsertPermissions(ctx context.Context, permissions []*biz.Permission) error {
@@ -164,11 +219,16 @@ func (r *roleRepo) UpsertPermissions(ctx context.Context, permissions []*biz.Per
 	}
 	rows := make([]model.PermissionPO, 0, len(permissions))
 	for _, p := range permissions {
+		source := p.Source
+		if source == "" {
+			source = biz.PermissionSourcePlugin
+		}
 		rows = append(rows, model.PermissionPO{
 			Code:     p.Code,
 			Name:     p.Name,
 			Resource: p.Resource,
 			Action:   p.Action,
+			Source:   source,
 		})
 	}
 	return r.data.DB.WithContext(ctx).
@@ -245,5 +305,15 @@ func toBizRole(po *model.RolePO, permissions []string) *biz.Role {
 		Description: po.Description,
 		IsSystem:    po.IsSystem,
 		Permissions: permissions,
+	}
+}
+
+func toBizPermission(po *model.PermissionPO) *biz.Permission {
+	return &biz.Permission{
+		Code:     po.Code,
+		Name:     po.Name,
+		Resource: po.Resource,
+		Action:   po.Action,
+		Source:   po.Source,
 	}
 }

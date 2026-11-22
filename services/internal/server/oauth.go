@@ -164,7 +164,12 @@ func (h *OAuthHandler) callback(w http.ResponseWriter, r *http.Request) {
 		h.redirectError(w, r, "token exchange failed")
 		return
 	}
-	user, err := provider.UserInfo(r.Context(), token)
+	var user *oauth.OAuthUser
+	if verifier, ok := provider.(oauth.NonceVerifier); ok && state.Nonce != "" {
+		user, err = verifier.UserInfoWithNonce(r.Context(), token, state.Nonce)
+	} else {
+		user, err = provider.UserInfo(r.Context(), token)
+	}
 	if err != nil {
 		h.redirectError(w, r, "failed to load provider profile")
 		return

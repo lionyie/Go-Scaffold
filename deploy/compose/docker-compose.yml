@@ -28,9 +28,12 @@ services:
     ports:
       - "8000:8000"
       - "9000:9000"
+    volumes:
+      - plugin-data:/app/data
     depends_on:
       mysql:
         condition: service_healthy
 
 volumes:
   mysql-data:
+  plugin-data:

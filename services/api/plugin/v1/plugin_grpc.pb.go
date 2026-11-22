@@ -19,8 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PluginService_ListPlugins_FullMethodName = "/plugin.v1.PluginService/ListPlugins"
-	PluginService_GetPlugin_FullMethodName   = "/plugin.v1.PluginService/GetPlugin"
+	PluginService_ListPlugins_FullMethodName     = "/plugin.v1.PluginService/ListPlugins"
+	PluginService_GetPlugin_FullMethodName       = "/plugin.v1.PluginService/GetPlugin"
+	PluginService_InstallPlugin_FullMethodName   = "/plugin.v1.PluginService/InstallPlugin"
+	PluginService_UninstallPlugin_FullMethodName = "/plugin.v1.PluginService/UninstallPlugin"
 )
 
 // PluginServiceClient is the client API for PluginService service.
@@ -29,6 +31,8 @@ const (
 type PluginServiceClient interface {
 	ListPlugins(ctx context.Context, in *ListPluginsRequest, opts ...grpc.CallOption) (*ListPluginsResponse, error)
 	GetPlugin(ctx context.Context, in *GetPluginRequest, opts ...grpc.CallOption) (*GetPluginResponse, error)
+	InstallPlugin(ctx context.Context, in *InstallPluginRequest, opts ...grpc.CallOption) (*InstallPluginResponse, error)
+	UninstallPlugin(ctx context.Context, in *UninstallPluginRequest, opts ...grpc.CallOption) (*UninstallPluginResponse, error)
 }
 
 type pluginServiceClient struct {
@@ -59,12 +63,34 @@ func (c *pluginServiceClient) GetPlugin(ctx context.Context, in *GetPluginReques
 	return out, nil
 }
 
+func (c *pluginServiceClient) InstallPlugin(ctx context.Context, in *InstallPluginRequest, opts ...grpc.CallOption) (*InstallPluginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InstallPluginResponse)
+	err := c.cc.Invoke(ctx, PluginService_InstallPlugin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pluginServiceClient) UninstallPlugin(ctx context.Context, in *UninstallPluginRequest, opts ...grpc.CallOption) (*UninstallPluginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UninstallPluginResponse)
+	err := c.cc.Invoke(ctx, PluginService_UninstallPlugin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PluginServiceServer is the server API for PluginService service.
 // All implementations must embed UnimplementedPluginServiceServer
 // for forward compatibility.
 type PluginServiceServer interface {
 	ListPlugins(context.Context, *ListPluginsRequest) (*ListPluginsResponse, error)
 	GetPlugin(context.Context, *GetPluginRequest) (*GetPluginResponse, error)
+	InstallPlugin(context.Context, *InstallPluginRequest) (*InstallPluginResponse, error)
+	UninstallPlugin(context.Context, *UninstallPluginRequest) (*UninstallPluginResponse, error)
 	mustEmbedUnimplementedPluginServiceServer()
 }
 
@@ -80,6 +106,12 @@ func (UnimplementedPluginServiceServer) ListPlugins(context.Context, *ListPlugin
 }
 func (UnimplementedPluginServiceServer) GetPlugin(context.Context, *GetPluginRequest) (*GetPluginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPlugin not implemented")
+}
+func (UnimplementedPluginServiceServer) InstallPlugin(context.Context, *InstallPluginRequest) (*InstallPluginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method InstallPlugin not implemented")
+}
+func (UnimplementedPluginServiceServer) UninstallPlugin(context.Context, *UninstallPluginRequest) (*UninstallPluginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UninstallPlugin not implemented")
 }
 func (UnimplementedPluginServiceServer) mustEmbedUnimplementedPluginServiceServer() {}
 func (UnimplementedPluginServiceServer) testEmbeddedByValue()                       {}
@@ -138,6 +170,42 @@ func _PluginService_GetPlugin_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PluginService_InstallPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InstallPluginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PluginServiceServer).InstallPlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PluginService_InstallPlugin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PluginServiceServer).InstallPlugin(ctx, req.(*InstallPluginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PluginService_UninstallPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UninstallPluginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PluginServiceServer).UninstallPlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PluginService_UninstallPlugin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PluginServiceServer).UninstallPlugin(ctx, req.(*UninstallPluginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PluginService_ServiceDesc is the grpc.ServiceDesc for PluginService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +220,14 @@ var PluginService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPlugin",
 			Handler:    _PluginService_GetPlugin_Handler,
+		},
+		{
+			MethodName: "InstallPlugin",
+			Handler:    _PluginService_InstallPlugin_Handler,
+		},
+		{
+			MethodName: "UninstallPlugin",
+			Handler:    _PluginService_UninstallPlugin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

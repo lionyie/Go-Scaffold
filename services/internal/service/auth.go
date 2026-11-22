@@ -63,13 +63,9 @@ func (s *AuthService) GetCurrentUser(ctx context.Context, _ *identityv1.GetCurre
 	if err != nil {
 		return nil, err
 	}
-	permissions, err := s.uc.Permissions(ctx, principal.UserID)
-	if err != nil {
-		return nil, err
-	}
 	return &identityv1.GetCurrentUserResponse{
 		User:        assembler.UserToProto(user),
-		Permissions: permissions,
+		Permissions: principal.Roles,
 	}, nil
 }
 

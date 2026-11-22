@@ -1,0 +1,103 @@
+{
+  "realm": "scaffold",
+  "displayName": "Scaffold",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "roles": {
+    "realm": [
+      { "name": "admin", "description": "Scaffold administrator (maps to is_admin)" },
+      { "name": "member", "description": "Regular member" },
+      {
+        "name": "viewer",
+        "description": "Read-only administrator",
+        "composite": true,
+        "composites": {
+          "realm": ["user:list", "role:list", "permission:list", "plugin:list", "plugin:read"]
+        }
+      },
+      { "name": "user:list", "description": "List users" },
+      { "name": "user:create", "description": "Create user" },
+      { "name": "user:update", "description": "Update user" },
+      { "name": "user:delete", "description": "Delete user" },
+      { "name": "role:list", "description": "List roles" },
+      { "name": "role:create", "description": "Create role" },
+      { "name": "role:update", "description": "Update role" },
+      { "name": "role:delete", "description": "Delete role" },
+      { "name": "permission:list", "description": "List permissions" },
+      { "name": "permission:create", "description": "Create permission" },
+      { "name": "permission:update", "description": "Update permission" },
+      { "name": "permission:delete", "description": "Delete permission" },
+      { "name": "permission:assign", "description": "Bind operations to permissions" },
+      { "name": "plugin:list", "description": "List plugins" },
+      { "name": "plugin:read", "description": "Read plugin" },
+      { "name": "plugin:manage", "description": "Install and uninstall plugins" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "scaffold-admin",
+      "name": "Scaffold Admin",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "dev-scaffold-admin-secret",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:8000/api/v1/auth/oauth/oidc/callback",
+        "http://127.0.0.1:8000/api/v1/auth/oauth/oidc/callback"
+      ],
+      "webOrigins": [
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+        "http://localhost:5175",
+        "http://127.0.0.1:5175"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@example.com",
+      "emailVerified": true,
+      "firstName": "Scaffold",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin"]
+    },
+    {
+      "username": "viewer",
+      "enabled": true,
+      "email": "viewer@example.com",
+      "emailVerified": true,
+      "firstName": "Scaffold",
+      "lastName": "Viewer",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "viewer123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["viewer"]
+    }
+  ]
+}

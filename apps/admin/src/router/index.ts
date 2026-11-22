@@ -48,12 +48,6 @@ const router = createRouter({
           meta: { titleKey: 'nav.roles', permission: Permission.RoleList },
         },
         {
-          path: 'permissions',
-          name: 'permissions',
-          component: () => import('../views/PermissionsView.vue'),
-          meta: { titleKey: 'nav.permissions', permission: Permission.RolePermissionList },
-        },
-        {
           path: 'plugins',
           name: 'plugins',
           component: () => import('../views/PluginListView.vue'),

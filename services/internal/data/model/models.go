@@ -42,9 +42,21 @@ type PermissionPO struct {
 	Name     string `gorm:"size:128"`
 	Resource string `gorm:"size:64"`
 	Action   string `gorm:"size:64"`
+	// Source is builtin, plugin, or custom. Only custom rows are editable
+	// and deletable through the API.
+	Source string `gorm:"size:16;not null;default:builtin"`
 }
 
 func (PermissionPO) TableName() string { return "permissions" }
+
+// OperationPolicyPO overrides an operation's permission at runtime.
+type OperationPolicyPO struct {
+	Operation      string `gorm:"primaryKey;size:128"`
+	PermissionCode string `gorm:"size:128;not null"`
+	UpdatedAt      time.Time
+}
+
+func (OperationPolicyPO) TableName() string { return "operation_permissions" }
 
 // RolePermissionPO joins roles to permissions.
 type RolePermissionPO struct {

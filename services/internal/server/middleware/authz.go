@@ -8,17 +8,21 @@ import (
 
 	"github.com/example/scaffold/services/internal/biz"
 	"github.com/example/scaffold/services/internal/pkg/auth"
-	"github.com/example/scaffold/services/internal/pkg/rbac"
 	"github.com/example/scaffold/services/internal/server/authz"
 )
 
-// Authz enforces the operation-to-permission map. Unknown operations fail
-// closed so that a new endpoint cannot silently become public.
-func Authz(checker rbac.Checker) middleware.Middleware {
+// Authz enforces the operation-to-permission map. The manager resolves runtime
+// database bindings over the compiled mapping, and the permission check reads
+// the roles carried by the session token. Unknown operations fail closed so
+// that a new endpoint cannot silently become public.
+func Authz(manager *authz.Manager) middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req any) (any, error) {
 			operation := contextOperation(ctx)
-			rule, ok := authz.Requirements[operation]
+			rule, ok, err := manager.Resolve(ctx, operation)
+			if err != nil {
+				return nil, biz.ErrInternal("authorization check failed")
+			}
 			if !ok {
 				return nil, biz.ErrForbidden()
 			}
@@ -36,18 +40,10 @@ func Authz(checker rbac.Checker) middleware.Middleware {
 			if principal.MustChangePassword && rule.Code != "" && operation != identityChangePasswordOperation {
 				return nil, biz.ErrMustChangePassword()
 			}
-			if principal.IsAdmin || rule.Code == "" {
+			if principal.IsAdmin || rule.Code == "" || principal.HasRole(rule.Code) {
 				return handler(ctx, req)
 			}
-
-			allowed, err := checker.HasGlobal(ctx, principal.UserID, rule.Code)
-			if err != nil {
-				return nil, biz.ErrInternal("authorization check failed")
-			}
-			if !allowed {
-				return nil, biz.ErrForbidden()
-			}
-			return handler(ctx, req)
+			return nil, biz.ErrForbidden()
 		}
 	}
 }

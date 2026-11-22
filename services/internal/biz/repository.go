@@ -1,6 +1,10 @@
 package biz
 
-import "context"
+import (
+	"context"
+
+	authpkg "github.com/example/scaffold/services/internal/pkg/auth"
+)
 
 // ListOptions is the transport-independent query shape shared by repositories.
 type ListOptions struct {
@@ -44,12 +48,22 @@ type Role struct {
 	Permissions []string
 }
 
+// Permission source values. Builtin permissions come from the generated
+// catalog, plugin permissions from plugin manifests, and custom permissions
+// from the admin API.
+const (
+	PermissionSourceBuiltin = "builtin"
+	PermissionSourcePlugin  = "plugin"
+	PermissionSourceCustom  = "custom"
+)
+
 // Permission is a single authorization capability.
 type Permission struct {
 	Code     string
 	Name     string
 	Resource string
 	Action   string
+	Source   string
 }
 
 // RoleRepo is the storage contract for roles and the permission catalog.
@@ -60,8 +74,21 @@ type RoleRepo interface {
 	Update(ctx context.Context, role *Role) (*Role, error)
 	Delete(ctx context.Context, id string) error
 	ListPermissions(ctx context.Context) ([]*Permission, error)
+	CreatePermission(ctx context.Context, permission *Permission) (*Permission, error)
+	UpdatePermission(ctx context.Context, permission *Permission) (*Permission, error)
+	DeletePermission(ctx context.Context, code string) error
 	UpsertPermissions(ctx context.Context, permissions []*Permission) error
 	AssignRole(ctx context.Context, userID, roleName string) error
+}
+
+// PolicyRepo stores runtime overrides that bind an HTTP operation to a
+// permission code. The compiled mapping remains the fallback.
+type PolicyRepo interface {
+	ListOperationPolicies(ctx context.Context) (map[string]string, error)
+	GetOperationPolicy(ctx context.Context, operation string) (string, bool, error)
+	SetOperationPolicy(ctx context.Context, operation, permissionCode string) error
+	DeleteOperationPolicy(ctx context.Context, operation string) error
+	PermissionExists(ctx context.Context, code string) (bool, error)
 }
 
 // RefreshToken is a persisted, revocable refresh token handle. The raw token is
@@ -112,12 +139,16 @@ type PluginInfo struct {
 	Routes      []PluginRoute
 	Navigations []PluginNav
 	Permissions []string
+	Source      string
 }
 
 // PluginLister is implemented by the plugin registry.
 type PluginLister interface {
-	ListPlugins(ctx context.Context, userID string, admin bool) ([]*PluginInfo, error)
+	ListPlugins(ctx context.Context, principal *authpkg.Principal) ([]*PluginInfo, error)
 	GetPlugin(ctx context.Context, id string) (*PluginInfo, error)
+	InstallFromGit(ctx context.Context, rawURL, ref string, replace bool) (*PluginInfo, error)
+	InstallFromArchive(ctx context.Context, data []byte, replace bool) (*PluginInfo, error)
+	Uninstall(ctx context.Context, id string) error
 }
 
 // HealthChecker reports the state of the backing stores for readiness probes.

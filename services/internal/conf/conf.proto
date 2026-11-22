@@ -65,6 +65,8 @@ message Plugins {
   bool dev = 2;
   bool strict = 3;
   repeated string allowed_upstreams = 4;
+  string install_dir = 5;
+  repeated string allowed_repos = 6;
 }
 
 message Web {

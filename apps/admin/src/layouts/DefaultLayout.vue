@@ -41,7 +41,6 @@ function iconFor(path: string): string {
     '/dashboard': 'mdi-view-dashboard-outline',
     '/users': 'mdi-account-group-outline',
     '/roles': 'mdi-shield-account-outline',
-    '/permissions': 'mdi-key-chain-variant',
     '/plugins': 'mdi-puzzle-outline',
     '/profile': 'mdi-account-circle-outline',
   }

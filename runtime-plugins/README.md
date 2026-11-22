@@ -29,6 +29,31 @@ host's Vuetify components, and calls a static API endpoint.
 5. **Plugin API.** Calls go to `/proxy/plugins/<id>/api/<path>` and are served
    from `<plugin>/server/` (static) or proxied to an upstream.
 
+## Installing plugins
+
+The admin **Plugins** page can install a plugin without restarting the server.
+Both sources expect a **prebuilt** plugin: `plugin.json` plus `dist/` at the root.
+
+- **Git repository**: a public HTTPS repository (optional branch/tag). The server
+  runs `git clone --depth 1`; it never runs build scripts.
+- **ZIP upload**: up to 10 MiB, containing `plugin.json` and `dist/`.
+
+Installed plugins live under `plugins.install_dir` (`data/plugins` in local dev),
+not in `runtime-plugins/`. Uninstall only removes installed plugins; bundled ones
+are protected. Both actions require the `plugin:manage` permission.
+
+Security notes:
+
+- Installed plugin JavaScript runs in the admin origin with no sandbox. Only
+  install artifacts you trust.
+- ZIP paths are validated, size limits are enforced, and the server never
+  executes plugin code at install time.
+- `plugins.allowed_repos` can restrict Git sources to specific hosts/prefixes.
+- Git installs shell out to the `git` binary. The Docker image includes it; local
+  runs need `git` on `PATH`. In compose, `data/plugins` is kept in the
+  `plugin-data` volume; Kubernetes needs a persistent volume for installs to
+  survive pod replacement.
+
 ## Directory layout
 
 ```text

@@ -1,4 +1,43 @@
 {
   "schemaVersion": 1,
-  "extensions": {}
+  "extensions": {
+    "oauth-oidc": {
+      "version": "1.0.0",
+      "kind": "feature",
+      "requires": [
+        "auth-core"
+      ],
+      "installedAt": "2026-11-22T09:14:30.151Z",
+      "baseHash": "c2aabf75a807a1050138a7fc863cd3d24c25db5cca4bb172261de8e9c5baa0b0",
+      "codegen": false,
+      "generatedDirs": [],
+      "files": [
+        {
+          "path": "services/internal/auth/oauth/providers/oidc.go",
+          "hash": "c44e67e1de178e4a06ab9533f8d0227d7c98a3ee64a115d95a6793d66faebbcc"
+        },
+        {
+          "path": "services/internal/auth/oauth/providers/oidc_test.go",
+          "hash": "c1a4e60b9e22824c96f711dd427fe008ca52ab5073c148e7ce94b770849f9710"
+        }
+      ],
+      "generatedFiles": [
+        "services/internal/auth/oauthproviders_gen/providers_gen.go",
+        "services/internal/extensions/registry_gen/registry_gen.go",
+        "services/internal/server/authz/extensions_gen.go",
+        "apps/admin/src/router/features.gen.ts",
+        "apps/web/src/router/features.gen.ts"
+      ],
+      "targets": {
+        "admin": {
+          "routes": [],
+          "menu": []
+        },
+        "web": {
+          "routes": [],
+          "menu": []
+        }
+      }
+    }
+  }
 }

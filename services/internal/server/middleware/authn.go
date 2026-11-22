@@ -22,6 +22,8 @@ func Authn(tokens *authpkg.TokenManager) middleware.Middleware {
 						SessionID:          claims.SessionID,
 						IsAdmin:            claims.Admin,
 						MustChangePassword: claims.MustChangePassword,
+						Roles:              claims.Roles,
+						IdentityProvider:   claims.IdentityProvider,
 					})
 				}
 			}

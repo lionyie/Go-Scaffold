@@ -99,11 +99,47 @@ pnpm run module:add -- oauth-oidc
 
 Each provider reads environment variables (for example `SCAFFOLD_OAUTH_GITHUB_CLIENT_ID` and `_CLIENT_SECRET`) and appears on the admin login page when configured. See [docs/auth.md](docs/auth.md).
 
+## Keycloak (OIDC, optional)
+
+The scaffold can authenticate against any OIDC provider, but it does not depend
+on one. A Keycloak realm for local development ships as an opt-in compose
+override:
+
+```bash
+docker compose -f deploy/compose/docker-compose.yml \
+               -f deploy/compose/docker-compose.keycloak.yml up -d keycloak   # http://localhost:8080
+```
+
+Start the API with the matching OIDC settings:
+
+```bash
+SCAFFOLD_OAUTH_STATE_SECRET=dev-only-oauth-state-secret \
+SCAFFOLD_OAUTH_OIDC_ISSUER=http://localhost:8080/realms/scaffold \
+SCAFFOLD_OAUTH_OIDC_CLIENT_ID=scaffold-admin \
+SCAFFOLD_OAUTH_OIDC_CLIENT_SECRET=dev-scaffold-admin-secret \
+SCAFFOLD_OAUTH_OIDC_DISPLAY_NAME=Keycloak \
+SCAFFOLD_OAUTH_AUTO_REGISTER=true \
+pnpm run dev:server
+```
+
+Sign in with `admin@example.com / admin123`. The verified email links the
+Keycloak identity to the seeded local administrator. Keycloak realm roles are
+the permission codes (`user:list`, `role:create`, ...); a role named `admin`
+implies full access. `viewer@example.com / viewer123` has read-only roles. Local
+password login stays available. See [docs/auth.md](docs/auth.md).
+
 ## Runtime plugins (experimental)
 
 A runnable example lives in `runtime-plugins/hello-panel/`. It registers a route
 and sidebar entry, uses the host's Vuetify components without bundling Vuetify,
 and calls a static API endpoint through the authenticated plugin proxy.
+
+Plugins are served from their built `dist/` directory. If the Hello plugin fails
+to load with a 404 for `index.js`, run `pnpm run build:plugins` once.
+
+The admin **Plugins** page can also install a prebuilt plugin from a public Git
+repository or a ZIP upload; installs go to `data/plugins` and can be uninstalled
+without restarting.
 
 ```bash
 pnpm run build:plugins                       # build every installed plugin

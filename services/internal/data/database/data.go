@@ -78,6 +78,7 @@ func NewData(bc *conf.Bootstrap, log *slog.Logger) (*Data, func(), error) {
 			&model.UserPO{},
 			&model.RolePO{},
 			&model.PermissionPO{},
+			&model.OperationPolicyPO{},
 			&model.RolePermissionPO{},
 			&model.UserRolePO{},
 			&model.RefreshTokenPO{},

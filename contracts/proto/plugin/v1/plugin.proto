@@ -33,6 +33,8 @@ message Plugin {
   repeated PluginRoute routes = 8;
   repeated PluginNav navigations = 9;
   repeated string permissions = 10;
+  // source is bundled or installed.
+  string source = 11;
 }
 
 service PluginService {
@@ -41,6 +43,15 @@ service PluginService {
   }
   rpc GetPlugin(GetPluginRequest) returns (GetPluginResponse) {
     option (google.api.http) = { get: "/api/v1/plugins/{id}" };
+  }
+  rpc InstallPlugin(InstallPluginRequest) returns (InstallPluginResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/plugins/install"
+      body: "*"
+    };
+  }
+  rpc UninstallPlugin(UninstallPluginRequest) returns (UninstallPluginResponse) {
+    option (google.api.http) = { delete: "/api/v1/plugins/{id}" };
   }
 }
 
@@ -57,3 +68,22 @@ message GetPluginRequest {
 message GetPluginResponse {
   Plugin plugin = 1;
 }
+
+message InstallPluginRequest {
+  oneof origin {
+    string git_url = 1;
+    string archive_base64 = 2;
+  }
+  string git_ref = 3;
+  bool replace = 4;
+}
+
+message InstallPluginResponse {
+  Plugin plugin = 1;
+}
+
+message UninstallPluginRequest {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message UninstallPluginResponse {}

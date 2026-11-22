@@ -11,6 +11,12 @@ const (
 	TokenTypeRefresh = "refresh"
 )
 
+// Identity providers recorded on the session.
+const (
+	IdentityProviderLocal = "local"
+	IdentityProviderOIDC  = "oidc"
+)
+
 // Principal is the authenticated caller extracted from an access token.
 type Principal struct {
 	UserID             string
@@ -18,6 +24,21 @@ type Principal struct {
 	SessionID          string
 	IsAdmin            bool
 	MustChangePassword bool
+	Roles              []string
+	IdentityProvider   string
+}
+
+// HasRole reports whether the caller carries the given permission code.
+func (p *Principal) HasRole(code string) bool {
+	if p == nil {
+		return false
+	}
+	for _, role := range p.Roles {
+		if role == code {
+			return true
+		}
+	}
+	return false
 }
 
 type principalKey struct{}

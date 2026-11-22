@@ -32,10 +32,26 @@ permissions:
     name: Delete role
     resource: role
     action: delete
-  - code: role:permission:list
+  - code: permission:list
     name: List permissions
-    resource: role
-    action: permission:list
+    resource: permission
+    action: list
+  - code: permission:create
+    name: Create permission
+    resource: permission
+    action: create
+  - code: permission:update
+    name: Update permission
+    resource: permission
+    action: update
+  - code: permission:delete
+    name: Delete permission
+    resource: permission
+    action: delete
+  - code: permission:assign
+    name: Bind operations to permissions
+    resource: permission
+    action: assign
 
   - code: plugin:list
     name: List plugins
@@ -45,3 +61,7 @@ permissions:
     name: Read plugin
     resource: plugin
     action: read
+  - code: plugin:manage
+    name: Install and uninstall plugins
+    resource: plugin
+    action: manage

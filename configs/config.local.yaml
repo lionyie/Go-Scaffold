@@ -30,9 +30,11 @@ auth:
 
 plugins:
   dir: "${PLUGINS_DIR:../runtime-plugins}"
+  install_dir: "${PLUGINS_INSTALL_DIR:../data/plugins}"
   dev: ${PLUGINS_DEV:false}
   strict: ${PLUGINS_STRICT:false}
   allowed_upstreams: []
+  allowed_repos: []
 
 web:
   dir: "${WEB_DIR:}"

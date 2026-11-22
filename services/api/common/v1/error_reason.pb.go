@@ -26,22 +26,25 @@ const (
 type ErrorReason int32
 
 const (
-	ErrorReason_ERROR_REASON_UNSPECIFIED ErrorReason = 0
-	ErrorReason_UNAUTHORIZED             ErrorReason = 1
-	ErrorReason_FORBIDDEN                ErrorReason = 2
-	ErrorReason_INVALID_CREDENTIALS      ErrorReason = 3
-	ErrorReason_TOKEN_INVALID            ErrorReason = 4
-	ErrorReason_TOKEN_EXPIRED            ErrorReason = 5
-	ErrorReason_USER_NOT_FOUND           ErrorReason = 6
-	ErrorReason_USER_ALREADY_EXISTS      ErrorReason = 7
-	ErrorReason_ROLE_NOT_FOUND           ErrorReason = 8
-	ErrorReason_ROLE_ALREADY_EXISTS      ErrorReason = 9
-	ErrorReason_PLUGIN_NOT_FOUND         ErrorReason = 13
-	ErrorReason_STORAGE_UNAVAILABLE      ErrorReason = 14
-	ErrorReason_STORAGE_FORBIDDEN        ErrorReason = 15
-	ErrorReason_INTERNAL_ERROR           ErrorReason = 16
-	ErrorReason_INVALID_ARGUMENT         ErrorReason = 17
-	ErrorReason_MUST_CHANGE_PASSWORD     ErrorReason = 18
+	ErrorReason_ERROR_REASON_UNSPECIFIED  ErrorReason = 0
+	ErrorReason_UNAUTHORIZED              ErrorReason = 1
+	ErrorReason_FORBIDDEN                 ErrorReason = 2
+	ErrorReason_INVALID_CREDENTIALS       ErrorReason = 3
+	ErrorReason_TOKEN_INVALID             ErrorReason = 4
+	ErrorReason_TOKEN_EXPIRED             ErrorReason = 5
+	ErrorReason_USER_NOT_FOUND            ErrorReason = 6
+	ErrorReason_USER_ALREADY_EXISTS       ErrorReason = 7
+	ErrorReason_ROLE_NOT_FOUND            ErrorReason = 8
+	ErrorReason_ROLE_ALREADY_EXISTS       ErrorReason = 9
+	ErrorReason_PLUGIN_NOT_FOUND          ErrorReason = 13
+	ErrorReason_STORAGE_UNAVAILABLE       ErrorReason = 14
+	ErrorReason_STORAGE_FORBIDDEN         ErrorReason = 15
+	ErrorReason_INTERNAL_ERROR            ErrorReason = 16
+	ErrorReason_INVALID_ARGUMENT          ErrorReason = 17
+	ErrorReason_MUST_CHANGE_PASSWORD      ErrorReason = 18
+	ErrorReason_PERMISSION_NOT_FOUND      ErrorReason = 19
+	ErrorReason_PERMISSION_ALREADY_EXISTS ErrorReason = 20
+	ErrorReason_PERMISSION_READ_ONLY      ErrorReason = 21
 )
 
 // Enum value maps for ErrorReason.
@@ -63,24 +66,30 @@ var (
 		16: "INTERNAL_ERROR",
 		17: "INVALID_ARGUMENT",
 		18: "MUST_CHANGE_PASSWORD",
+		19: "PERMISSION_NOT_FOUND",
+		20: "PERMISSION_ALREADY_EXISTS",
+		21: "PERMISSION_READ_ONLY",
 	}
 	ErrorReason_value = map[string]int32{
-		"ERROR_REASON_UNSPECIFIED": 0,
-		"UNAUTHORIZED":             1,
-		"FORBIDDEN":                2,
-		"INVALID_CREDENTIALS":      3,
-		"TOKEN_INVALID":            4,
-		"TOKEN_EXPIRED":            5,
-		"USER_NOT_FOUND":           6,
-		"USER_ALREADY_EXISTS":      7,
-		"ROLE_NOT_FOUND":           8,
-		"ROLE_ALREADY_EXISTS":      9,
-		"PLUGIN_NOT_FOUND":         13,
-		"STORAGE_UNAVAILABLE":      14,
-		"STORAGE_FORBIDDEN":        15,
-		"INTERNAL_ERROR":           16,
-		"INVALID_ARGUMENT":         17,
-		"MUST_CHANGE_PASSWORD":     18,
+		"ERROR_REASON_UNSPECIFIED":  0,
+		"UNAUTHORIZED":              1,
+		"FORBIDDEN":                 2,
+		"INVALID_CREDENTIALS":       3,
+		"TOKEN_INVALID":             4,
+		"TOKEN_EXPIRED":             5,
+		"USER_NOT_FOUND":            6,
+		"USER_ALREADY_EXISTS":       7,
+		"ROLE_NOT_FOUND":            8,
+		"ROLE_ALREADY_EXISTS":       9,
+		"PLUGIN_NOT_FOUND":          13,
+		"STORAGE_UNAVAILABLE":       14,
+		"STORAGE_FORBIDDEN":         15,
+		"INTERNAL_ERROR":            16,
+		"INVALID_ARGUMENT":          17,
+		"MUST_CHANGE_PASSWORD":      18,
+		"PERMISSION_NOT_FOUND":      19,
+		"PERMISSION_ALREADY_EXISTS": 20,
+		"PERMISSION_READ_ONLY":      21,
 	}
 )
 
@@ -115,7 +124,7 @@ var File_common_v1_error_reason_proto protoreflect.FileDescriptor
 
 const file_common_v1_error_reason_proto_rawDesc = "" +
 	"\n" +
-	"\x1ccommon/v1/error_reason.proto\x12\tcommon.v1*\xef\x02\n" +
+	"\x1ccommon/v1/error_reason.proto\x12\tcommon.v1*\xc2\x03\n" +
 	"\vErrorReason\x12\x1c\n" +
 	"\x18ERROR_REASON_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fUNAUTHORIZED\x10\x01\x12\r\n" +
@@ -132,7 +141,10 @@ const file_common_v1_error_reason_proto_rawDesc = "" +
 	"\x11STORAGE_FORBIDDEN\x10\x0f\x12\x12\n" +
 	"\x0eINTERNAL_ERROR\x10\x10\x12\x14\n" +
 	"\x10INVALID_ARGUMENT\x10\x11\x12\x18\n" +
-	"\x14MUST_CHANGE_PASSWORD\x10\x12B=Z;github.com/example/scaffold/services/api/common/v1;commonv1b\x06proto3"
+	"\x14MUST_CHANGE_PASSWORD\x10\x12\x12\x18\n" +
+	"\x14PERMISSION_NOT_FOUND\x10\x13\x12\x1d\n" +
+	"\x19PERMISSION_ALREADY_EXISTS\x10\x14\x12\x18\n" +
+	"\x14PERMISSION_READ_ONLY\x10\x15B=Z;github.com/example/scaffold/services/api/common/v1;commonv1b\x06proto3"
 
 var (
 	file_common_v1_error_reason_proto_rawDescOnce sync.Once

@@ -19,6 +19,7 @@ import (
 	authpkg "github.com/example/scaffold/services/internal/pkg/auth"
 	"github.com/example/scaffold/services/internal/pkg/rbac"
 	"github.com/example/scaffold/services/internal/plugin"
+	"github.com/example/scaffold/services/internal/server/authz"
 	"github.com/example/scaffold/services/internal/server/middleware"
 	"github.com/example/scaffold/services/internal/service"
 	"github.com/example/scaffold/services/internal/swagger"
@@ -34,6 +35,7 @@ func NewHTTPServer(
 	web *webui.Handler,
 	tokens *authpkg.TokenManager,
 	checker rbac.Checker,
+	authzManager *authz.Manager,
 	oauthStore oauth.Store,
 	oauthUC *biz.OAuthUsecase,
 	log *slog.Logger,
@@ -47,7 +49,7 @@ func NewHTTPServer(
 			logging.Server(log),
 			middleware.LoginRateLimit(),
 			middleware.Authn(tokens),
-			middleware.Authz(checker),
+			middleware.Authz(authzManager),
 		),
 		khttp.NotFoundHandler(web),
 	}
@@ -65,6 +67,7 @@ func NewHTTPServer(
 	identityv1.RegisterAuthServiceHTTPServer(srv, svcs.Auth)
 	identityv1.RegisterUserServiceHTTPServer(srv, svcs.User)
 	identityv1.RegisterRoleServiceHTTPServer(srv, svcs.Role)
+	identityv1.RegisterAuthzServiceHTTPServer(srv, svcs.Authz)
 	pluginv1.RegisterPluginServiceHTTPServer(srv, svcs.Plugin)
 	systemv1.RegisterSystemServiceHTTPServer(srv, svcs.System)
 

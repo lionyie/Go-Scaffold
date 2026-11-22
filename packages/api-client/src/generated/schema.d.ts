@@ -84,6 +84,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AuthzService_ListOperations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/permission": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["AuthzService_SetOperationPermission"];
+        post?: never;
+        delete: operations["AuthzService_ResetOperationPermission"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/permissions": {
         parameters: {
             query?: never;
@@ -93,8 +125,24 @@ export interface paths {
         };
         get: operations["RoleService_ListPermissions"];
         put?: never;
-        post?: never;
+        post: operations["RoleService_CreatePermission"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/permissions/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["RoleService_UpdatePermission"];
+        post?: never;
+        delete: operations["RoleService_DeletePermission"];
         options?: never;
         head?: never;
         patch?: never;
@@ -116,6 +164,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plugins/install": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PluginService_InstallPlugin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plugins/{id}": {
         parameters: {
             query?: never;
@@ -126,7 +190,7 @@ export interface paths {
         get: operations["PluginService_GetPlugin"];
         put?: never;
         post?: never;
-        delete?: never;
+        delete: operations["PluginService_UninstallPlugin"];
         options?: never;
         head?: never;
         patch?: never;
@@ -253,6 +317,12 @@ export interface components {
             newPassword: string;
         };
         "identity.v1.ChangePasswordResponse": Record<string, never>;
+        "identity.v1.CreatePermissionRequest": {
+            permission: components["schemas"]["identity.v1.Permission"];
+        };
+        "identity.v1.CreatePermissionResponse": {
+            permission?: components["schemas"]["identity.v1.Permission"];
+        };
         "identity.v1.CreateRoleRequest": {
             role: components["schemas"]["identity.v1.Role"];
         };
@@ -266,11 +336,15 @@ export interface components {
         "identity.v1.CreateUserResponse": {
             user?: components["schemas"]["identity.v1.User"];
         };
+        "identity.v1.DeletePermissionResponse": Record<string, never>;
         "identity.v1.DeleteRoleResponse": Record<string, never>;
         "identity.v1.DeleteUserResponse": Record<string, never>;
         "identity.v1.GetCurrentUserResponse": {
             user?: components["schemas"]["identity.v1.User"];
             permissions?: string[];
+        };
+        "identity.v1.ListOperationsResponse": {
+            items?: components["schemas"]["identity.v1.OperationInfo"][];
         };
         "identity.v1.ListPermissionsResponse": {
             items?: components["schemas"]["identity.v1.Permission"][];
@@ -302,11 +376,39 @@ export interface components {
             refreshToken?: string;
         };
         "identity.v1.LogoutResponse": Record<string, never>;
+        /** @description OperationInfo describes one HTTP operation and the permission that guards it. */
+        "identity.v1.OperationInfo": {
+            /**
+             * @description operation is the protobuf operation name, e.g.
+             *      /identity.v1.RoleService/ListRoles.
+             */
+            operation?: string;
+            service?: string;
+            /** @description method is the HTTP method. */
+            method?: string;
+            path?: string;
+            /**
+             * @description permission is the effective permission code, or empty when the operation is
+             *      public or authenticated-only.
+             */
+            permission?: string;
+            /** @description static_permission is the code declared in the compiled mapping. */
+            staticPermission?: string;
+            /** @description source is one of public, authenticated, static, database, or none. */
+            source?: string;
+            /** @description locked operations cannot be rebound through the API. */
+            locked?: boolean;
+        };
         "identity.v1.Permission": {
             code?: string;
             name?: string;
             resource?: string;
             action?: string;
+            /**
+             * @description Source is one of builtin, plugin, or custom. Builtin and plugin
+             *      permissions are managed by code and cannot be deleted.
+             */
+            source?: string;
         };
         "identity.v1.RefreshRequest": {
             refreshToken: string;
@@ -318,6 +420,9 @@ export interface components {
             /** Format: int32 */
             expiresIn?: number;
         };
+        "identity.v1.ResetOperationPermissionResponse": {
+            operation?: components["schemas"]["identity.v1.OperationInfo"];
+        };
         "identity.v1.Role": {
             id?: string;
             name: string;
@@ -325,6 +430,20 @@ export interface components {
             description?: string;
             isSystem?: boolean;
             permissions?: string[];
+        };
+        "identity.v1.SetOperationPermissionRequest": {
+            operation: string;
+            permission: string;
+        };
+        "identity.v1.SetOperationPermissionResponse": {
+            operation?: components["schemas"]["identity.v1.OperationInfo"];
+        };
+        "identity.v1.UpdatePermissionRequest": {
+            code: string;
+            permission: components["schemas"]["identity.v1.Permission"];
+        };
+        "identity.v1.UpdatePermissionResponse": {
+            permission?: components["schemas"]["identity.v1.Permission"];
         };
         "identity.v1.UpdateRoleRequest": {
             id: string;
@@ -356,6 +475,15 @@ export interface components {
         "plugin.v1.GetPluginResponse": {
             plugin?: components["schemas"]["plugin.v1.Plugin"];
         };
+        "plugin.v1.InstallPluginRequest": {
+            gitUrl?: string;
+            archiveBase64?: string;
+            gitRef?: string;
+            replace?: boolean;
+        };
+        "plugin.v1.InstallPluginResponse": {
+            plugin?: components["schemas"]["plugin.v1.Plugin"];
+        };
         "plugin.v1.ListPluginsResponse": {
             items?: components["schemas"]["plugin.v1.Plugin"][];
         };
@@ -370,6 +498,8 @@ export interface components {
             routes?: components["schemas"]["plugin.v1.PluginRoute"][];
             navigations?: components["schemas"]["plugin.v1.PluginNav"][];
             permissions?: string[];
+            /** @description source is bundled or installed. */
+            source?: string;
         };
         "plugin.v1.PluginNav": {
             label?: string;
@@ -385,6 +515,7 @@ export interface components {
             component?: string;
             permission?: string;
         };
+        "plugin.v1.UninstallPluginResponse": Record<string, never>;
         "system.v1.GetHealthResponse": {
             status?: string;
         };
@@ -523,6 +654,72 @@ export interface operations {
             };
         };
     };
+    AuthzService_ListOperations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["identity.v1.ListOperationsResponse"];
+                };
+            };
+        };
+    };
+    AuthzService_SetOperationPermission: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["identity.v1.SetOperationPermissionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["identity.v1.SetOperationPermissionResponse"];
+                };
+            };
+        };
+    };
+    AuthzService_ResetOperationPermission: {
+        parameters: {
+            query?: {
+                operation?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["identity.v1.ResetOperationPermissionResponse"];
+                };
+            };
+        };
+    };
     RoleService_ListPermissions: {
         parameters: {
             query?: never;
@@ -539,6 +736,78 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["identity.v1.ListPermissionsResponse"];
+                };
+            };
+        };
+    };
+    RoleService_CreatePermission: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["identity.v1.CreatePermissionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["identity.v1.CreatePermissionResponse"];
+                };
+            };
+        };
+    };
+    RoleService_UpdatePermission: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["identity.v1.UpdatePermissionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["identity.v1.UpdatePermissionResponse"];
+                };
+            };
+        };
+    };
+    RoleService_DeletePermission: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["identity.v1.DeletePermissionResponse"];
                 };
             };
         };
@@ -563,6 +832,30 @@ export interface operations {
             };
         };
     };
+    PluginService_InstallPlugin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["plugin.v1.InstallPluginRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["plugin.v1.InstallPluginResponse"];
+                };
+            };
+        };
+    };
     PluginService_GetPlugin: {
         parameters: {
             query?: never;
@@ -581,6 +874,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["plugin.v1.GetPluginResponse"];
+                };
+            };
+        };
+    };
+    PluginService_UninstallPlugin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["plugin.v1.UninstallPluginResponse"];
                 };
             };
         };

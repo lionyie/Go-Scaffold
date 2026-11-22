@@ -37,6 +37,51 @@ refresh_tokens(id, user_id, token_hash, session_id, expires_at, revoked_at)
 - `pnpm run verify-authz` 会在生成的 operation 缺少映射、映射条目过期、或权限
   码不存在时失败。
 
+### 权限来源
+
+| 来源 | 产生方式 | 可删除 | 可改 code |
+| --- | --- | --- | --- |
+| `builtin` | `contracts/permissions.yaml` | 否 | 否 |
+| `plugin` | 插件清单 | 否 | 否 |
+| `custom` | `POST /api/v1/permissions`（API） | 是 | 否 |
+
+启动时的种子只同步 builtin 目录并清理过期的 builtin 行，因此 custom 与 plugin
+权限不会在重启后丢失。删除 custom 权限时，会在同一事务里清理对应的
+`role_permissions`。
+
+自定义权限本身只是目录条目：在某个 operation 被映射到它之前（写在
+`Requirements` 里，或通过下面的运行时绑定），它不会保护任何接口。
+
+### 运行时接口绑定
+
+`mapping.go` 里的编译期映射是默认值。后端
+`PUT /api/v1/operations/permission` 可以在运行时覆盖某个 operation 的权限。
+管理端不再提供该页面，它是运维 API。
+
+- `services/internal/pkg/operations/operations_gen.go` 由 OpenAPI 规格自动生成，
+  保证目录与真实路由一致。
+- 覆盖关系存放在 `operation_permissions(operation, permission_code)`。
+- 公开接口和仅登录接口是锁定的，不能改绑。
+- 其余接口可以绑定任意已存在的权限码，包括自定义权限。自定义权限正是通过这一步
+  才真正开始保护接口。
+- 绑定结果缓存 30 秒，写入时主动失效。
+- 删除自定义权限时会一并删除引用它的接口绑定，相关接口回退到编译期映射。
+- 改绑需要 `permission:assign`，查看目录需要 `permission:list`。
+
+### 会话角色
+
+会话 token 携带调用者的角色（`roles` claim），鉴权直接读取这些角色，不再每次
+请求查数据库。
+
+- 本地密码登录从本地 RBAC 表解析角色
+- OIDC 登录直接使用 `realm_access.roles`。对接 Keycloak 时，名称等于权限码的
+  realm role（例如 `user:list`）即授予该权限
+- 名为 `admin` 的角色等价于 `is_admin`（完全绕过）
+- `/api/v1/auth/me` 返回会话中的角色
+
+本地密码登录作为兜底保留。管理端的权限管理页面已移除：SSO 用户的权限在 Keycloak
+中管理，密码用户的权限在本地角色页管理。
+
 默认角色：`admin`（全部权限）和 `viewer`（只读）。管理端的路由与菜单守卫使用
 生成的 `Permission` 常量，ESLint 会拒绝 `apps/admin/src` 下出现权限字符串字面量。
 
@@ -86,6 +131,61 @@ http(s)://<host>/api/v1/auth/oauth/<provider>/callback
 微信（开放平台扫码）与 QQ 互联不返回邮箱地址，它们永远不参与基于邮箱的绑定。
 OIDC 会用 issuer 的 JWKS 校验 ID token 签名，并检查 `iss`、`aud`、`exp` 与
 nonce。
+
+### Keycloak（OIDC）
+
+`pnpm run module:add oauth-oidc` 会安装通用 OIDC provider，目标文件为
+`services/internal/auth/oauth/providers/oidc.go`。开发用 realm 位于
+`deploy/keycloak/scaffold-realm.json`。
+
+启动 Keycloak（可选 override）：
+
+```bash
+docker compose -f deploy/compose/docker-compose.yml \
+               -f deploy/compose/docker-compose.keycloak.yml up -d keycloak
+```
+
+它监听 `http://localhost:8080`，导入 realm `scaffold`，并创建：
+
+- 客户端 `scaffold-admin`（confidential，secret 为 `dev-scaffold-admin-secret`，
+  启用 PKCE S256）
+- `http://localhost:8000` 与 `http://127.0.0.1:8000` 的回调地址
+- 开发用户 `admin@example.com / admin123`，realm 角色 `admin`
+- 开发用户 `viewer@example.com / viewer123`，composite 角色 `viewer`
+- 每个权限码对应一个 realm role（例如 `user:list`）
+
+realm role 就是权限码。ID token 里的 `realm_access.roles` 会写入会话，因此在
+Keycloak 中分配 `user:list` 即授予 `user:list` 权限。`admin` realm role 等价于
+`is_admin`。
+
+后端配置：
+
+```text
+SCAFFOLD_OAUTH_STATE_SECRET=<随机值>
+SCAFFOLD_OAUTH_OIDC_ISSUER=http://localhost:8080/realms/scaffold
+SCAFFOLD_OAUTH_OIDC_CLIENT_ID=scaffold-admin
+SCAFFOLD_OAUTH_OIDC_CLIENT_SECRET=dev-scaffold-admin-secret
+SCAFFOLD_OAUTH_OIDC_SCOPES=openid email profile
+SCAFFOLD_OAUTH_OIDC_DISPLAY_NAME=Keycloak
+SCAFFOLD_OAUTH_AUTO_REGISTER=true
+```
+
+账号关联规则：
+
+- 已验证邮箱会把 Keycloak 身份关联到同邮箱的本地用户
+- 种子管理员默认使用 `admin@example.com`，可用 `SCAFFOLD_SEED_ADMIN_EMAIL` 覆盖
+- `auto_register=true` 时，未知身份会创建本地用户，但不具备管理员权限
+- 本地密码登录与 SSO 并存
+
+安全说明：
+
+- PKCE S256 与 OIDC nonce 都会校验
+- 所有环境都必须设置 `SCAFFOLD_OAUTH_STATE_SECRET`
+- 完整 compose 部署时，server 容器通过
+  `extra_hosts: localhost:host-gateway` 访问宿主机发布的 Keycloak 端口
+
+Keycloak 是可选的 provider：本地 RBAC 与密码登录仍是默认形态，脚手架不依赖
+Keycloak 才能运行。
 
 ### 多副本部署
 

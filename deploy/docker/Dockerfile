@@ -28,12 +28,14 @@ RUN CGO_ENABLED=0 go build -trimpath \
     -ldflags "-s -w -X main.Version=${VERSION}" \
     -o /out/scaffold ./cmd/api
 
-FROM gcr.io/distroless/static-debian12:nonroot
+FROM alpine:3.22
+RUN apk add --no-cache git ca-certificates && adduser -D -u 10001 app
 WORKDIR /app
 COPY --from=build /out/scaffold /app/scaffold
 COPY configs /app/configs
 COPY --from=web /out/plugins /app/runtime-plugins
+RUN mkdir -p /app/data/plugins && chown -R 10001:10001 /app/data
 EXPOSE 8000 9000
-USER nonroot:nonroot
+USER 10001:10001
 ENTRYPOINT ["/app/scaffold"]
 CMD ["-conf", "/app/configs/docker.yaml"]

@@ -13,6 +13,7 @@ type Services struct {
 	Auth   *AuthService
 	User   *UserService
 	Role   *RoleService
+	Authz  *AuthzService
 	Plugin *PluginService
 	System *SystemService
 }
@@ -22,6 +23,7 @@ func NewServices(
 	auth *AuthService,
 	user *UserService,
 	role *RoleService,
+	authz *AuthzService,
 	plugin *PluginService,
 	system *SystemService,
 ) *Services {
@@ -29,6 +31,7 @@ func NewServices(
 		Auth:   auth,
 		User:   user,
 		Role:   role,
+		Authz:  authz,
 		Plugin: plugin,
 		System: system,
 	}
@@ -39,6 +42,7 @@ var ProviderSet = wire.NewSet(
 	NewAuthService,
 	NewUserService,
 	NewRoleService,
+	NewAuthzService,
 	NewPluginService,
 	NewSystemService,
 	NewServices,

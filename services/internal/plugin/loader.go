@@ -9,9 +9,20 @@ import (
 	"strings"
 )
 
+// Plugin sources.
+const (
+	SourceBundled   = "bundled"
+	SourceInstalled = "installed"
+)
+
 // Load scans a plugins directory and returns every valid manifest. Invalid
 // plugins are skipped when strict is false.
 func Load(root string, dev bool, allowedUpstreams []string, strict bool) ([]*Plugin, []error, error) {
+	return LoadWithSource(root, SourceBundled, dev, allowedUpstreams, strict)
+}
+
+// LoadWithSource is Load with an explicit source label.
+func LoadWithSource(root, source string, dev bool, allowedUpstreams []string, strict bool) ([]*Plugin, []error, error) {
 	entries, err := os.ReadDir(root)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -45,7 +56,7 @@ func Load(root string, dev bool, allowedUpstreams []string, strict bool) ([]*Plu
 			warnings = append(warnings, fmt.Errorf("validate %s: %w", manifestPath, err))
 			continue
 		}
-		plugins = append(plugins, &Plugin{Manifest: &manifest, Dir: dir})
+		plugins = append(plugins, &Plugin{Manifest: &manifest, Dir: dir, Source: source})
 	}
 
 	if strict && len(warnings) > 0 {

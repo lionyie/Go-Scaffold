@@ -98,10 +98,43 @@ pnpm run module:add -- oauth-oidc
 
 每个 provider 从环境变量读取配置（例如 `SCAFFOLD_OAUTH_GITHUB_CLIENT_ID` 与 `_CLIENT_SECRET`），配置齐全后会出现在管理端登录页。详见[认证与 SSO](docs/auth.zh-CN.md)。
 
+## Keycloak（OIDC，可选）
+
+脚手架能对接任意 OIDC 提供方，但**不依赖**它。本地开发用 Keycloak realm 作为可选
+compose override 提供：
+
+```bash
+docker compose -f deploy/compose/docker-compose.yml \
+               -f deploy/compose/docker-compose.keycloak.yml up -d keycloak   # http://localhost:8080
+```
+
+带匹配的 OIDC 配置启动后端：
+
+```bash
+SCAFFOLD_OAUTH_STATE_SECRET=dev-only-oauth-state-secret \
+SCAFFOLD_OAUTH_OIDC_ISSUER=http://localhost:8080/realms/scaffold \
+SCAFFOLD_OAUTH_OIDC_CLIENT_ID=scaffold-admin \
+SCAFFOLD_OAUTH_OIDC_CLIENT_SECRET=dev-scaffold-admin-secret \
+SCAFFOLD_OAUTH_OIDC_DISPLAY_NAME=Keycloak \
+SCAFFOLD_OAUTH_AUTO_REGISTER=true \
+pnpm run dev:server
+```
+
+使用 `admin@example.com / admin123` 登录。已验证邮箱会把 Keycloak 身份关联到种子管理员；
+Keycloak 的 realm role 就是权限码（`user:list`、`role:create` 等），名为 `admin` 的角色
+等价于全部权限；`viewer@example.com / viewer123` 是只读账号。本地密码登录仍然保留。
+详见[认证与 SSO](docs/auth.zh-CN.md)。
+
 ## 运行时插件（实验性）
 
 仓库内置了一个可运行示例 `runtime-plugins/hello-panel/`：注册路由与侧边栏入口，使用
 宿主提供的 Vuetify 组件（不重复打包），并通过受鉴权的插件代理调用静态 API。
+
+插件从构建后的 `dist/` 目录提供。如果 Hello 插件加载时报 `index.js` 404，
+先执行一次 `pnpm run build:plugins`。
+
+管理端的**插件**页还支持从公开 Git 仓库或上传 ZIP 安装预构建插件；安装到
+`data/plugins`，无需重启即可卸载。
 
 ```bash
 pnpm run build:plugins                       # 构建所有已安装插件

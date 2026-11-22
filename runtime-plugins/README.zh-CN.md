@@ -25,6 +25,28 @@
 5. **插件 API。** 请求 `/proxy/plugins/<id>/api/<path>`，由 `<plugin>/server/`（static）
    或上游服务（proxy）处理。
 
+## 安装插件
+
+管理端的**插件**页可以在不重启服务的情况下安装插件。两种来源都要求**预构建**产物：
+根目录包含 `plugin.json` 与 `dist/`。
+
+- **Git 仓库**：公开 HTTPS 仓库（可指定分支/标签）。服务端执行
+  `git clone --depth 1`，不会运行任何构建脚本。
+- **上传 ZIP**：最大 10 MiB，包含 `plugin.json` 与 `dist/`。
+
+安装后的插件位于 `plugins.install_dir`（本地开发为 `data/plugins`），不会写入
+`runtime-plugins/`。卸载只针对已安装插件，内置插件受保护。安装与卸载都需要
+`plugin:manage` 权限。
+
+安全说明：
+
+- 安装的插件 JavaScript 运行在管理端同源上下文，没有沙箱，只应安装可信产物
+- ZIP 路径、大小都会校验，服务端不会在安装时执行插件代码
+- `plugins.allowed_repos` 可以把 Git 来源限制到指定 host/前缀
+- Git 安装依赖服务器上的 `git` 命令。Docker 镜像已内置；本地运行需要 `git` 在
+  `PATH` 中。compose 部署时 `data/plugins` 保存在 `plugin-data` 卷；Kubernetes
+  需要持久卷，否则重建 Pod 后安装的插件会丢失
+
 ## 目录结构
 
 ```text

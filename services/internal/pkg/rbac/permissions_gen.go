@@ -3,17 +3,22 @@
 package rbac
 
 const (
-	PermUserList           = "user:list"
-	PermUserCreate         = "user:create"
-	PermUserUpdate         = "user:update"
-	PermUserDelete         = "user:delete"
-	PermRoleList           = "role:list"
-	PermRoleCreate         = "role:create"
-	PermRoleUpdate         = "role:update"
-	PermRoleDelete         = "role:delete"
-	PermRolePermissionList = "role:permission:list"
-	PermPluginList         = "plugin:list"
-	PermPluginRead         = "plugin:read"
+	PermUserList         = "user:list"
+	PermUserCreate       = "user:create"
+	PermUserUpdate       = "user:update"
+	PermUserDelete       = "user:delete"
+	PermRoleList         = "role:list"
+	PermRoleCreate       = "role:create"
+	PermRoleUpdate       = "role:update"
+	PermRoleDelete       = "role:delete"
+	PermPermissionList   = "permission:list"
+	PermPermissionCreate = "permission:create"
+	PermPermissionUpdate = "permission:update"
+	PermPermissionDelete = "permission:delete"
+	PermPermissionAssign = "permission:assign"
+	PermPluginList       = "plugin:list"
+	PermPluginRead       = "plugin:read"
+	PermPluginManage     = "plugin:manage"
 )
 
 // PermissionDef is a single entry of the permission catalog.
@@ -35,9 +40,14 @@ func Catalog() []PermissionDef {
 		{PermRoleCreate, "Create role", "role", "create"},
 		{PermRoleUpdate, "Update role", "role", "update"},
 		{PermRoleDelete, "Delete role", "role", "delete"},
-		{PermRolePermissionList, "List permissions", "role", "permission:list"},
+		{PermPermissionList, "List permissions", "permission", "list"},
+		{PermPermissionCreate, "Create permission", "permission", "create"},
+		{PermPermissionUpdate, "Update permission", "permission", "update"},
+		{PermPermissionDelete, "Delete permission", "permission", "delete"},
+		{PermPermissionAssign, "Bind operations to permissions", "permission", "assign"},
 		{PermPluginList, "List plugins", "plugin", "list"},
 		{PermPluginRead, "Read plugin", "plugin", "read"},
+		{PermPluginManage, "Install and uninstall plugins", "plugin", "manage"},
 	}
 }
 
@@ -52,8 +62,13 @@ func All() []string {
 		PermRoleCreate,
 		PermRoleUpdate,
 		PermRoleDelete,
-		PermRolePermissionList,
+		PermPermissionList,
+		PermPermissionCreate,
+		PermPermissionUpdate,
+		PermPermissionDelete,
+		PermPermissionAssign,
 		PermPluginList,
 		PermPluginRead,
+		PermPluginManage,
 	}
 }
